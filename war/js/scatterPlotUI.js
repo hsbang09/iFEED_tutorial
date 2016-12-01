@@ -646,6 +646,14 @@ function scatterPlot_option(selected_option){ // three options: zoom, drag_selec
            // remove selection frame
         svg_tmp.selectAll( "rect.selection").remove();
         
+        if(current_view==7 && option=="selection"){
+        	view7_completed = true;
+        	activate_right_arrow();
+        }else if(current_view==8 && option=="deselection"){
+        	view8_completed = true;
+        	activate_right_arrow();
+        }
+        
     })
     }               
 }

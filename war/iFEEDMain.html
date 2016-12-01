@@ -245,15 +245,22 @@ and open the template in the editor.
 			<div style="width:1300px; margin:auto">
 			
 			
-			    <div id="main_div" style="margin:auto;width:90%;height:200px;background-color:#F9E39D;padding:15px">
+			    <div id="main_div" style="margin:auto;width:80%;background-color:#F9E39D;padding:20px">
 			    	<h3 id="main_header"></h3>
 			    	<p id="main_text" style="font-size:18px"></p>
-			    	<div id="arrow_div" style="margin-top:5px">
+			    	<img id="main_img" style="margin:auto;">
+			    	<img id="main_img2" style="margin:auto;">
+			    	<p id="main_text3" style="font-size:18px"></p>
+			    	
+			    	<p id="main_img_credit" style="margin-top:5px; font-size:10px"></p>
+			    	
+			    	
+			    	<div id="arrow_div" style="margin-top:30px">
 			    		<img src="images/rightarrow.png" class="img-hor-vert" id="leftarrow" width="48" height="31">
 			    		<img src="images/rightarrow.png" id="rightarrow" width="48" height="31">
 			    	</div>
-		    	</div>
-			
+			    </div>
+						
 			
 			
 			
@@ -375,6 +382,17 @@ and open the template in the editor.
        
        
        <script>
+       
+       
+    
+       		var view7_completed = false;
+       		var view6_completed = false;
+       		var view5_completed = false;
+       		var view8_completed = false;
+       		var view9_completed = false;
+       		var view10_completed = false;
+       
+       
 
             var original_bitString;
             var modified_bitString;
@@ -775,17 +793,14 @@ and open the template in the editor.
             newDataFromResultFile();
 
             
+           
             
             
-            
-            
-            
-            
-            var current_view=1;
+            var current_view=5;
             
             function click_leftarrow(){
-            	if(current_view==1){
-            		return;
+            	if(current_view==5){
+            		window.location.replace("iFEEDTutorial.html?48375937584=23413");
             	}else{
             		current_view= current_view-1;
             	}
@@ -797,19 +812,138 @@ and open the template in the editor.
             }
 
             function clear_view(){
+            	d3.select("#main_header").text("");
+            	d3.select("#main_text").text('');
+            	
+            	d3.select("#main_img").attr("src","")
+            			.style("width","0%")
+            			.style("opacity",0);
+            	
+            	d3.select("#main_text2").remove();
+
+            	d3.select("#main_img2").attr("src","")
+            			.style("width","0%")
+            			.style("opacity",0);
+            	
+            	d3.select("#main_text3").text('');
+            	
+            	d3.select("#main_img_credit").text("");
             }
 
             function display_views(){
-            	if(current_view==1){
-            		d3.select("#main_header").text("Experiment overview")
-            		d3.select("#main_text").text("You will be given 30 minutes to use the web-based data-analysis tool called iFEED (Interactive Feature Extraction in Engineering Design) to analyze a given set of data.")
+            	clear_view();
+            	if(current_view==5){
+            		d3.select("#main_header").text("Scatter Plot Panel and Analysis Panel")
+            		d3.select("#main_text").html('<p>The scatter plot panel (box highlighted in red) displays thousands of different designs '
+            				+' of satellite systems. Each dot corresponds to one design, and is located based on its corresponding '
+            				+' cost and science benefit score.</p>'
+            				+'<p>You can zoom in and zoom out using your mouse wheel, or using pinching motion if you are using'
+            				+' a trackpad. You can also pan the view using your mouse.</p>');
+
+            		d3.select('#scatterPlotFigure')
+            			.style('border-width','5px')
+            			.style('border-color','#FF2D65');
+            		
+            		d3.select('#OptionsPane')
+	    				.style('border-width','1px')
+	    				.style('border-color','#000000');
+            		
             	}
+            	else if(current_view==6){
+            		d3.select('#scatterPlotFigure')
+        				.style('border-width','1px')
+        				.style('border-color','#000000');
+            		
+            		d3.select("#main_header").text("Selection Panel")
+            		d3.select("#main_text").html('<p>The selection panel contains menus and options you can use to '
+            				+'select a group of solutions.</p> <p>Selection is useful for analyzing a group of solutions'
+            				+' as will be shown later.</p>');
+            		
+            		d3.select('#OptionsPane')
+	        			.style('border-width','5px')
+	        			.style('border-style','solid')
+	        			.style('border-color','#FF2D65');
+            		
+            		
+            		d3.select('#OptionsPane').select('div').select('div')
+	    				.style('border-width','0px')
+	    				.style('border-color','#000000');
+        		
+            		
+            	}	
+            	else if(current_view==7){
+            		if(!view7_completed){
+            			deactivate_right_arrow();
+            		}
+            		
+            		d3.select("#main_header").text("Drag-select Option")
+            		d3.select("#main_text").html('<p>Drag-select option allows you to '
+            				+'select dots on the scatter plot by dragging your mouse over them.</p> '
+            				+'<p> Use drag-select option to select dots to continue.</p>');
+            		
+            		d3.select('#OptionsPane').select('div').select('div')
+	        			.style('border-width','5px')
+	        			.style('border-style','solid')
+	        			.style('border-color','#FF2D65');
+            		d3.select('#OptionsPane')
+	    				.style('border-width','1px')
+	    				.style('border-color','#000000');
+            	}
+            	else if(current_view==8){
+            		if(!view8_completed){
+            			deactivate_right_arrow();
+            		}
+            		
+            		d3.select("#main_header").text("Deselect Option")
+            		d3.select("#main_text").html('<p>Deselect option allows you to '
+            				+'deselect the highlighted dots on the scatter plot by dragging your mouse over them.</p> '
+            				+'<p> To continue, use deselect option to cancel selections.</p>');
+            		
+            	}
+            	else if(current_view==9){
+//             		if(!view9_completed){
+//             			deactivate_right_arrow();
+//             		}
+            		
+//             		d3.select("#main_header").text("Deselect Option")
+//             		d3.select("#main_text").html('<p>Deselect option allows you to '
+//             				+'deselect the highlighted dots on the scatter plot by dragging your mouse over them.</p> '
+//             				+'<p> To continue, use deselect option to cancel selections.</p>');
+            		
+            		
+//             		d3.select('#OptionsPane').select('div').select('div')
+// 	    				.style('border-width','0px')
+// 	    				.style('border-color','#000000');
+            		
+            	}
+            		
+            	
             }
             	
 
+            
+            
+            
+            function deactivate_right_arrow(){
+            	d3.select("#rightarrow").on("click",null);
+            	d3.select('#rightarrow').style('opacity',0.3);
+            }
+            function activate_right_arrow(){
+            	d3.select('#rightarrow').style('opacity',1);
+            	d3.select("#rightarrow").on("click",click_rightarrow);
+            }
+            
+            
+            
+            
             d3.select("#leftarrow").on("click",click_leftarrow);
             d3.select("#rightarrow").on("click",click_rightarrow);
             display_views();
+            
+            
+            
+            
+            
             
             
             
