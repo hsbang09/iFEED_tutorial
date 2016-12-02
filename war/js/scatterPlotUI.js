@@ -202,16 +202,16 @@ function draw_scatterPlot(source) {
     
     d3.select("[id=selectArchsWithinRangeButton]")[0][0].disabled = false;
     d3.select("[id=cancel_selection]")[0][0].disabled = false;
-    d3.select("[id=hide_selection]")[0][0].disabled = false;
-    d3.select("[id=show_all_archs]")[0][0].disabled = false;
+//    d3.select("[id=hide_selection]")[0][0].disabled = false;
+//    d3.select("[id=show_all_archs]")[0][0].disabled = false;
 	
     d3.select("[id=scatterPlotFigure]").on("click",unhighlight_basic_info_box);
     d3.select("[id=basicInfoBox_div]").on("click",highlight_basic_info_box);
 	d3.selectAll("[id=getDrivingFeaturesButton]").on("click", runDataMining);
     d3.select("[id=selectArchsWithinRangeButton]").on("click", selectArchsWithinRange);
     d3.select("[id=cancel_selection]").on("click",cancelDotSelections);
-    d3.select("[id=hide_selection]").on("click",hideSelection);
-    d3.select("[id=show_all_archs]").on("click",show_all_archs);
+//    d3.select("[id=hide_selection]").on("click",hideSelection);
+//    d3.select("[id=show_all_archs]").on("click",show_all_archs);
     d3.select("[id=openFilterOptions]").on("click",openFilterOptions);
     d3.select("[id=drivingFeaturesAndSensitivityAnalysis_div]").selectAll("options");
     d3.select("[id=numOfArchs_inputBox]").text(""+numOfArchs());
@@ -244,6 +244,12 @@ function add_newArchs_to_scatterPlot() {
 }
 
 function selectArchsWithinRange() {
+	
+	
+	if(current_view==9){
+		view9_completed=true;
+		activate_right_arrow();
+	}
 
     var clickedArchs = d3.selectAll("[class=dot_clicked]");
     var unClickedArchs = d3.selectAll("[class=dot]");
@@ -312,6 +318,11 @@ function selectArchsWithinRange() {
 }
 
 function cancelDotSelections(){
+	
+	if(current_view==11){
+		view11_completed=true;
+		activate_right_arrow();
+	}
 
     var clickedArchs = d3.selectAll("[class=dot_clicked]");
 
@@ -784,7 +795,14 @@ function calculateParetoRanking(){
 
 
 function highlight_basic_info_box(){
-	
+	if(current_view==13){
+		if(view13_ready < 2){
+			view13_ready = view13_ready + 1;
+		}else{
+			view13_completed=true;
+			activate_right_arrow();
+		}
+	}
     d3.select("[id=scatterPlotFigure]")
     	.style("border-width","1px");
 	d3.select("[id=basicInfoBox_div]")
@@ -792,6 +810,14 @@ function highlight_basic_info_box(){
 	infoBox_active=true;
 }
 function unhighlight_basic_info_box(){
+	if(current_view==13){
+		if(view13_ready < 2){
+			view13_ready = view13_ready + 1;
+		}else{
+			view13_completed=true;
+			activate_right_arrow();
+		}
+	}
     d3.select("[id=scatterPlotFigure]")
 			.style("border-width","3.3px");
 	d3.select("[id=basicInfoBox_div]")

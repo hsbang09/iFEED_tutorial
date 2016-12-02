@@ -644,12 +644,26 @@ function filterInputField_subsetOfInstruments(){
 
 
 function applyFilter_new(){
+	
     buttonClickCount_applyFilter += 1;
 
     cancelDotSelections();
 
     var filterType = d3.select("[id=dropdown_presetFilters]")[0][0].value;
     var neg = false;
+    
+	if(current_view==15 && filterType == "paretoFront"){
+		view15_completed=true;
+		activate_right_arrow();
+	}
+	else if(current_view==16 && filterType == "present"){
+		view16_completed = true;
+		activate_right_arrow();
+	}
+	else if(current_view==17 && filterType =="inOrbit"){
+		view17_completed = true;
+		activate_right_arrow();
+	}
     
     if (filterType == "paretoFront"){
         var filterInput = d3.select("[id=filter_input1_textBox]")[0][0].value;

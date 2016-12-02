@@ -48,16 +48,7 @@ and open the template in the editor.
             	margin-bottom: 3px;
                 width: 170px;
             }
-            #data_mining_option_div button{
-            	margin-top: 3px;
-            	margin-bottom: 3px;
-                width: 170px;
-            }
-            selection_option_div button{
-            	margin-top: 3px;
-            	margin-bottom: 3px;
-                width: 170px;
-            }           
+          
 			                
 
             
@@ -290,10 +281,10 @@ and open the template in the editor.
 		            <div id="OptionsPane" class="main_options" style="float:left; width: 250px; height: 540px;border: 1px black double;">
 		            	<div style="width:225px;height:535px;margin:auto;">
 		            		
-		            		<div style="float:left;width:220px;margin-top:10px;height:115px;background-color:#D9D9D9">
-			            		<div class="toggle-selection-option-div" style="height: 110px; width:100%;float:left;margin:6px;">
+		            		<div style="float:left;width:190px;padding:15px;height:115px;background-color:#D9D9D9;margin-top:15px">
+			            		<div class="toggle-selection-option-div" style="height: 110px;float:left;">
 									<div style="font-size:18px;font-weight: bold;">
-										Select Interaction Mode
+										Mouse Selection
 									</div>
 									<div class="tooltip">
 										<span class="tooltiptext" style="right:230px;padding:11px;width:230px">Zoom/Pan: This option allows zooming/panning on the scatter plot</span>
@@ -323,21 +314,29 @@ and open the template in the editor.
 			            		</div>
 		            		</div>
 		
-			                <div id="selection_option_div" style="float:left;margin-top: 10px;">
-			                    Cost range: <br/>
-			                    <input id="selectArchsWithinRange_minCost" class="select_within_range_text_box" type="text" value="0"/>&nbsp; ~&nbsp; <input id="selectArchsWithinRange_maxCost" class="select_within_range_text_box" type="text" value="inf"/>
-			                    <br/> Science Benefit range: <br/>
-			                    <input id="selectArchsWithinRange_minScience" class="select_within_range_text_box" type="text" value="0"/>&nbsp; ~&nbsp; <input id="selectArchsWithinRange_maxScience" class="select_within_range_text_box" type="text" value="1"/>
-			                    <br/>
-			                    
-			                    <button type="button" id="selectArchsWithinRangeButton" disabled="True">Select points within range</button>
-			                    <button type="button"  id="cancel_selection" disabled="True">Cancel all selections</button>
-			                    <button type="button"  id="hide_selection" disabled="True">Hide selections</button>
-			                    <button type="button"  id="show_all_archs" disabled="True">Show all architectures</button>
+		
+		
+			                <div id="selection_option_div" style="float:left;width:220px;margin-top: 20px;">
+								<div style="margin:auto;width:200;padding:15px;background-color:#D9D9D9">
+									<div style="font-size:18px;font-weight: bold;margin-bottom:10px">
+										Range Selection
+									</div>
+				                    Cost range: <br/>
+				                    <input id="selectArchsWithinRange_minCost" class="select_within_range_text_box" type="text" value="0"/>&nbsp; ~&nbsp; <input id="selectArchsWithinRange_maxCost" class="select_within_range_text_box" type="text" value="inf"/>
+				                    <br/> Science Benefit range: <br/>
+				                    <input id="selectArchsWithinRange_minScience" class="select_within_range_text_box" type="text" value="0"/>&nbsp; ~&nbsp; <input id="selectArchsWithinRange_maxScience" class="select_within_range_text_box" type="text" value="1"/>
+				                    <br/>
+			                    	<button type="button" id="selectArchsWithinRangeButton" style="margin-top:10px;margin-bottom:3px;width:170px" disabled="True">Select within range</button>
+
+								</div>
+<!-- 			                    <button type="button"  id="hide_selection" disabled="True">Hide selections</button> -->
+<!-- 			                    <button type="button"  id="show_all_archs" disabled="True">Show all architectures</button> -->
+            				    <button type="button"  id="cancel_selection" disabled="True" style="width:220px;height:35px;margin-top:20px">Cancel all selections</button>
+			                	
+			                
 			                </div>
 
-			                <div id="data_mining_option_div" style="float:left; margin-top: 15px;">
-			                </div>
+
 		            	</div>
 		            	
 		
@@ -391,7 +390,16 @@ and open the template in the editor.
        		var view8_completed = false;
        		var view9_completed = false;
        		var view10_completed = false;
-       
+       		var view11_completed = false;
+       		var view12_completed = false;
+       		var view13_completed = false;
+       		var view14_completed = false;
+       		var view15_completed = false;
+       		var view16_completed = false;
+       		var view17_completed = false;
+       		var view18_completed = false;
+       		var view19_completed = false;
+       		var view13_ready = 0;
        
 
             var original_bitString;
@@ -899,24 +907,212 @@ and open the template in the editor.
             				+'deselect the highlighted dots on the scatter plot by dragging your mouse over them.</p> '
             				+'<p> To continue, use deselect option to cancel selections.</p>');
             		
+            		
+            		d3.select('#selection_option_div').select('div')
+	    				.style('border-width','0px')
+	    				.style('border-color','#000000');
+            		
             	}
             	else if(current_view==9){
-//             		if(!view9_completed){
-//             			deactivate_right_arrow();
-//             		}
+            		if(!view9_completed){
+            			deactivate_right_arrow();
+            		}
             		
-//             		d3.select("#main_header").text("Deselect Option")
-//             		d3.select("#main_text").html('<p>Deselect option allows you to '
-//             				+'deselect the highlighted dots on the scatter plot by dragging your mouse over them.</p> '
-//             				+'<p> To continue, use deselect option to cancel selections.</p>');
+            		d3.select("#main_header").text("Selection by Range")
+            		d3.select("#main_text").html('<p>You can also set a range of values for cost and benefit to make the selection.</p> '
+            				+'<p> To continue, set ranges of values for cost and benefit and click [select within range] button.</p>');
             		
             		
-//             		d3.select('#OptionsPane').select('div').select('div')
-// 	    				.style('border-width','0px')
-// 	    				.style('border-color','#000000');
+            		d3.select('#selection_option_div').select('div')
+	        			.style('border-width','5px')
+	        			.style('border-style','solid')
+	        			.style('border-color','#FF2D65');
+            		d3.select('#OptionsPane').select('div').select('div')
+	    				.style('border-width','0px')
+	    				.style('border-color','#000000');
+            		
+
             		
             	}
+            	else if(current_view==10){
             		
+            		d3.select("#main_header").text("Number of designs selected")
+            		d3.select("#main_text").html('<p>The total number of designs and the number of selected designs are displayed on'
+            				+'the boxes above the scatter plot.</p>');
+            		
+            		d3.select('#StatusBar')
+	        			.style('border-width','5px')
+	        			.style('border-style','solid')
+	        			.style('border-color','#FF2D65');
+            		
+            		d3.select('#selection_option_div').select('div')
+	    				.style('border-width','0px')
+	    				.style('border-color','#000000');
+            		d3.select('#cancel_selection')
+	    				.style('border-width','0px')
+	    				.style('border-color','#000000');
+            		
+            	}
+            	else if(current_view==11){
+            		if(!view11_completed){
+            			deactivate_right_arrow();
+            		}
+            		d3.select("#main_header").text("Cancel All Selection")
+            		d3.select("#main_text").html('<p>Cancel all selection button is used to cancel all the selections. </p>'
+            				+'<p>To continue, press cancel all selections button.</p>');
+
+            		d3.select('#cancel_selection')
+	        			.style('border-width','5px')
+	        			.style('border-style','solid')
+	        			.style('border-color','#FF2D65');
+            		
+            		d3.select('#StatusBar')
+	    				.style('border-width','0px')
+	    				.style('border-color','#000000');
+            	}
+            	else if(current_view==12){
+            		d3.select("#main_header").text("Analysis Panel")
+            		d3.select("#main_text").html('<p>The analysis panel is located below the scatter plot, '
+            				+'and you can use it to analyze the data displayed on the scatter plot.</p>');
+
+            		d3.select('#basicInfoBox_div')
+	        			.style('border-width','5px')
+	        			.style('border-style','solid')
+	        			.style('border-color','#FF2D65');
+            		d3.select('#cancel_selection')
+	    				.style('border-width','0px')
+	    				.style('border-color','#000000');
+            		
+            	}
+            	else if(current_view==13){
+            		if(!view13_completed){
+            			deactivate_right_arrow();
+            		}
+            		d3.select("#main_header").text("Design Inspection")
+            		d3.select("#main_text").html('<p>If you hover your mouse over each design on the scatter plot, '
+            				+' relevant information will be displayed on the design inspection tab.</p>'
+            				+'<p>The displayed information conatains the science benefit score and the cost, as well as'
+            				+' a figure that shows what instruments are assigned to each orbit.</p>'
+            				+'<p>The borderline of either the scatter plot or the analysis panel will be represented by bold lines.'
+            				+' The bold line means that the panel is currently focused. When the analysis panel is focused, hovering the mouse'
+            				+' over a dot on scatter plot will not change the information already displayed on the analysis panel.'
+            				+' To enable the inspection of designs by hovering, click the scatter plot to bring the focus back to the scatter plot.</p>'
+            				+'<p>To continue, try alternating the focus by clicking the scatter plot and the analysis panel.</p>');
+
+            		document.getElementById('tab1').click();
+            		set_selection_option(1);
+            		cancelDotSelections();
+            		unhighlight_basic_info_box();
+            		
+            		d3.select('#basicInfoBox_div')
+	        			.style('border-width','5px')
+	        			.style('border-style','solid')
+	        			.style('border-color','#FF2D65');
+            	}
+            	else if(current_view==14){
+            		d3.select("#main_header").text("Filters")
+            		d3.select("#main_text").html('<p>Filters can be used to select a group of designs '
+            				+'that share the common feature. For example, you can selectively highlight '
+            				+'designs that use instrument C, or designs that assign instrument D and E to the orbit 4000. </p>'
+            				+'<p>Such selective highlighting function is useful to see how designs sharing the same '
+            				+'feature are distributed in the scatter plot.</p>'
+            				+'<p>The most basic and useful features have been identified and built into the filter options. '
+            				+'You can select one of these preset filters to specify what patterns you want to investigate.</p>');
+
+            		document.getElementById('tab2').click();
+            	    highlight_basic_info_box();
+            		
+            		d3.select('#basicInfoBox_div')
+	        			.style('border-width','5px')
+	        			.style('border-style','solid')
+	        			.style('border-color','#FF2D65');
+            	}
+            	else if(current_view==15){
+            		if(!view15_completed){
+            			deactivate_right_arrow();
+            		}
+            		d3.select("#main_header").text("Preset Filters: Pareto front")
+            		d3.select("#main_text").html('<p>We will test some of the preset filters. First, the Pareto front is used'
+            				+' to highlight a layer of dots that are closest to low-cost high-science-score region.'
+            				+' The Pareto ranking represents the number of layers that will be selected.'
+            				+' To use this filter, follow the steps below:</p>'
+            				+'<p>1. Select Pareto front option from the dropdown menu. </p>'
+            				+'<p>2. In the input field that appears, type in an integer number.</p>'
+            				+'<p>3. Then click [Apply new filter] button to apply the filter.</p>');
+            		
+            		d3.select('#basicInfoBox_div')
+	    				.style('border-width','0px')
+	    				.style('border-color','#000000');
+            		
+            		document.getElementById('tab2').click();
+            	    highlight_basic_info_box();
+            	    
+            	    d3.select('#filter_options').select('select')
+	        			.style('border-width','5px')
+	        			.style('border-style','solid')
+	        			.style('border-color','#FF2D65');
+            	    d3.select('#applyFilterButton_new')
+	        			.style('border-width','5px')
+	        			.style('border-style','solid')
+	        			.style('border-color','#FF2D65');
+            	    
+            	}
+            	else if(current_view==16){
+            		if(!view16_completed){
+            			deactivate_right_arrow();
+            		}
+            		d3.select("#main_header").text("Preset Filters: Present")
+            		d3.select("#main_text").html('<p>Filter called Present is used to selectively highlight designs that '
+            				+'contain specific instrument. It takes in one instrument name as an argument. All the selected designs'
+            				+' will have the given instrument.</p>'
+            				+'<p>1. Select Present option from the dropdown menu. </p>'
+            				+'<p>2. In the input field that appears, type in an instrument name. '
+            				+'The instrument should be an alphabet letter ranging from A to L. </p>'
+            				+'<p>3. Then click [Apply new filter] button to apply the filter.</p>');
+            		
+            		document.getElementById('tab2').click();
+            	    highlight_basic_info_box();
+            	    
+            	    d3.select('#filter_options').select('select')
+	        			.style('border-width','5px')
+	        			.style('border-style','solid')
+	        			.style('border-color','#FF2D65');
+            	    d3.select('#applyFilterButton_new')
+	        			.style('border-width','5px')
+	        			.style('border-style','solid')
+	        			.style('border-color','#FF2D65');
+            	}
+            	else if(current_view==17){
+            		if(!view17_completed){
+            			deactivate_right_arrow();
+            		}
+            		d3.select("#main_header").text("Preset Filters: InOrbit")
+            		d3.select("#main_text").html('<p>Filter called InOrbit is used to selectively highlight designs that '
+            				+'assigns a specific instrument to the given orbit. It takes in an orbit name and an instrument '
+            				+'name as arguments. To continue, follow the steps below:</p>'
+            				+'<p>1. Select InOrbit option from the dropdown menu. </p>'
+            				+'<p>2. In the first input field that appears, type in an orbit name. '
+            				+'The orbit name should be a number in thousands (1000, 2000, 3000, 4000, or 5000). </p>'
+            				+'<p>2. In the second input field, type in an instrument name. '
+            				+'The instrument should be an alphabet letter ranging from A to L. </p>'
+            				+'<p>3. Then click [Apply new filter] button to apply the filter.</p>');
+            		
+            		document.getElementById('tab2').click();
+            	    highlight_basic_info_box();
+            	    
+            	    d3.select('#filter_options').select('select')
+	        			.style('border-width','5px')
+	        			.style('border-style','solid')
+	        			.style('border-color','#FF2D65');
+            	    d3.select('#applyFilterButton_new')
+	        			.style('border-width','5px')
+	        			.style('border-style','solid')
+	        			.style('border-color','#FF2D65');
+            	}
+            	
+            	
+            	
+
             	
             }
             	
