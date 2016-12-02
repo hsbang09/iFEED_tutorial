@@ -45,6 +45,7 @@
     	<div id="arrow_div" style="margin-top:30px">
     		<img src="images/rightarrow.png" class="img-hor-vert" id="leftarrow" width="48" height="31">
     		<img src="images/rightarrow.png" id="rightarrow" width="48" height="31">
+    		<div id="tutorial_page_number" style="font-size:12px; margin:0 48%"></div>
     	</div>
     </div>
     
@@ -120,6 +121,8 @@ function clear_view(){
 
 function display_views(){
 	clear_view();
+	d3.select('#tutorial_page_number').text("" + current_view);
+	
 	if(current_view==1){
 		d3.select("#main_header").text("Experiment overview");
 		d3.select("#main_text").text('You will be given 30 minutes to use the web-based data-analysis tool called iFEED'
@@ -154,8 +157,8 @@ function display_views(){
 		d3.select("#main_header").text("Design Task: Satellite system design - Continued");
 		d3.select("#main_text")
 				.text('Each design is represented by a figure similar to the one shown below:');
-		d3.select('#main_img').attr('src','images/architecture_example.png')
-				.style("width","42%")
+		d3.select('#main_img').attr('src','images/architecture_example_2.png')
+				.style("width","72%")
 				.style("opacity",1);
 		
 		d3.select('#main_div').insert('p','#main_img2')

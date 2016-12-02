@@ -405,16 +405,27 @@ function applyUserDefFilter_single(expression,prev,logic,bitString){
 
 
 function saveNewFilter(){
+	
+	if(current_view==20){
+		view20_completed=true;
+		activate_right_arrow();
+	}
+	
+	
     var name = d3.select("[id=userDefinedFilter_name]")[0][0].value;
+    var filterExpression = d3.select("[id=filter_expression]").text();
     
     if(name.length==0){
-    	var filterExpression = d3.select("[id=filter_expression]");
-        filterExpression.text("Error: name required to save!");
+    	alert("Error: name required to save!");
         userDefFilterExpressionHistory.push("error");
+    	return;
+    }else if(filterExpression.length==0){
+    	alert("Error: no filter applied");
     	return;
     }
     
-    var filterExpression = d3.select("[id=filter_expression]").text();
+    
+    
     userDefFilters.push({name:name,expression:filterExpression});
     console.log(name + " " + filterExpression);
     filterDropdownOptions.push({value:name,text:name});

@@ -12,6 +12,11 @@
 
 function runDataMining() {
 	
+	if(current_view==21){
+		view21_completed=true;
+		activate_right_arrow();
+	}
+	
 	document.getElementById('tab3').click();
     highlight_basic_info_box()
     
@@ -237,12 +242,12 @@ function display_filterOption(){
             .style("margin-left","6px")
             .style("float","left")
             .text("Search within selection");
-    d3.select("[id=filter_options]").append("button")
-		    .attr("id","applyFilterButton_complement")
-		    .attr("class","filterOptionButtons")
-		    .style("margin-left","6px")
-		    .style("float","left")
-		    .text("Select complement");
+//    d3.select("[id=filter_options]").append("button")
+//		    .attr("id","applyFilterButton_complement")
+//		    .attr("class","filterOptionButtons")
+//		    .style("margin-left","6px")
+//		    .style("float","left")
+//		    .text("Select complement");
     d3.select("[id=filter_options]").append("button")
             .attr("id","saveFilter")
             .attr("class","filterOptionButtons")
@@ -255,6 +260,7 @@ function display_filterOption(){
     d3.select("[id=applyFilterButton_add]").on("click",applyFilter_add);
     d3.select("[id=applyFilterButton_new]").on("click",applyFilter_new);
     d3.select("[id=applyFilterButton_within]").on("click",applyFilter_within);
+//    d3.select("[id=applyFilterButton_complement]").on("click",applyFilter_complement);
     
     highlight_basic_info_box()
 }
@@ -364,7 +370,7 @@ function selectFilterOption_filterInput(selectedOption,userDefOption){
 
         filterInput.append("div")
                 .attr("id","filter_input1")
-                .text("Input Pareto Ranking: ");
+                .text("Input Pareto Ranking (Integer number between 0-15): ");
 
         filterInput.select("[id=filter_input1]")
                 .append("input")
@@ -664,12 +670,17 @@ function applyFilter_new(){
 		view17_completed = true;
 		activate_right_arrow();
 	}
+	else if(current_view==19 && filterType == "defineNewFilter"){
+		view19_completed = true;
+		activate_right_arrow();
+	}
+	
     
     if (filterType == "paretoFront"){
         var filterInput = d3.select("[id=filter_input1_textBox]")[0][0].value;
         var unClickedArchs = d3.selectAll("[class=dot]")[0].forEach(function (d) {
-        	var rank = d3.select(d).attr("paretoRank");
-            if (rank <= ""+filterInput && rank >= 0){
+        	var rank = parseInt(d3.select(d).attr("paretoRank"));
+            if (rank <= +filterInput && rank >= 0){
                 d3.select(d).attr("class", "dot_clicked")
                             .style("fill", "#0040FF");
             }
@@ -692,7 +703,12 @@ function applyFilter_new(){
 
         var unClickedArchs = d3.selectAll("[class=dot]")[0].forEach(function (d) {
             var bitString = d.__data__.archBitString;
-            if (presetFilter2(filterType,bitString,filterInputs,neg)){
+            var temp = presetFilter2(filterType,bitString,filterInputs,neg);
+            if(temp==null){
+            	alert("Wrong argument input");
+            	return;
+            }
+            else if (temp){
                 d3.select(d).attr("class", "dot_clicked")
                             .style("fill", "#0040FF");
             }
@@ -732,6 +748,17 @@ function applyFilter_new(){
 }
 
 function applyFilter_within(){
+	
+	if(current_view==18){
+		if(view18_ready < 1){
+			view18_ready = view18_ready +1;
+		}else{
+			view18_completed=true;
+			activate_right_arrow();
+		}
+	}
+	
+	
     buttonClickCount_applyFilter += 1;
     var filterType = d3.select("[id=dropdown_presetFilters]")[0][0].value;
     var neg = false;
@@ -740,8 +767,8 @@ function applyFilter_within(){
         var filterInput = d3.select("[id=filter_input1_textBox]")[0][0].value;
         var clickedArchs = d3.selectAll("[class=dot_clicked]")[0].forEach(function (d) {
 
-        	var rank = d3.select(d).attr("paretoRank");
-            if (rank <= ""+filterInput && rank >= 0){
+        	var rank = parseInt(d3.select(d).attr("paretoRank"));
+            if (rank <= +filterInput && rank >= 0){
             }else {
                 d3.select(d).attr("class", "dot")
                             .style("fill", function (d) {
@@ -778,7 +805,11 @@ function applyFilter_within(){
 //                            var bitString = booleanArray2String(d.__data__.archBitString)
 
             var bitString = d.__data__.archBitString;
-            if (presetFilter2(filterType,bitString,filterInputs,neg)){
+            var temp = presetFilter2(filterType,bitString,filterInputs,neg);
+            if(temp==null){
+            	alert("Wrong argument input");
+            	return;
+            } else if(temp){
             } else {
                 d3.select(d).attr("class", "dot")
                             .style("fill", function (d) {
@@ -814,6 +845,18 @@ function applyFilter_within(){
 
 
 function applyFilter_add(){
+	
+	if(current_view==18){
+		if(view18_ready < 1){
+			view18_ready = view18_ready +1;
+		}else{
+			view18_completed=true;
+			activate_right_arrow();
+		}
+	}
+	
+	
+	
     buttonClickCount_applyFilter += 1;
 
     var filterType = d3.select("[id=dropdown_presetFilters]")[0][0].value;
@@ -822,8 +865,8 @@ function applyFilter_add(){
     if (filterType == "paretoFront"){
         var filterInput = d3.select("[id=filter_input1_textBox]")[0][0].value;
         var unClickedArchs = d3.selectAll("[class=dot]")[0].forEach(function (d) {
-        	var rank = d3.select(d).attr("paretoRank");
-            if (rank <= ""+filterInput && rank >= 0){
+        	var rank = parseInt(d3.select(d).attr("paretoRank"));
+            if (rank <= +filterInput && rank >= 0){
             	d3.select(d).attr("class", "dot_clicked")
                             .style("fill", "#0040FF");
             }
@@ -849,7 +892,12 @@ function applyFilter_add(){
         var unClickedArchs = d3.selectAll("[class=dot]")[0].forEach(function (d) {
 //                            var bitString = booleanArray2String(d.__data__.archBitString)
             var bitString = d.__data__.archBitString;
-            if (presetFilter2(filterType,bitString,filterInputs,neg)){
+            var temp = presetFilter2(filterType,bitString,filterInputs,neg);
+            if(temp==null){
+            	alert("Wrong argument input");
+            	return;
+            }
+            else if (temp){
                 d3.select(d).attr("class", "dot_clicked")
                             .style("fill", "#0040FF");
             }
@@ -991,21 +1039,29 @@ function display_drivingFeatures(source,sortby) {
 
     
     
+    
+    
     var df_explanation_box = infoBox.append("div")
+		.attr("id","df_explanation_box")
 		.style("float","left")
 		.style("background-color","#E7E7E7")
-		.style("width","350px")
-		.style("height",height_df + margin_df.top + margin_df.bottom)
-		.append("div")
-		.attr("id","df_explanation_box")
-		.style("width","330px")
-		.style("height",height_df + margin_df.top + margin_df.bottom - 30)
-		.style("margin-top","15px")
-		.style("margin-left","20px");
+	    .style('height','350px')
+	    .style('margin-top','15px')
+	    .style('padding','15px')
+	    .style('width','320px');
+    
+    df_explanation_box.append('div')
+		.style("font-family","sans-serif")
+		.style('margin-left','10px')
+		.style("font-size","18px")
+    	.style('width','100%')
+    	.text('Total number of designs: ' + numOfArchs());
+    
     df_explanation_box.append("svg")
-		.style("height","360px")
-		.style("width","290px")
-		.style("margin","auto");
+		.style('width','320px')  			
+		.style('height','305px')
+		.style('margin-top','10px')
+		.style('margin-bottom','10px'); 
     
 
 ////////////////////////////////////////////////////////
@@ -1199,14 +1255,24 @@ function display_drivingFeatures(source,sortby) {
                             
                         d3.selectAll("[class=dot]")[0].forEach(function (d) {
                         	var bitString = d.__data__.archBitString;
-                    		if (presetFilter2(type_modified,bitString,filterInputs,false)){
+                            var temp = presetFilter2(filterType,bitString,filterInputs,neg);
+                            if(temp==null){
+                            	alert("Wrong argument input");
+                            	return;
+                            }
+                            else if (temp){
                     			d3.select(d).attr("class", "dot_DFhighlighted")
                     						.style("fill", "#F75082");
                 			}
                         });
                         d3.selectAll("[class=dot_clicked]")[0].forEach(function (d) {
                         	var bitString = d.__data__.archBitString;
-                    		if (presetFilter2(type_modified,bitString,filterInputs,false)){
+                            var temp = presetFilter2(filterType,bitString,filterInputs,neg);
+                            if(temp==null){
+                            	alert("Wrong argument input");
+                            	return;
+                            }
+                            else if (temp){
                     			d3.select(d).attr("class", "dot_selected_DFhighlighted")
                     						.style("fill", "#F75082");
                 			}
@@ -1255,14 +1321,15 @@ function display_drivingFeatures(source,sortby) {
                             .data([{name:name,supp:supp,conf:conf,conf2:conf2,lift:lift}])
                             .enter()
                             .append("div")
-                            .style("margin-left","15px")
-                            .style("margin-top","10px");
+                            .style("padding","15px");
+//                            .style("margin-left","15px")
+//                            .style("margin-top","10px");
                           
 //                    
                     textdiv.html(function(d){
-                        var output= "<br>" + d.name + "<br><br><br> lift: " + d.lift.toFixed(4) + "<br> support: " + d.supp.toFixed(4) + 
-                        "<br> conf {feature} -> {selection}: " + d.conf.toFixed(4) + "<br> conf2 {selection} -> {feature}: " + d.conf2.toFixed(4) +
-                        "";
+                        var output= "" + d.name + "<br><br> The % of designs in the intersection out of all designs: " + d.supp.toFixed(3)*100 + 
+                        "% <br> The % of selected designs among designs with the feature: " + d.conf.toFixed(3)*100 + 
+                        "%<br> The % of designs with the feature among selected designs: " + d.conf2.toFixed(3)*100 +"";
                         return output;
                     }).style("color", "#F7FF55");                         
 
@@ -1295,7 +1362,16 @@ function display_drivingFeatures(source,sortby) {
                             });     
                     d3.selectAll("[class=dot_selected_DFhighlighted]")
                     		.attr("class", "dot_clicked")
-                            .style("fill","#0040FF");     
+                            .style("fill","#0040FF");    
+                    
+                    
+                    if(current_view==22){
+                    	view22_ready = view22_ready+1;
+                    	if(view22_ready > 2){
+                    		view22_completed=true;
+                    		activate_right_arrow();
+                    	}
+                    }
                 });
 
 
@@ -1382,6 +1458,9 @@ function presetFilter2(filterName,bitString,inputs,neg){
     if(filterName==="present"){
         filterInput1 = relabelback(filterInput1);
         var thisInstr = $.inArray(filterInput1,instrList);
+        if(thisInstr==-1){
+        	return null;
+        }
         output = false;
         for(var i=0;i<orbitList.length;i++){
             if(bitString[ninstr*i+thisInstr]===true){
@@ -1392,6 +1471,9 @@ function presetFilter2(filterName,bitString,inputs,neg){
     } else if(filterName==="absent"){
         filterInput1 = relabelback(filterInput1);
         var thisInstr = $.inArray(filterInput1,instrList);
+        if(thisInstr==-1){
+        	return null;
+        }
         output = true;
         for(var i=0;i<orbitList.length;i++){
             if(bitString[ninstr*i+thisInstr]===true){
@@ -1405,6 +1487,10 @@ function presetFilter2(filterName,bitString,inputs,neg){
         output = false;
         var thisOrbit = $.inArray(filterInput1,orbitList);
         var thisInstr = $.inArray(filterInput2,instrList);
+        
+        if(thisInstr==-1 || thisOrbit==-1){
+        	return null;
+        }
             if(bitString[thisOrbit*ninstr + thisInstr]===true){
                 output = true;
             }
@@ -1414,6 +1500,9 @@ function presetFilter2(filterName,bitString,inputs,neg){
         output = true;
         var thisOrbit = $.inArray(filterInput1,orbitList);
         var thisInstr = $.inArray(filterInput2,instrList);
+        if(thisInstr==-1 || thisOrbit==-1){
+        	return null;
+        }
             if(bitString[thisOrbit*ninstr + thisInstr]===true){
                 output = false;
             }
@@ -1424,6 +1513,9 @@ function presetFilter2(filterName,bitString,inputs,neg){
         var thisInstr2 = $.inArray(relabelback(splitInstruments[1]),instrList);
         var thisInstr3;
         if(splitInstruments.length===2){
+            if(thisInstr1==-1 || thisInstr2==-1){
+            	return null;
+            }
             for(var i=0;i<norb;i++){
                 if(bitString[i*ninstr + thisInstr1] === true && bitString[i*ninstr + thisInstr2] === true){
                     output = true;
@@ -1431,8 +1523,10 @@ function presetFilter2(filterName,bitString,inputs,neg){
                 }
             }
         } else {
-            
             thisInstr3 = $.inArray(relabelback(splitInstruments[2]),instrList);
+            if(thisInstr1==-1 || thisInstr2==-1 || thisInstr3==-1){
+            	return null;
+            }
             for(var i=0;i<norb;i++){
                 if(bitString[i*ninstr + thisInstr1] === true && bitString[i*ninstr + thisInstr2] === true
                         && bitString[i*ninstr + thisInstr3] === true){
@@ -1449,11 +1543,17 @@ function presetFilter2(filterName,bitString,inputs,neg){
         var thisInstr2 = $.inArray(relabelback(splitInstruments[1]),instrList);
         var thisInstr3;
         if(splitInstruments.length===2){
+            if(thisInstr1==-1 || thisInstr2==-1 || thisOrbit==-1){
+            	return null;
+            }
             if(bitString[thisOrbit*ninstr + thisInstr1] === true && bitString[thisOrbit*ninstr + thisInstr2] === true){
                 output = true;
             }
         } else {
             thisInstr3 = $.inArray(relabelback(splitInstruments[2]),instrList);
+            if(thisInstr1==-1 || thisInstr2==-1 || thisInstr3==-1 || thisOrbit==-1){
+            	return null;
+            }
             if(bitString[thisOrbit*ninstr + thisInstr1] === true && bitString[thisOrbit*ninstr + thisInstr2] === true
                         && bitString[thisOrbit*ninstr + thisInstr3] === true){
                 output = true;
@@ -1466,6 +1566,9 @@ function presetFilter2(filterName,bitString,inputs,neg){
         var thisInstr2 = $.inArray(relabelback(splitInstruments[1]),instrList);
         var thisInstr3;
         if(splitInstruments.length===2){
+            if(thisInstr1==-1 || thisInstr2==-1){
+            	return null;
+            }
             for(var i=0;i<norb;i++){
                 if(bitString[i*ninstr + thisInstr1] === true && bitString[i*ninstr + thisInstr2] === true){
                     output = false;
@@ -1474,6 +1577,9 @@ function presetFilter2(filterName,bitString,inputs,neg){
             }
         } else {
             thisInstr3 = $.inArray(relabelback(splitInstruments[2]),instrList);
+            if(thisInstr1==-1 || thisInstr2==-1 || thisInstr3==-1){
+            	return null;
+            }
             for(var i=0;i<norb;i++){
                 if(bitString[i*ninstr + thisInstr1] === true && bitString[i*ninstr + thisInstr2] === true
                         && bitString[i*ninstr + thisInstr3] === true){
@@ -1484,6 +1590,9 @@ function presetFilter2(filterName,bitString,inputs,neg){
         }
     } else if(filterName ==="emptyOrbit"){
         var thisOrbit =  $.inArray(relabelback(filterInput1),orbitList);
+        if(thisOrbit==-1){
+        	return null;
+        }
         output = true;
         for(var i=0;i<ninstr;i++){
             if(bitString[thisOrbit*ninstr + i]===true){
@@ -1493,6 +1602,9 @@ function presetFilter2(filterName,bitString,inputs,neg){
         }
     } else if(filterName ==="numOrbitUsed"){
         var numOrbits = filterInput1;
+        if(numOrbits > 5 || numOrbits < 0){
+        	return null;
+        }
         var cnt = 0;
         for (var i=0;i<norb;i++){
             for (var j=0;j<ninstr;j++){
@@ -1553,15 +1665,21 @@ function checkNeg(original,neg){
 }
 
 
+
 function draw_venn_diagram(df_explanation_box,supp,conf,conf2){
 
 	df_explanation_box.select("svg").remove();
 	var svg_venn_diag = df_explanation_box
 								.append("svg")
-								.style("height","360px")
-								.style("width","290px")
-								.style("margin","auto");
-	
+					    		.style('width','320px')  			
+								.style('border-width','3px')
+								.style('height','305px')
+								.style('border-style','solid')
+								.style('border-color','black')
+								.style('border-radius','40px')
+								.style('margin-top','10px')
+								.style('margin-bottom','10px'); 
+
 	var F_size = supp * 1/conf;
 	var S_size = supp * 1/conf2;
 		
@@ -1592,7 +1710,7 @@ function draw_venn_diagram(df_explanation_box,supp,conf,conf2){
 		.append("circle")
 		.attr("id","venn_diag_c1")
 	    .attr("cx", c1x)
-	    .attr("cy", 180)
+	    .attr("cy", 180-30)
 	    .attr("r", r1)
 	    .style("fill", "steelblue")
 	    .style("fill-opacity", ".5");
@@ -1601,7 +1719,7 @@ function draw_venn_diagram(df_explanation_box,supp,conf,conf2){
 		.append("circle")
 		.attr("id","venn_diag_c2")
 	    .attr("cx", c2x)
-	    .attr("cy", 180)
+	    .attr("cy", 180-30)
 	    .attr("r", r2)
 	    .style("fill", "brown")
 	    .style("fill-opacity", ".5");
@@ -1610,7 +1728,7 @@ function draw_venn_diagram(df_explanation_box,supp,conf,conf2){
 	svg_venn_diag
 		.append("text")
 		.attr("x",left_margin-10)
-		.attr("y",70)
+		.attr("y",70-30)
 		.attr("font-family","sans-serif")
 		.attr("font-size","18px")
 		.attr("fill","black")
@@ -1619,7 +1737,7 @@ function draw_venn_diagram(df_explanation_box,supp,conf,conf2){
 	svg_venn_diag
 		.append("text")
 		.attr("x",c1x-110)
-		.attr("y",180+r1+50)
+		.attr("y",180+r1+50-30)
 		.attr("font-family","sans-serif")
 		.attr("font-size","18px")
 		.attr("fill","steelblue")
@@ -1627,12 +1745,13 @@ function draw_venn_diagram(df_explanation_box,supp,conf,conf2){
 	svg_venn_diag
 		.append("text")
 		.attr("x",c1x+30)
-		.attr("y",180+r1+50)
+		.attr("y",180+r1+50-30)
 		.attr("font-family","sans-serif")
 		.attr("font-size","18px")
 		.attr("fill","brown")
 		.text("Features:" + Math.round(F_size * numOfArchs()) );
 }
+
 
 
 
@@ -1642,8 +1761,8 @@ function applyFilter(filterType,filterInput){
     var neg = false;
     if (filterType == "paretoFront"){
         var unClickedArchs = d3.selectAll("[class=dot]")[0].forEach(function (d) {
-        	var rank = d3.select(d).attr("paretoRank");
-            if (rank <= ""+filterInput && rank >= 0){
+        	var rank = parseInt(d3.select(d).attr("paretoRank"));
+            if (rank <= +filterInput && rank >= 0){
                 d3.select(d).attr("class", "dot_clicked")
                             .style("fill", "#0040FF");
             }
@@ -1655,7 +1774,12 @@ function applyFilter(filterType,filterInput){
 
         var unClickedArchs = d3.selectAll("[class=dot]")[0].forEach(function (d) {
             var bitString = d.__data__.archBitString;
-            if (presetFilter2(filterType,bitString,filterInput,neg)){
+            var temp = presetFilter2(filterType,bitString,filterInputs,neg);
+            if(temp==null){
+            	alert("Wrong argument input");
+            	return;
+            }
+            else if (temp){
                 d3.select(d).attr("class", "dot_clicked")
                             .style("fill", "#0040FF");
             }

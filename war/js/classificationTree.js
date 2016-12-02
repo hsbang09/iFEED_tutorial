@@ -415,6 +415,14 @@ function update(source) {
 
 // Toggle children.
 function toggle_tree(d) {
+	if(current_view==23){
+		view23_ready = view23_ready + 1;
+		if(view23_ready > 1){
+			view23_completed=true;
+			activate_right_arrow();
+		}
+	}
+
     if (d.children) {
       d._children = d.children;
       d.children = null;

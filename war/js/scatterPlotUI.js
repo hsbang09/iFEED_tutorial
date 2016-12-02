@@ -389,6 +389,10 @@ function show_all_archs(){
 
 function dot_mouseover(d) {
 	
+	if(current_view==21){
+		return;
+	}
+	
 	if(infoBox_active==true){
 		return;
 	}
@@ -410,10 +414,10 @@ function dot_mouseover(d) {
     archInfoBox.append("p")
             .text("Cost: " + (d.cost).toFixed(1));
 
-    archInfoBox.append("input")
-            .attr("id", "evalNewArch")
-            .attr("type", "button")
-            .attr("value", "Evaluate modified architecture");
+//    archInfoBox.append("input")
+//            .attr("id", "evalNewArch")
+//            .attr("type", "button")
+//            .attr("value", "Evaluate modified architecture");
 
 
     var bitString = booleanArray2String(d.archBitString);
@@ -425,7 +429,7 @@ function dot_mouseover(d) {
 
 
 
-    document.getElementById("evalNewArch").disabled = true;
+//    document.getElementById("evalNewArch").disabled = true;
 
     d3.select("[id=instrumentOptions]")
             .select("table").remove();
@@ -752,16 +756,11 @@ function calculateParetoRanking(){
         return;
     }
 
-
     var rank=0;
-    archs = d3.selectAll("[class=dot]")[0];
-
     while(archs.length > 0){
 
         var numArchs = archs.length;
-        rank++;
-
-        if (rank>10){
+        if (rank>15){
             break;
         }
 
@@ -789,6 +788,7 @@ function calculateParetoRanking(){
                 return true;
             }
         });
+        rank++;
     }
 
 }
@@ -1027,6 +1027,13 @@ function initialize_tabs_filter_options(){
     
 }
 function initialize_tabs_driving_features(){
+	
+	if(current_view==21){
+		return;
+	}
+	
+	
+	
 	d3.select("[id=basicInfoBox_div]").select("[id=view3]").select("g").remove();
 	var guideline = d3.select("[id=basicInfoBox_div]").select("[id=view3]")
 			.append("g")
@@ -1052,6 +1059,13 @@ function initialize_tabs_driving_features(){
 }
 
 function initialize_tabs_classification_tree(){
+	
+	if(current_view==21){
+		return;
+	}
+	
+	
+	
 	if(testType=="3"){
 		d3.select("[id=basicInfoBox_div]").select("[id=view4]").select("g").remove();
 		var guideline = d3.select("[id=basicInfoBox_div]").select("[id=view4]")

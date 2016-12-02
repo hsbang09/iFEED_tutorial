@@ -104,10 +104,6 @@ and open the template in the editor.
                 font-family: 'Helvetica Neue', Helvetica; font-weight: 300; padding: 5px;
                 font-size: 15px;
             }
-            #evalNewArch{
-                margin-top: 4px;
-                margin-bottom: 14px;
-            }
 
 
             #filter_inputs{
@@ -249,6 +245,7 @@ and open the template in the editor.
 			    	<div id="arrow_div" style="margin-top:30px">
 			    		<img src="images/rightarrow.png" class="img-hor-vert" id="leftarrow" width="48" height="31">
 			    		<img src="images/rightarrow.png" id="rightarrow" width="48" height="31">
+    					<div id="tutorial_page_number" style="font-size:12px; margin:0 48%"></div>
 			    	</div>
 			    </div>
 						
@@ -399,7 +396,17 @@ and open the template in the editor.
        		var view17_completed = false;
        		var view18_completed = false;
        		var view19_completed = false;
+       		var view20_completed = false;
+       		var view21_completed = false;
+       		var view22_completed = false;
+       		var view23_completed = false;
+       		var view24_completed = false;
        		var view13_ready = 0;
+       		var view18_ready = 0;
+       		var view20_ready = 0;
+       		var view21_ready = 0;
+       		var view22_ready = 0;
+       		var view23_ready = 0;
        
 
             var original_bitString;
@@ -836,10 +843,14 @@ and open the template in the editor.
             	d3.select("#main_text3").text('');
             	
             	d3.select("#main_img_credit").text("");
+            	activate_right_arrow();
             }
 
             function display_views(){
             	clear_view();
+            	d3.select('#tutorial_page_number').text("" + current_view);
+            	
+            	
             	if(current_view==5){
             		d3.select("#main_header").text("Scatter Plot Panel and Analysis Panel")
             		d3.select("#main_text").html('<p>The scatter plot panel (box highlighted in red) displays thousands of different designs '
@@ -907,7 +918,10 @@ and open the template in the editor.
             				+'deselect the highlighted dots on the scatter plot by dragging your mouse over them.</p> '
             				+'<p> To continue, use deselect option to cancel selections.</p>');
             		
-            		
+            		d3.select('#OptionsPane').select('div').select('div')
+	        			.style('border-width','5px')
+	        			.style('border-style','solid')
+	        			.style('border-color','#FF2D65');
             		d3.select('#selection_option_div').select('div')
 	    				.style('border-width','0px')
 	    				.style('border-color','#000000');
@@ -931,7 +945,9 @@ and open the template in the editor.
 	    				.style('border-width','0px')
 	    				.style('border-color','#000000');
             		
-
+            		d3.select('#StatusBar')
+	    				.style('border-width','0px')
+	    				.style('border-color','#000000');
             		
             	}
             	else if(current_view==10){
@@ -967,6 +983,10 @@ and open the template in the editor.
 	        			.style('border-color','#FF2D65');
             		
             		d3.select('#StatusBar')
+	    				.style('border-width','0px')
+	    				.style('border-color','#000000');
+            		
+            		d3.select('#basicInfoBox_div')
 	    				.style('border-width','0px')
 	    				.style('border-color','#000000');
             	}
@@ -1026,6 +1046,14 @@ and open the template in the editor.
 	        			.style('border-width','5px')
 	        			.style('border-style','solid')
 	        			.style('border-color','#FF2D65');
+            		
+            	    d3.select('#filter_options').select('select')
+	    				.style('border-width','0px')
+	    				.style('border-color','#000000');
+        	    	d3.select('#applyFilterButton_new')
+	    				.style('border-width','0px')
+	    				.style('border-color','#000000');
+            		
             	}
             	else if(current_view==15){
             		if(!view15_completed){
@@ -1108,10 +1136,207 @@ and open the template in the editor.
 	        			.style('border-width','5px')
 	        			.style('border-style','solid')
 	        			.style('border-color','#FF2D65');
+            	    
+            	    
+	        	    d3.select('#applyFilterButton_add')
+	    				.style('border-width','0px')
+	    				.style('border-color','#000000');
+	        	    d3.select('#applyFilterButton_within')
+						.style('border-width','0px')
+						.style('border-color','#000000');
+            	    
+            	    
             	}
             	
             	
-            	
+            	else if(current_view==18){
+            		if(!view18_completed){
+            			deactivate_right_arrow();
+            		}
+            		d3.select("#main_header").text("Filter application buttons")
+            		d3.select("#main_text").html('<p> There are three different buttons you can use to apply filters.'
+            				+' The first one is [Apply new filter], which simply applies the current selected filter regardless'
+            				+' of the previous selections made. The other two buttons are used when you have a group of designs'
+            				+' already selected in the scatter plot, and want to apply filters in addition to the current selection.</p>'
+            				+'<p>[Add to selection] adds the newly filtered designs to the current selection. The highlighted designs'
+            				+' on the scatter plot remains highlighted and the filter will be applied to previously unhighlighted designs.' 
+            				+' This is similar to the logical connective OR.</p>'
+		            		+'<p>[Search within selection] applies the filter to the currently selected set of designs. This is'
+		    				+' similar to the logical connective AND.</p>'
+		    				+'<p>To continue, try both options using the filters of your choice.</p>');
+            		
+            		document.getElementById('tab2').click();
+            	    highlight_basic_info_box();
+            	    
+            	    d3.select('#filter_options').select('select')
+	        			.style('border-width','5px')
+	        			.style('border-style','solid')
+	        			.style('border-color','#FF2D65');
+            	    d3.select('#applyFilterButton_new')
+	    				.style('border-width','0px')
+	    				.style('border-color','#000000');
+            	    
+            	    d3.select('#applyFilterButton_add')
+	        			.style('border-width','5px')
+	        			.style('border-style','solid')
+	        			.style('border-color','#FF2D65');
+            	    d3.select('#applyFilterButton_within')
+	        			.style('border-width','5px')
+	        			.style('border-style','solid')
+	        			.style('border-color','#FF2D65');
+            	}
+            	else if(current_view==19){
+            		if(!view19_completed){
+            			deactivate_right_arrow();
+            		}
+            		d3.select("#main_header").text("Making your own filter")
+            		d3.select("#main_text").html('<p>You can also combine filters to define a new filter using [Define new Filter] option'
+            				+' from the dropdown menu. The new filter can be defined as a logical combination of preset filters,'
+            				+' and therefore you can make more sophisticated filters that better separates good'
+            				+' designs from the rest of the designs. To define new filter, follow the steps below:</p>'
+            				+'<p>1. Select Define new filter option from the dropdown menu. </p>'
+            				+'<p>2. Select any filter from the newly appeared dropdown menu. </p>'
+            				+'<p>3. For now, ignore the fields "Filter name" and "Filter expression", and fill in the rest of the input'
+            				+' field boxes (arguments such as instrument names and orbit names). </p>'
+            				+'<p>4. Click [Add this feature] button on the bottom right.</p>'
+            				+'<p>5. Select the another filter from the lower dropdown menu.</p>'
+            				+'<p>6. Fill in the input field boxes again. (ignore "Filer name" and "Filter expression")</p>'
+            				+'<p>7. Click either [AND] or [OR] button to specify the logical connective you want to use to combine filters</p>'
+            				+'<p>8. Click [Add this feature] button on the bottom left.</p>'
+            				+'<p>9. Click [Apply new filter] button on the top, to apply the newly generated filter.</p>'
+            				+'<p> * If you make a mistake in adding a new filter, you can click [Undo] button to reverse the action.</p>');
+            				
+            		document.getElementById('tab2').click();
+            	    highlight_basic_info_box();
+            	    
+            	    d3.select('#filter_options').select('select')
+	        			.style('border-width','5px')
+	        			.style('border-style','solid')
+	        			.style('border-color','#FF2D65');
+            	    
+	        	    d3.select('#applyFilterButton_add')
+	    				.style('border-width','0px')
+	    				.style('border-color','#000000');
+	        	    d3.select('#applyFilterButton_within')
+						.style('border-width','0px')
+						.style('border-color','#000000');
+            	    d3.select('#saveFilter')
+						.style('border-width','0px')
+						.style('border-color','#000000');
+            	}
+            	else if(current_view==20){
+            		if(!view20_completed){
+            			deactivate_right_arrow();
+            		}
+            		d3.select("#main_header").text("Making your own filter - saving filters")
+            		d3.select("#main_text").html('<p>You can save the newly defined filter so that you can you can view it later and'
+            						+'further analyze it.</p>'
+            						+'<p>After defining your own filter, set the filter name by filling in the input field'
+            						+' box that appears when you select Define new filter option.</p>'
+            						+'<p>Then click the [Save this filter] button on the top right corner.</p>'
+            						+'<p>To continue, define your own filter and save it.</p>');
+            				
+            		document.getElementById('tab2').click();
+            	    highlight_basic_info_box();
+            	    
+            	    d3.select('#filter_options').select('select')
+						.style('border-width','0px')
+						.style('border-color','#000000');
+            	    
+            		d3.select('#getDrivingFeaturesButton')
+						.style('border-width','0px')
+						.style('border-color','#000000');
+            	    
+            	    d3.select('#saveFilter')
+	        			.style('border-width','5px')
+	        			.style('border-style','solid')
+	        			.style('border-color','#FF2D65');            	    
+            	}
+            	else if(current_view==21){
+            		if(!view21_completed){
+            			deactivate_right_arrow();
+            		}
+            		d3.select("#main_header").text("Data Mining - Driving Features")
+            		d3.select("#main_text").html('<p>iFEED also provides the data mining capability to help analyzing the data.'
+            						+' The data mining extracts the driving features. Driving features are the patterns that '
+            						+'appear more often among the selected group of designs compared all other designs. '
+            						+'Extracting these patterns can be useful to learn what constitutes good designs. </p>'
+            						+'<p>To run data mining, you first have to select a group of designs as targets. '
+            						+' The selection can be made using either the drag-selection or the range-selection.</p>'
+            						+'<p>Then click the [Run data mining] button on the Driving Features tab.</p>');
+            		
+            		document.getElementById('tab3').click();
+            	    highlight_basic_info_box();
+            		set_selection_option(2);
+            		cancelDotSelections();
+            		
+            		d3.select('#getDrivingFeaturesButton')
+	        			.style('border-width','5px')
+	        			.style('border-style','solid')
+	        			.style('border-color','#FF2D65');  
+        	    	d3.select('#saveFilter')
+						.style('border-width','0px')
+						.style('border-color','#000000'); 
+            		d3.select('#basicInfoBox_div')
+	    				.style('border-width','0px')
+	    				.style('border-color','#000000');
+        	    	
+            	}
+            	else if(current_view==22){
+            		if(!view22_completed){
+            			deactivate_right_arrow();
+            		}
+            		d3.select("#main_header").text("Driving Features Explained")
+            		d3.select("#main_text").html('<p>The driving features are presented as bar graphs. Each bar '
+            				+'corresponds to one driving feature, and the height of the bar'
+            				+' indicates how well the feature separates selected designs from the rest of the designs.'
+            				+' As you hover your mouse over each bar, the relevant information is presented in 3 ways.</p>'
+            				+'<p>1. Tooltip shows the name of the feature, including the arguments such as instrument names'
+            				+' and orbit names. Also, tooltip presents some basic statistics to show the composition of '
+            				+'designs with the feature and the selected designs in the dataset.</p>'
+            				+'<p>2. Scatterplot highlights (in pink) all the designs that have the given feature. </p>'
+            				+'<p>3. A Venn Diagram is presented to show the composition of designs with the feature and the'
+            				+' selected designs. The blue circle represents the selected designs, and the pink circle represents'
+            				+' designs with the feature.</p>'
+            				+'</br><p>To continue, inspect 3 features by hovering your mouse over the bars.</p>');            				
+            
+	        		document.getElementById('tab3').click();
+	        	    highlight_basic_info_box();
+	        	    
+            		d3.select('#basicInfoBox_div')
+	        			.style('border-width','5px')
+	        			.style('border-style','solid')
+	        			.style('border-color','#FF2D65');  
+            	}
+            	else if(current_view==23){
+            		if(!view23_completed){
+            			deactivate_right_arrow();
+            		}
+            		d3.select("#main_header").text("Data Mining: Classification Tree")
+            		d3.select("#main_text").html('<p>The driving features can also be presented using a classification tree. '
+            				+'Classification tree is a decision tree that classifies whether a design belongs to the target '
+            				+'selected region or not. Each node corresponds to one driving feature. All the designs start'
+            				+'from the root node (far left) and follow the branches depending on whether it contains '
+            				+'the driving feature specified at each node. If a design contains the driving feature, '
+            				+'it will follow the green line. Otherwise, it follow the red line.</p>'
+            				+'<p>Each leaf node (far right) can be expanded by clicking on the node. '
+            				+'When it is expanded, a new driving feature will replace that node and the tree size will grow. '
+            				+'The information displayed at each leaf node indicates whether the designs that reach the node '
+            				+'are classified as selected or not selected in the scatter plot. '
+            				+'The classification accuracy is displayed inside the parentheses. The “weight” indicates '
+            				+'the number of designs that reached the leaf node.</p>'
+            				+'<p>If you hover your mouse over a leaf node (far right), corresponding designs will be'
+            				+' highlighted on the scatter plot.'</p>'
+            				+'<p>To continue, try expanding and collapsing the tree by clicking on the node.</p>');            				
+            
+	        		document.getElementById('tab4').click();
+	        	    highlight_basic_info_box();
+	        	    
+            		d3.select('#basicInfoBox_div')
+	        			.style('border-width','5px')
+	        			.style('border-style','solid')
+	        			.style('border-color','#FF2D65');  
+            	}
 
             	
             }

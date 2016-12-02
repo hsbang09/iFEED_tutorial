@@ -20,5 +20,13 @@
   <welcome-file-list>
     <welcome-file>iFEEDTutorial.html</welcome-file>
   </welcome-file-list>
+  <servlet>
+  	<servlet-name>drivingFeatureServlet</servlet-name>
+  	<servlet-class>rbsa.eoss.server.drivingFeatureServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>drivingFeatureServlet</servlet-name>
+  	<url-pattern>/drivingFeatureServlet</url-pattern>
+  </servlet-mapping>
 
 </web-app>
