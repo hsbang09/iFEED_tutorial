@@ -654,7 +654,7 @@ function applyFilter_new(){
     buttonClickCount_applyFilter += 1;
 
     cancelDotSelections();
-
+    var wrong_arg = false;
     var filterType = d3.select("[id=dropdown_presetFilters]")[0][0].value;
     var neg = false;
     
@@ -705,7 +705,7 @@ function applyFilter_new(){
             var bitString = d.__data__.archBitString;
             var temp = presetFilter2(filterType,bitString,filterInputs,neg);
             if(temp==null){
-            	alert("Wrong argument input");
+            	wrong_arg = true;
             	return;
             }
             else if (temp){
@@ -743,7 +743,9 @@ function applyFilter_new(){
            } 
         }
     }
-
+    if(wrong_arg){
+    	alert("Wrong argument input");
+    }
     d3.select("[id=numOfSelectedArchs_inputBox]").attr("value",numOfSelectedArchs());  
 }
 
@@ -760,6 +762,7 @@ function applyFilter_within(){
 	
 	
     buttonClickCount_applyFilter += 1;
+    var wrong_arg = false;
     var filterType = d3.select("[id=dropdown_presetFilters]")[0][0].value;
     var neg = false;
 
@@ -807,7 +810,7 @@ function applyFilter_within(){
             var bitString = d.__data__.archBitString;
             var temp = presetFilter2(filterType,bitString,filterInputs,neg);
             if(temp==null){
-            	alert("Wrong argument input");
+            	wrong_arg = true;
             	return;
             } else if(temp){
             } else {
@@ -840,6 +843,9 @@ function applyFilter_within(){
            } 
         }
     }
+    if(wrong_arg){
+    	alert("Wrong argument input");
+    }
     d3.select("[id=numOfSelectedArchs_inputBox]").attr("value",numOfSelectedArchs());  
 }
 
@@ -858,7 +864,7 @@ function applyFilter_add(){
 	
 	
     buttonClickCount_applyFilter += 1;
-
+    var wrong_arg = false;
     var filterType = d3.select("[id=dropdown_presetFilters]")[0][0].value;
     var neg = false;
     
@@ -894,7 +900,7 @@ function applyFilter_add(){
             var bitString = d.__data__.archBitString;
             var temp = presetFilter2(filterType,bitString,filterInputs,neg);
             if(temp==null){
-            	alert("Wrong argument input");
+            	wrong_arg = true;
             	return;
             }
             else if (temp){
@@ -916,6 +922,9 @@ function applyFilter_add(){
                 }); 
            } 
         }
+    }
+    if(wrong_arg){
+    	alert("Wrong argument input");
     }
     d3.select("[id=numOfSelectedArchs_inputBox]").attr("value",numOfSelectedArchs());  
 }
@@ -1255,9 +1264,8 @@ function display_drivingFeatures(source,sortby) {
                             
                         d3.selectAll("[class=dot]")[0].forEach(function (d) {
                         	var bitString = d.__data__.archBitString;
-                            var temp = presetFilter2(filterType,bitString,filterInputs,neg);
+                            var temp = presetFilter2(type_modified,bitString,filterInputs,false);
                             if(temp==null){
-                            	alert("Wrong argument input");
                             	return;
                             }
                             else if (temp){
@@ -1267,9 +1275,8 @@ function display_drivingFeatures(source,sortby) {
                         });
                         d3.selectAll("[class=dot_clicked]")[0].forEach(function (d) {
                         	var bitString = d.__data__.archBitString;
-                            var temp = presetFilter2(filterType,bitString,filterInputs,neg);
+                            var temp = presetFilter2(type_modified,bitString,filterInputs,false);
                             if(temp==null){
-                            	alert("Wrong argument input");
                             	return;
                             }
                             else if (temp){
@@ -1657,10 +1664,10 @@ function presetFilter2(filterName,bitString,inputs,neg){
 
 
 function checkNeg(original,neg){
-	if(neg==false){
-		return original;
-	}else{
+	if(neg==true){
 		return !original;
+	}else{
+		return original;
 	}
 }
 
@@ -1757,7 +1764,7 @@ function draw_venn_diagram(df_explanation_box,supp,conf,conf2){
 
 function applyFilter(filterType,filterInput){
     cancelDotSelections();
-
+    var wrong_arg = false;
     var neg = false;
     if (filterType == "paretoFront"){
         var unClickedArchs = d3.selectAll("[class=dot]")[0].forEach(function (d) {
@@ -1776,7 +1783,7 @@ function applyFilter(filterType,filterInput){
             var bitString = d.__data__.archBitString;
             var temp = presetFilter2(filterType,bitString,filterInputs,neg);
             if(temp==null){
-            	alert("Wrong argument input");
+            	wrong_arg = true;
             	return;
             }
             else if (temp){
@@ -1815,6 +1822,8 @@ function applyFilter(filterType,filterInput){
            } 
         }
     }
-
+    if(wrong_arg){
+    	alert("Wrong argument input");
+    }
     d3.select("[id=numOfSelectedArchs_inputBox]").attr("value",numOfSelectedArchs());  
 }
