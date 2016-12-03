@@ -20,7 +20,7 @@ import com.seak.ifeed.shared.FieldVerifier;
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
-public class IDETC_2016_2 implements EntryPoint {
+public class IFEED_tutorial implements EntryPoint {
 	/**
 	 * The message displayed to the user when the server cannot be reached or
 	 * returns an error.
