@@ -6,7 +6,13 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <link type="text/css" rel="stylesheet" href="iFEEDTutorial.css">   
     <script src="js/lib/jquery.js" type="text/javascript"></script>
-    <script src="js/lib/d3.js"></script>                                  
+    <script src="js/lib/d3.js"></script> 
+    
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="564804694787-lnsp9md3u0q8086nftbamu43drid6d4t.apps.googleusercontent.com">
+
+    
+                                     
     <title>iFEED Web Application</title>
 	<style>
 		#div1, #div2 {
@@ -31,6 +37,14 @@
 
   <body>
     <h1>iFEED Tutorial</h1>
+    
+	<div id="logIn_window" style="width:100%; margin-bottom:30px;">
+        <div style="width:400px;margin:auto">
+        	Please log in to start:
+        </div>
+		<div id="signin_div" class="g-signin2" data-onsuccess="onSignIn" style="width:400px;margin:auto"></div>
+	</div>
+    
    
     <div id="main_div" style="margin:auto;width:80%;background-color:#F9E39D;padding:20px">
     	<h3 id="main_header"></h3>
@@ -49,23 +63,82 @@
     	</div>
     </div>
     
-    
-    
-    
 
 <!-- 	<div id="div1" ondrop="drop(event)" ondragover="allowDrop(event)"> -->
 <!-- 	  <img src="images/bread.jpg" draggable="true" ondragstart="drag(event)" id="drag1" width="88" height="31"> -->
 <!-- 	</div> -->
-	
 <!-- 	<div id="div2" ondrop="drop(event)" ondragover="allowDrop(event)"></div> -->
 
-
-
 <script>
+// updated2
+
+var testType = -1;
+var account_id = -1;
+
+try{
+
+	function onSignIn(googleUser) {
+		id_token = googleUser.getAuthResponse().id_token;
+	    var firstLoginTime = Date.parse(new Date());
+	    var credential;
+	     $.ajax(
+	             {
+	                 url: "loginServlet",
+	                 type: "POST",
+	                 data: {ID: "login", IDToken: id_token, loginTime:firstLoginTime},
+	                 async: false,
+	                 success: function (data, textStatus, jqXHR)
+	                 {
+	                 	d3.select("[id=logIn_window]").remove();
+						credential = data;
+	                 },
+	                 error: function (jqXHR, textStatus, errorThrown)
+	                 {
+	                     alert("Login error");
+	                 }
+	             });
+	     if(credential!=="accessDenied"){  // access granted
+	    	console.log(credential);
+	     	var credential_split = credential.split('-');
+	     	testType = credential_split[0];
+	     	account_id = credential_split[1];
+	     	activate_right_arrow();
+	     }else{ // access not granted
+// 	     	signOut();
+	     }
+	}
+
+	function renderButton() {
+	    gapi.signin2.render('my-signin2', {
+	      'scope': 'profile',
+	      'width': 240,
+	      'height': 50,
+	      'longtitle': true,
+	      'theme': 'dark',
+	      'onsuccess': onSuccess,
+	      'onfailure': onFailure
+	    });
+	}
+} catch (err) {
+    console.log(err.message);
+}
+
+
+
+
 
 var current_view;
 if(window.location.search){
 	current_view = 4;	
+	
+    var testType;
+    var account_id;
+    var cred = window.location.search;
+    cred = cred.substring(1);
+    if(cred){
+    		testType = cred.split("-")[0];
+    		account_id = cred.split("-")[1];
+    }
 }else{
 	current_view = 1;
 }
@@ -119,16 +192,42 @@ function clear_view(){
 	d3.select("#main_img_credit").text("");
 }
 
+
+
+
+function deactivate_right_arrow(){
+	d3.select("#rightarrow").on("click",null);
+	d3.select('#rightarrow').style('opacity',0.3);
+}
+function activate_right_arrow(){
+	d3.select('#rightarrow').style('opacity',1);
+	d3.select("#rightarrow").on("click",click_rightarrow);
+}
+
+
+
 function display_views(){
 	clear_view();
 	d3.select('#tutorial_page_number').text("" + current_view);
 	
 	if(current_view==1){
+		
+		if(account_id==-1){
+			deactivate_right_arrow();
+		}
+		
 		d3.select("#main_header").text("Experiment overview");
-		d3.select("#main_text").text('You will be given 30 minutes to use the web-based data-analysis tool called iFEED'
-				+'(Interactive Feature Extraction in Engineering Design) to analyze a given set of data. '
-				+'The data consists of a large number of satellite system designs, associated with corresponding science score and the cost. ' 
-				+'Your task is to interact with the analysis tool and to learn about the data as much as possible.');
+		d3.select("#main_text").html('<p>In this experiment, you will first go through the tutorial on how to use iFEED'
+				+' (Interactive Feature Extraction in Engineering Design). iFEED is a web-based data analysis tool aimed to help '
+				+'engineers in complex engineering design tasks. The tutorial will walk you through all of its capabilities '
+				+'and explain how you can use them. </p>'
+				+'<p>After the tutorial is finished, you will be given 30 minutes to use iFEED to analyze a given set of data. '
+				+'The given data will contain a large number of satellite system designs. Your task will be to interact with the '
+				+'analysis tool and to learn about the data as much as possible. </p>'
+				+'<p>After the 30 minutes of using iFEED, you will be given a problem set to solve. The questions will test '
+				+'how much knowledge you have gained during your interaction with the tool.</p>'
+				+'<p>Click the right arrow below to continue with the tutorial.</p>');
+				
 		d3.select("#main_img").attr("src","images/a-train.png")
 			.style("width","50%")
 			.style("margin","auto")
@@ -139,10 +238,11 @@ function display_views(){
 	}
 	else if (current_view==2){
 		d3.select("#main_header").text("Design Task: Satellite system design");
-		d3.select("#main_text").text("The provided data will contain various designs of satellite system."
-				+' Each design consists of multiple satellites working together to satisfy certain measurement requirements'
+		d3.select("#main_text").html('<p>Before introducing iFEED, we will first explain the basic structure of the data. '
+				+'The dataset that you will be asked to analyze contains various designs of satellite system.'
+				+' Each design consists of multiple satellites working together to satisfy the measurement requirements'
 				+' related to climate monitoring. Different designs will be defined by what measurement instruments are used'
-				+' in each spacecraft, and in what orbits those spacecrafts fly.');
+				+' in each spacecraft, and in what orbits those spacecrafts fly.</p>');
 		d3.select("#main_img").attr("src","images/sat_instruments_labeled.png")
 				.style("width","30%")
 				.style('opacity',1);
@@ -156,7 +256,7 @@ function display_views(){
 	else if (current_view==3){
 		d3.select("#main_header").text("Design Task: Satellite system design - Continued");
 		d3.select("#main_text")
-				.text('Each design is represented by a figure similar to the one shown below:');
+				.text('Each design is represented by a figure similar to the one shown below (left):');
 		d3.select('#main_img').attr('src','images/architecture_example_2.png')
 				.style("width","72%")
 				.style("opacity",1);
@@ -179,30 +279,30 @@ function display_views(){
 	else if (current_view==4){
 		d3.select("#main_header").text("Design Task: Synergies between instruments");
 		d3.select("#main_text")
-				.text('Each design will have corresponding science benefit score and cost. '
-						+'The science benefit score is a score that is computed using very complex models'
+				.html('<p>Each design will have corresponding science benefit score and cost. '
+						+'The science benefit score is a score that is computed using a very complex model'
 						+' to evaluate the performance and capabilities of each satellite system. '
-						+'The low-cost and high-science score designs are desirable. '
-						+'Note that, particular combinations of instruments and instrument-to-orbit assignments will '
-						+'may have synergistic effects. For example, assigning two particular instruments '
-						+'in the same orbit may result in much higher score than having four arbitrary '
-						+'instruments in one orbit.');
+						+'The low-cost and high-science score designs are desirable. </p>'
+						+'<p>Note that, particular combinations of instruments and instrument-to-orbit assignments '
+						+'may have synergistic effects. For example, instrument X may increase the science score by 0.3 '
+						+'when it is assigned to orbit 3000, whereas the score increases by 0.1 when it is assigned to orbit 4000. '
+						+'Or, assigning instruments X and Y together in the same orbit may result in much higher score than '
+						+'having four arbitrary instruments in that orbit, because X and Y have synergistic behavior.</p>');
 		
 		d3.select('#main_div').insert('p','#main_img2')
 			.attr('id','main_text2')
 			.style('font-size','18px')
-			.html('<p>Your goal in this task is to do the followings:</p>'
-							+'<p>1) Find as many patterns (features) as possible that maximizes '
+			.html('<p>Your goal in this task is to do the following:</p>'
+							+'<p> Find as many patterns (instrument-to-orbit assignments) as possible that maximizes '
 							+'science benefit score, while keeping the cost low. </p>'
-							+'<p>2) Using “define new filter” function, try to generate a new filter that'
-							+'classifies good designs (high science score and low cost) from the rest of the designs.</p>'
-							+'<p>Next, we will introduce how the iFEED interface looks like and how to use it for data analysis.</p>');
+							+'<p>Next, we will introduce how the iFEED interface looks like and how you can use it for data analysis.'
+							+' (Loading the next page may take few seconds)</p>');
 	}
 
 	
 	
 	else if (current_view==5){
-		window.location.replace("iFEEDMain.html");
+		window.location.replace("iFEEDMain.html?" + testType + "-" + account_id);
 	}
 }
 	

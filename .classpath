@@ -15,5 +15,12 @@
 	<classpathentry kind="lib" path="/Users/bang/Documents/workspace/iFEED_tutorial/war/WEB-INF/lib/madkit-5.0.5.jar"/>
 	<classpathentry kind="lib" path="/Users/bang/Documents/workspace/iFEED_tutorial/war/WEB-INF/lib/matlabcontrol-4.0.0.jar"/>
 	<classpathentry kind="lib" path="/Users/bang/Documents/workspace/iFEED_tutorial/war/WEB-INF/lib/weka.jar"/>
+	<classpathentry kind="lib" path="/Users/bang/Documents/workspace/iFEED_tutorial/war/WEB-INF/lib/google-api-client-1.21.0.jar"/>
+	<classpathentry kind="lib" path="/Users/bang/Documents/workspace/iFEED_tutorial/war/WEB-INF/lib/objectify-5.1.12.jar"/>
+	<classpathentry kind="lib" path="/Users/bang/Documents/workspace/iFEED_tutorial/war/WEB-INF/lib/google-http-client-1.21.0.jar"/>
+	<classpathentry kind="lib" path="/Users/bang/Documents/workspace/iFEED_tutorial/war/WEB-INF/lib/google-http-client-gson-1.21.0.jar"/>
+	<classpathentry kind="lib" path="/Users/bang/Documents/workspace/iFEED_tutorial/war/WEB-INF/lib/guava-jdk5-17.0.jar"/>
+	<classpathentry kind="lib" path="/Users/bang/Documents/workspace/iFEED_tutorial/war/WEB-INF/lib/gwt-servlet.jar"/>
+	<classpathentry kind="lib" path="/Users/bang/Documents/workspace/iFEED_tutorial/war/WEB-INF/lib/google-oauth-client-1.21.0.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

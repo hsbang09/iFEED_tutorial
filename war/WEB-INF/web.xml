@@ -33,5 +33,27 @@
   	<servlet-name>drivingFeatureServlet</servlet-name>
   	<url-pattern>/drivingFeatureServlet</url-pattern>
   </servlet-mapping>
+	
+  <servlet>
+    <servlet-name>loginServlet</servlet-name>
+    <servlet-class>rbsa.eoss.server.loginServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>loginServlet</servlet-name>
+    <url-pattern>/loginServlet</url-pattern>
+  </servlet-mapping>
+	
+	
+	<filter>
+	    <filter-name>ObjectifyFilter</filter-name>
+	    <filter-class>com.googlecode.objectify.ObjectifyFilter</filter-class>
+	</filter>
+	<filter-mapping>
+	    <filter-name>ObjectifyFilter</filter-name>
+	    <url-pattern>/*</url-pattern>
+	</filter-mapping>
+  
+	
 
 </web-app>

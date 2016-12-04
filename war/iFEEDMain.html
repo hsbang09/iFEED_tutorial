@@ -249,10 +249,7 @@ and open the template in the editor.
 			    	</div>
 			    </div>
 						
-			
-			
-			
-	
+
 		        <div id="StatusBar" style="width: 100%; float:left; margin-top:10px; margin-bottom:5px;
 		                height: 30px;">
 		<!--             <div id="satisfactionScoreSummaryButton_div"> -->
@@ -380,6 +377,56 @@ and open the template in the editor.
        <script>
        
        
+
+	       var testType_temp;
+	       var account_id;
+
+           
+			function credential_check(){
+				var credential_verified = false;
+				
+				var cred = window.location.search;
+				cred = cred.substring(1);
+		       
+				if(cred){
+		       		testType_temp = cred.split("-")[0];
+		       		console.log(testType_temp);
+		       		account_id = cred.split("-")[1];
+		       		console.log(account_id);
+		       		var access;
+					$.ajax(
+						{
+	  		                 url: "loginServlet",
+	  		                 type: "POST",
+	  		                 data: {ID: "credential_check", account_id: account_id, testType: testType_temp},
+	  		                 async: false,
+	  		                 success: function (data, textStatus, jqXHR)
+	  		                 {
+	  		                	access=data; 
+	  		                 },
+	  		                 error: function (jqXHR, textStatus, errorThrown)
+	  		                 {
+	  		                     alert("error");
+	  		                 }
+	  		             });
+	      	       if(access=="accessGranted"){
+	      	    	   credential_verified=true;
+	      	    	   console.log('Credential Verified');
+	      	       }
+		       }
+		       
+				if(!credential_verified){
+					// abort
+				}
+			}
+	       
+	       
+	       
+	       
+	       
+	       
+			credential_check();
+
     
        		var view7_completed = false;
        		var view6_completed = false;
@@ -827,6 +874,59 @@ and open the template in the editor.
             }
 
             function clear_view(){
+	            	
+	           	d3.select('#saveFilter')
+	                .style('border-width','0px')
+	                .style('border-color','#000000');
+	                
+	            d3.select('#basicInfoBox_div')
+	                .style('border-width','1px')
+	                .style('border-color','#000000');
+	                
+	            d3.select('#filter_options').select('select')
+	                .style('border-width','0px')
+	                .style('border-color','#000000');
+	
+	            d3.select('#getDrivingFeaturesButton')
+	                .style('border-width','0px')
+	                .style('border-color','#000000');
+	                
+	            d3.select('#applyFilterButton_add')
+	                .style('border-width','0px')
+	                .style('border-color','#000000');
+	            d3.select('#applyFilterButton_within')
+	                .style('border-width','0px')
+	                .style('border-color','#000000');
+	            d3.select('#applyFilterButton_new')
+	                .style('border-width','0px')
+	                .style('border-color','#000000');      
+	                              
+	            d3.select('#cancel_selection')
+	                .style('border-width','0px')
+	                .style('border-color','#000000');
+	
+	            d3.select('#StatusBar')
+	                .style('border-width','0px')
+	                .style('border-color','#000000');
+	                                      
+	            d3.select('#selection_option_div').select('div')
+	                .style('border-width','0px')
+	                .style('border-color','#000000');
+	
+	
+	            d3.select('#OptionsPane')
+	                .style('border-width','1px')
+	                .style('border-color','#000000');
+	                
+	                
+	            d3.select('#scatterPlotFigure')
+	                .style('border-width','1px')
+	                .style('border-color','#000000');
+	
+	            d3.select('#OptionsPane').select('div').select('div')
+	                .style('border-width','0px')
+	                .style('border-color','#000000');  
+	                    
             	d3.select("#main_header").text("");
             	d3.select("#main_text").text('');
             	
@@ -844,6 +944,8 @@ and open the template in the editor.
             	
             	d3.select("#main_img_credit").text("");
             	activate_right_arrow();
+            	
+            	d3.select('#experiment_start_button').remove();
             }
 
             function display_views(){
@@ -862,16 +964,8 @@ and open the template in the editor.
             		d3.select('#scatterPlotFigure')
             			.style('border-width','5px')
             			.style('border-color','#FF2D65');
-            		
-            		d3.select('#OptionsPane')
-	    				.style('border-width','1px')
-	    				.style('border-color','#000000');
-            		
             	}
             	else if(current_view==6){
-            		d3.select('#scatterPlotFigure')
-        				.style('border-width','1px')
-        				.style('border-color','#000000');
             		
             		d3.select("#main_header").text("Selection Panel")
             		d3.select("#main_text").html('<p>The selection panel contains menus and options you can use to '
@@ -883,12 +977,6 @@ and open the template in the editor.
 	        			.style('border-style','solid')
 	        			.style('border-color','#FF2D65');
             		
-            		
-            		d3.select('#OptionsPane').select('div').select('div')
-	    				.style('border-width','0px')
-	    				.style('border-color','#000000');
-        		
-            		
             	}	
             	else if(current_view==7){
             		if(!view7_completed){
@@ -898,15 +986,13 @@ and open the template in the editor.
             		d3.select("#main_header").text("Drag-select Option")
             		d3.select("#main_text").html('<p>Drag-select option allows you to '
             				+'select dots on the scatter plot by dragging your mouse over them.</p> '
-            				+'<p> Use drag-select option to select dots to continue.</p>');
+            				+'<p>To continue, use drag-select option to select dots.</p>');
             		
             		d3.select('#OptionsPane').select('div').select('div')
 	        			.style('border-width','5px')
 	        			.style('border-style','solid')
 	        			.style('border-color','#FF2D65');
-            		d3.select('#OptionsPane')
-	    				.style('border-width','1px')
-	    				.style('border-color','#000000');
+
             	}
             	else if(current_view==8){
             		if(!view8_completed){
@@ -922,10 +1008,6 @@ and open the template in the editor.
 	        			.style('border-width','5px')
 	        			.style('border-style','solid')
 	        			.style('border-color','#FF2D65');
-            		d3.select('#selection_option_div').select('div')
-	    				.style('border-width','0px')
-	    				.style('border-color','#000000');
-            		
             	}
             	else if(current_view==9){
             		if(!view9_completed){
@@ -934,39 +1016,24 @@ and open the template in the editor.
             		
             		d3.select("#main_header").text("Selection by Range")
             		d3.select("#main_text").html('<p>You can also set a range of values for cost and benefit to make the selection.</p> '
-            				+'<p> To continue, set ranges of values for cost and benefit and click [select within range] button.</p>');
-            		
+            				+'<p> To continue, set ranges of values for cost and benefit and click [Select within range] button.</p>');
             		
             		d3.select('#selection_option_div').select('div')
 	        			.style('border-width','5px')
 	        			.style('border-style','solid')
 	        			.style('border-color','#FF2D65');
-            		d3.select('#OptionsPane').select('div').select('div')
-	    				.style('border-width','0px')
-	    				.style('border-color','#000000');
-            		
-            		d3.select('#StatusBar')
-	    				.style('border-width','0px')
-	    				.style('border-color','#000000');
-            		
             	}
             	else if(current_view==10){
             		
             		d3.select("#main_header").text("Number of designs selected")
             		d3.select("#main_text").html('<p>The total number of designs and the number of selected designs are displayed on'
-            				+'the boxes above the scatter plot.</p>');
+            				+' the boxes above the scatter plot.</p>');
             		
             		d3.select('#StatusBar')
 	        			.style('border-width','5px')
 	        			.style('border-style','solid')
 	        			.style('border-color','#FF2D65');
-            		
-            		d3.select('#selection_option_div').select('div')
-	    				.style('border-width','0px')
-	    				.style('border-color','#000000');
-            		d3.select('#cancel_selection')
-	    				.style('border-width','0px')
-	    				.style('border-color','#000000');
+
             		
             	}
             	else if(current_view==11){
@@ -975,20 +1042,13 @@ and open the template in the editor.
             		}
             		d3.select("#main_header").text("Cancel All Selection")
             		d3.select("#main_text").html('<p>Cancel all selection button is used to cancel all the selections. </p>'
-            				+'<p>To continue, press cancel all selections button.</p>');
+            				+'<p>To continue, press [Cancel all selections] button to deselct all the selected designs.</p>');
 
             		d3.select('#cancel_selection')
 	        			.style('border-width','5px')
 	        			.style('border-style','solid')
 	        			.style('border-color','#FF2D65');
-            		
-            		d3.select('#StatusBar')
-	    				.style('border-width','0px')
-	    				.style('border-color','#000000');
-            		
-            		d3.select('#basicInfoBox_div')
-	    				.style('border-width','1px')
-	    				.style('border-color','#000000');
+
             	}
             	else if(current_view==12){
             		d3.select("#main_header").text("Analysis Panel")
@@ -999,9 +1059,7 @@ and open the template in the editor.
 	        			.style('border-width','5px')
 	        			.style('border-style','solid')
 	        			.style('border-color','#FF2D65');
-            		d3.select('#cancel_selection')
-	    				.style('border-width','0px')
-	    				.style('border-color','#000000');
+
             		
             	}
             	else if(current_view==13){
@@ -1010,7 +1068,7 @@ and open the template in the editor.
             		}
             		d3.select("#main_header").text("Design Inspection")
             		d3.select("#main_text").html('<p>If you hover your mouse over each design on the scatter plot, '
-            				+' relevant information will be displayed on the design inspection tab.</p>'
+            				+' the relevant information will be displayed on the design inspection tab.</p>'
             				+'<p>The displayed information conatains the science benefit score and the cost, as well as'
             				+' a figure that shows what instruments are assigned to each orbit.</p>'
             				+'<p>The borderline of either the scatter plot or the analysis panel will be represented by bold lines.'
@@ -1047,13 +1105,6 @@ and open the template in the editor.
 	        			.style('border-style','solid')
 	        			.style('border-color','#FF2D65');
             		
-            	    d3.select('#filter_options').select('select')
-	    				.style('border-width','0px')
-	    				.style('border-color','#000000');
-        	    	d3.select('#applyFilterButton_new')
-	    				.style('border-width','0px')
-	    				.style('border-color','#000000');
-            		
             	}
             	else if(current_view==15){
             		if(!view15_completed){
@@ -1067,10 +1118,6 @@ and open the template in the editor.
             				+'<p>1. Select Pareto front option from the dropdown menu. </p>'
             				+'<p>2. In the input field that appears, type in an integer number.</p>'
             				+'<p>3. Then click [Apply new filter] button to apply the filter.</p>');
-            		
-            		d3.select('#basicInfoBox_div')
-	    				.style('border-width','1px')
-	    				.style('border-color','#000000');
             		
             		document.getElementById('tab2').click();
             	    highlight_basic_info_box();
@@ -1136,19 +1183,7 @@ and open the template in the editor.
 	        			.style('border-width','5px')
 	        			.style('border-style','solid')
 	        			.style('border-color','#FF2D65');
-            	    
-            	    
-	        	    d3.select('#applyFilterButton_add')
-	    				.style('border-width','0px')
-	    				.style('border-color','#000000');
-	        	    d3.select('#applyFilterButton_within')
-						.style('border-width','0px')
-						.style('border-color','#000000');
-            	    
-            	    
             	}
-            	
-            	
             	else if(current_view==18){
             		if(!view18_completed){
             			deactivate_right_arrow();
@@ -1172,9 +1207,6 @@ and open the template in the editor.
 	        			.style('border-width','5px')
 	        			.style('border-style','solid')
 	        			.style('border-color','#FF2D65');
-            	    d3.select('#applyFilterButton_new')
-	    				.style('border-width','0px')
-	    				.style('border-color','#000000');
             	    
             	    d3.select('#applyFilterButton_add')
 	        			.style('border-width','5px')
@@ -1213,16 +1245,7 @@ and open the template in the editor.
 	        			.style('border-width','5px')
 	        			.style('border-style','solid')
 	        			.style('border-color','#FF2D65');
-            	    
-	        	    d3.select('#applyFilterButton_add')
-	    				.style('border-width','0px')
-	    				.style('border-color','#000000');
-	        	    d3.select('#applyFilterButton_within')
-						.style('border-width','0px')
-						.style('border-color','#000000');
-            	    d3.select('#saveFilter')
-						.style('border-width','0px')
-						.style('border-color','#000000');
+
             	}
             	else if(current_view==20){
             		if(!view20_completed){
@@ -1238,15 +1261,7 @@ and open the template in the editor.
             				
             		document.getElementById('tab2').click();
             	    highlight_basic_info_box();
-            	    
-            	    d3.select('#filter_options').select('select')
-						.style('border-width','0px')
-						.style('border-color','#000000');
-            	    
-            		d3.select('#getDrivingFeaturesButton')
-						.style('border-width','0px')
-						.style('border-color','#000000');
-            	    
+
             	    d3.select('#saveFilter')
 	        			.style('border-width','5px')
 	        			.style('border-style','solid')
@@ -1274,12 +1289,7 @@ and open the template in the editor.
 	        			.style('border-width','5px')
 	        			.style('border-style','solid')
 	        			.style('border-color','#FF2D65');  
-        	    	d3.select('#saveFilter')
-						.style('border-width','0px')
-						.style('border-color','#000000'); 
-            		d3.select('#basicInfoBox_div')
-	    				.style('border-width','1px')
-	    				.style('border-color','#000000');
+
         	    	
             	}
             	else if(current_view==22){
@@ -1337,13 +1347,62 @@ and open the template in the editor.
 	        			.style('border-style','solid')
 	        			.style('border-color','#FF2D65');  
             	}
+            	else if(current_view==24){
+					deactivate_right_arrow();
+					
+            		d3.select("#main_header").text("Tutorial Finished")
+            		d3.select("#main_text").html('<p style="font-weight:bold;">This is the end of the tutorial. Now you can start the experiment. Please read the directions below carefully.</p>'
+            				+'<p style="font-weight:bold;">You will not be able to return to this tutorial. If you need to refer to the tutorial, you can refer to the '
+            				+'summarized manual provided in Mechanical Turk page.</p>'
+            				+'<p style="font-weight:bold;">Now you will be given 30 minutes to use iFEED. During this time, you are encouraged to take notes'
+            				+' (either physically using pencil and papers or electronically using a text editor on you computer).</p>'
+            				+'<p style="font-weight:bold">After the 30-minute session is over, the page will be automatically reloaded to a different page. You will be provided with'
+            				+' a key number. Please COPY THIS NUMBER BEFORE YOU CLOSE THE PAGE. You will need this key number to put into the survey page,'
+            				+' and it will be used as an indication that you completed the whole session.</p>'
+            				+'<p style="font-weight:bold"> At the end of the final page, a link to the problem set will be provided. '
+            				+'The problem set is designed to test how much knowledge you have gained during your use of iFEED. A sample problem set is '
+            				+'provided in the Mechanical Turk page. The actual questions will be of similar types to this problem set, but not exactly the same. '
+            				+'To do well on this test, you should: </p>'
+            				+'<p style="font-weight:bold;color:red;"> Try to identify the features that are shared by good designs (Designs with'
+            				+' high science score and low cost). </p>'
+            				+'<p>Now you can move on to the experiment by clicking the button below. Good luck!</p>');  
+            		
+            		
+            		d3.select('#main_div')
+            			.insert('button','#main_text3')
+            			.attr("type","button")
+            			.attr("id","experiment_start_button")
+            			.style("width","220px")
+            			.style("height","30px")
+            			.style("margin-top:20px");
+            		d3.select("#experiment_start_button")
+            			.text("Start the Experiment")
+            			.on("click", start_experiment);
+            		
+            		var tutorialFinishTime = Date.parse(new Date());
+	           	     $.ajax(
+	        	             {
+	        	                 url: "loginServlet",
+	        	                 type: "POST",
+	        	                 data: {ID: "session_ended", account_id: account_id, tutorial_finish_time:tutorialFinishTime},
+	        	                 async: false,
+	        	                 success: function (data, textStatus, jqXHR)
+	        	                 {
+	        	                 },
+	        	                 error: function (jqXHR, textStatus, errorThrown)
+	        	                 {
+	        	                     alert("error");
+	        	                 }
+	        	             });
+            	}
 
-            	
             }
             	
 
             
-            
+            function start_experiment(){
+        		window.location.replace("http://1-dot-airy-passkey-125416.appspot.com?" + testType + "-" + account_id);
+            }
             
             function deactivate_right_arrow(){
             	d3.select("#rightarrow").on("click",null);
@@ -1353,22 +1412,13 @@ and open the template in the editor.
             	d3.select('#rightarrow').style('opacity',1);
             	d3.select("#rightarrow").on("click",click_rightarrow);
             }
-            
-            
-            
-            
+
             d3.select("#leftarrow").on("click",click_leftarrow);
             d3.select("#rightarrow").on("click",click_rightarrow);
             display_views();
             
             
-            
-            
-            
-            
-            
-            
-            
+
             
             
             

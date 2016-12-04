@@ -386,6 +386,14 @@ function selectFilterOption_filterInput(selectedOption,userDefOption){
                 .style("margin-left","10px")
                 .text("(Hint: Designs that have the specified instrument are selected)")
                 .style("color", "#696969");   
+        d3.select("[id=filter_inputs]")
+        .append("div")
+        .attr("id","filter_explanation_valid_inputs")
+        .style("margin-top","15px")
+        .style("margin-left","10px")
+        .style("color", "#696969")
+        .html('<p>Valid orbit names: 1000, 2000, 3000, 4000, 5000</p>'
+        		+'Valid instrument names: A, B, C, D, E, F, G, H, I, J, K, L');     
     }
     else if (selectedOption=="absent"){
         filterInputField_singleInstInput();
@@ -396,6 +404,14 @@ function selectFilterOption_filterInput(selectedOption,userDefOption){
                 .style("margin-left","10px")
                 .text("(Hint: Designs that does not have the specified instrument are selected)")
                 .style("color", "#696969");   
+        d3.select("[id=filter_inputs]")
+        .append("div")
+        .attr("id","filter_explanation_valid_inputs")
+        .style("margin-top","15px")
+        .style("margin-left","10px")
+        .style("color", "#696969")
+        .html('<p>Valid orbit names: 1000, 2000, 3000, 4000, 5000</p>'
+        		+'Valid instrument names: A, B, C, D, E, F, G, H, I, J, K, L');     
     }
     else if (selectedOption=="inOrbit"){
         filterInputField_orbitAndInstInput();
@@ -406,6 +422,14 @@ function selectFilterOption_filterInput(selectedOption,userDefOption){
                 .style("margin-left","10px")
                 .text("(Hint: Designs that have the specified instrument inside the chosen orbit are selected)")
                 .style("color", "#696969");   
+        d3.select("[id=filter_inputs]")
+        .append("div")
+        .attr("id","filter_explanation_valid_inputs")
+        .style("margin-top","15px")
+        .style("margin-left","10px")
+        .style("color", "#696969")
+        .html('<p>Valid orbit names: 1000, 2000, 3000, 4000, 5000</p>'
+        		+'Valid instrument names: A, B, C, D, E, F, G, H, I, J, K, L');     
     }
     else if (selectedOption=="notInOrbit"){
         filterInputField_orbitAndInstInput();
@@ -416,6 +440,14 @@ function selectFilterOption_filterInput(selectedOption,userDefOption){
                 .style("margin-left","10px")
                 .text("(Hint: Designs that does not have the specified instrument inside the chosen orbit are selected)")
                 .style("color", "#696969");   
+        d3.select("[id=filter_inputs]")
+        .append("div")
+        .attr("id","filter_explanation_valid_inputs")
+        .style("margin-top","15px")
+        .style("margin-left","10px")
+        .style("color", "#696969")
+        .html('<p>Valid orbit names: 1000, 2000, 3000, 4000, 5000</p>'
+        		+'Valid instrument names: A, B, C, D, E, F, G, H, I, J, K, L');     
     }
     else if (selectedOption=="together"){
         filterInputField_multipleInstInput();
@@ -426,6 +458,14 @@ function selectFilterOption_filterInput(selectedOption,userDefOption){
                 .style("margin-left","10px")
                 .text("(Hint: Designs that have the specified instruments in any one orbit are chosen)")
                 .style("color", "#696969");   
+        d3.select("[id=filter_inputs]")
+        .append("div")
+        .attr("id","filter_explanation_valid_inputs")
+        .style("margin-top","15px")
+        .style("margin-left","10px")
+        .style("color", "#696969")
+        .html('<p>Valid orbit names: 1000, 2000, 3000, 4000, 5000</p>'
+        		+'Valid instrument names: A, B, C, D, E, F, G, H, I, J, K, L');     
     } 
     else if (selectedOption=="togetherInOrbit"){
         filterInputField_orbitAndMultipleInstInput();
@@ -436,6 +476,14 @@ function selectFilterOption_filterInput(selectedOption,userDefOption){
                 .style("margin-left","10px")
                 .text("(Hint: Designs that have the specified instruments in the specified orbit are chosen)")
                 .style("color", "#696969");   
+        d3.select("[id=filter_inputs]")
+        .append("div")
+        .attr("id","filter_explanation_valid_inputs")
+        .style("margin-top","15px")
+        .style("margin-left","10px")
+        .style("color", "#696969")
+        .html('<p>Valid orbit names: 1000, 2000, 3000, 4000, 5000</p>'
+        		+'Valid instrument names: A, B, C, D, E, F, G, H, I, J, K, L');     
     } 
     else if (selectedOption=="separate"){
         filterInputField_multipleInstInput();
@@ -446,6 +494,14 @@ function selectFilterOption_filterInput(selectedOption,userDefOption){
                 .style("margin-left","10px")
                 .text("(Hint: Designs that does not have the specified instruments in the same orbit are chosen)")
                 .style("color", "#696969");   
+        d3.select("[id=filter_inputs]")
+        .append("div")
+        .attr("id","filter_explanation_valid_inputs")
+        .style("margin-top","15px")
+        .style("margin-left","10px")
+        .style("color", "#696969")
+        .html('<p>Valid orbit names: 1000, 2000, 3000, 4000, 5000</p>'
+        		+'Valid instrument names: A, B, C, D, E, F, G, H, I, J, K, L');     
     } 
     else if (selectedOption=="emptyOrbit"){
         filterInputField_orbitInput();
@@ -456,6 +512,14 @@ function selectFilterOption_filterInput(selectedOption,userDefOption){
                 .style("margin-left","10px")
                 .text("(Hint: Designs that have no instrument inside the specified orbit are chosen)")
                 .style("color", "#696969");   
+        d3.select("[id=filter_inputs]")
+	        .append("div")
+	        .attr("id","filter_explanation_valid_inputs")
+	        .style("margin-top","15px")
+	        .style("margin-left","10px")
+	        .style("color", "#696969")
+	        .html('<p>Valid orbit names: 1000, 2000, 3000, 4000, 5000</p>'
+	        		+'Valid instrument names: A, B, C, D, E, F, G, H, I, J, K, L');         
     } 
     else if (selectedOption=="numOrbitUsed"){
         filterInputField_numOrbitInput();
@@ -465,7 +529,15 @@ function selectFilterOption_filterInput(selectedOption,userDefOption){
                 .style("margin-top","15px")
                 .style("margin-left","10px")
                 .text("(Hint: Designs that have the specified number of non-empty orbits are chosen)")
-                .style("color", "#696969");   
+                .style("color", "#696969");  
+        d3.select("[id=filter_inputs]")
+		        .append("div")
+		        .attr("id","filter_explanation_valid_inputs")
+		        .style("margin-top","15px")
+		        .style("margin-left","10px")
+		        .style("color", "#696969")
+		        .html('<p>Valid orbit names: 1000, 2000, 3000, 4000, 5000</p>'
+		        		+'Valid instrument names: A, B, C, D, E, F, G, H, I, J, K, L');         
     } 
     else if(selectedOption=="subsetOfInstruments"){
         filterInputField_subsetOfInstruments();
@@ -476,12 +548,17 @@ function selectFilterOption_filterInput(selectedOption,userDefOption){
                 .style("margin-left","10px")
                 .text("(Hint: The specified orbit should contain at least m number and at maximum M number of instruments from the specified instrument set. m is the first entry and M is the second entry in the second field)")
                 .style("color", "#696969");  
+        d3.select("[id=filter_inputs]")
+		        .append("div")
+		        .attr("id","filter_explanation_valid_inputs")
+		        .style("margin-top","15px")
+		        .style("margin-left","10px")
+		        .style("color", "#696969")
+		        .html('<p>Valid orbit names: 1000, 2000, 3000, 4000, 5000</p>'
+		        		+'Valid instrument names: A, B, C, D, E, F, G, H, I, J, K, L'); 
     } else if(selectedOption=="defineNewFilter"){
     	
     } else{
-    	
-    	
-
         
     	if(!userDefOption){
     		
@@ -744,7 +821,7 @@ function applyFilter_new(){
         }
     }
     if(wrong_arg){
-    	alert("Wrong argument input");
+    	alert("Invalid input argument");
     }
     d3.select("[id=numOfSelectedArchs_inputBox]").attr("value",numOfSelectedArchs());  
 }
@@ -844,7 +921,7 @@ function applyFilter_within(){
         }
     }
     if(wrong_arg){
-    	alert("Wrong argument input");
+    	alert("Invalid input argument");
     }
     d3.select("[id=numOfSelectedArchs_inputBox]").attr("value",numOfSelectedArchs());  
 }
@@ -924,7 +1001,7 @@ function applyFilter_add(){
         }
     }
     if(wrong_arg){
-    	alert("Wrong argument input");
+    	alert("Invalid input argument");
     }
     d3.select("[id=numOfSelectedArchs_inputBox]").attr("value",numOfSelectedArchs());  
 }
@@ -1334,9 +1411,9 @@ function display_drivingFeatures(source,sortby) {
                           
 //                    
                     textdiv.html(function(d){
-                        var output= "" + d.name + "<br><br> The % of designs in the intersection out of all designs: " + d.supp.toFixed(3)*100 + 
-                        "% <br> The % of selected designs among designs with the feature: " + d.conf.toFixed(3)*100 + 
-                        "%<br> The % of designs with the feature among selected designs: " + d.conf2.toFixed(3)*100 +"";
+                        var output= "" + d.name + "<br><br> The % of designs in the intersection out of all designs: " + round_num_2_perc(d.supp) + 
+                        "% <br> The % of selected designs among designs with the feature: " + round_num_2_perc(d.conf) + 
+                        "%<br> The % of designs with the feature among selected designs: " + round_num_2_perc(d.conf2) +"%";
                         return output;
                     }).style("color", "#F7FF55");                         
 
@@ -1823,7 +1900,9 @@ function applyFilter(filterType,filterInput){
         }
     }
     if(wrong_arg){
-    	alert("Wrong argument input");
+    	alert("Invalid input argument");
     }
     d3.select("[id=numOfSelectedArchs_inputBox]").attr("value",numOfSelectedArchs());  
 }
+
+

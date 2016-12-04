@@ -410,9 +410,9 @@ function dot_mouseover(d) {
             .append("g");
 
     archInfoBox.append("p")
-            .text("Benefit: " + (d.science).toFixed(4));
+            .text("Benefit: " + d.science.toFixed(4));
     archInfoBox.append("p")
-            .text("Cost: " + (d.cost).toFixed(1));
+            .text("Cost: " + d.cost.toFixed(1));
 
 //    archInfoBox.append("input")
 //            .attr("id", "evalNewArch")
@@ -677,7 +677,7 @@ function scatterPlot_option(selected_option){ // three options: zoom, drag_selec
 function drawParetoFront(){
 
     var archsInParetoFront = d3.selectAll("[class=dot]")[0].filter(function(d){
-        if(d3.select(d).attr("paretoRank")=="1"){
+        if(d3.select(d).attr("paretoRank")=="0"){
             return true;
         }
     });
@@ -945,7 +945,7 @@ function initialize_tabs_inspection(){
 			.append("div")
 			.style("width","100%")
 			.style("font-size","21px")
-			.text("If you hover the mouse over a design, relative information will be displayed here.");
+			.text("If you hover the mouse over a design, relevant information will be displayed here.");
 }
 function initialize_tabs_filter_options(){
 
@@ -1006,12 +1006,12 @@ function initialize_tabs_filter_options(){
             .style("margin-left","6px")
             .style("float","left")
             .text("Search within selection");
-    d3.select("[id=filter_options]").append("button")
-		    .attr("id","applyFilterButton_complement")
-		    .attr("class","filterOptionButtons")
-		    .style("margin-left","6px")
-		    .style("float","left")
-		    .text("Select complement");
+//    d3.select("[id=filter_options]").append("button")
+//		    .attr("id","applyFilterButton_complement")
+//		    .attr("class","filterOptionButtons")
+//		    .style("margin-left","6px")
+//		    .style("float","left")
+//		    .text("Select complement");
     d3.select("[id=filter_options]").append("button")
             .attr("id","saveFilter")
             .attr("class","filterOptionButtons")
@@ -1111,4 +1111,9 @@ function set_selection_option(selected_option){
 		d3.select("#de-select")[0][0].checked=true;
 	}
 	scatterPlot_option(selected_option)
+}
+
+
+function round_num_2_perc(num){
+	return Math.round((num + 0.01) * 100);
 }
