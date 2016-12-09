@@ -320,7 +320,7 @@ and open the template in the editor.
 				                    <br/> Science Benefit range: <br/>
 				                    <input id="selectArchsWithinRange_minScience" class="select_within_range_text_box" type="text" value="0"/>&nbsp; ~&nbsp; <input id="selectArchsWithinRange_maxScience" class="select_within_range_text_box" type="text" value="1"/>
 				                    <br/>
-			                    	<button type="button" id="selectArchsWithinRangeButton" style="margin-top:10px;margin-bottom:3px;width:170px" disabled="True">Select within range</button>
+			                    	<button type="button" id="selectArchsWithinRangeButton" style="margin-top:10px;margin-bottom:3px;width:170px" disabled="True">Select Designs</button>
 
 								</div>
 <!-- 			                    <button type="button"  id="hide_selection" disabled="True">Hide selections</button> -->
@@ -516,6 +516,7 @@ and open the template in the editor.
                 {value:"notInOrbit",text:"Not in orbit"},{value:"together",text:"Together"},
                 {value:"togetherInOrbit",text:"Together in orbit"},{value:"separate",text:"Separate"},
                 {value:"emptyOrbit",text:"Empty orbit"},{value:"numOrbitUsed",text:"Number of orbit used"},
+                {value:"numOfInstruments",text:"Number of instruments"},
                 {value:"subsetOfInstruments",text:"Num of instruments in a subset"},{value:"defineNewFilter",text:"Define new filter"}];
             
             var userDefFilterExpressionHistory = [];
@@ -613,9 +614,7 @@ and open the template in the editor.
 
             }
             
-            
-
-
+  
             
             function extractInfoFromBitString(bitString) {
                 var jsonObj_arch
@@ -851,7 +850,7 @@ and open the template in the editor.
 
 
         	remainingTime = + 10000000000000000000000;
-         	testType = "3";
+         	testType = "1";
             newDataFromResultFile();
 
             
@@ -863,13 +862,52 @@ and open the template in the editor.
             function click_leftarrow(){
             	if(current_view==5){
             		window.location.replace("iFEEDTutorial.html?48375937584=23413");
-            	}else{
-            		current_view= current_view-1;
             	}
+            	if(testType=="1"){
+            		if(current_view==24){
+            			current_view=20;
+            		}else if(current_view==19){
+            			current_view=11;
+            		}else if(current_view==11){
+            			current_view=18;
+            		}else if(current_view==12){
+            			current_view=5;
+            		}else{
+            			current_view = current_view-1; 	
+            		}
+            	}else if(testType=="2"){
+					if(current_view==24){
+						current_view=22;
+					}else{
+						current_view = current_view-1; 
+					}
+            	}else{
+            		current_view = current_view-1; 
+            	}	
             	display_views();
             }
             function click_rightarrow(){
-            	current_view = current_view+1;
+            	if(testType=="1"){
+            		if(current_view==5){
+            			current_view=12;
+            		}else if(current_view==18){
+            			current_view=11;
+            		}else if(current_view==11){
+            			current_view=19;
+            		}else if(current_view==20){
+            			current_view=24;
+            		}else{
+            			current_view = current_view+1; 	
+            		}
+            	}else if(testType=="2"){
+					if(current_view==22){
+						current_view=24;
+					}else{
+						current_view = current_view+1; 
+					}
+            	}else{
+            		current_view = current_view+1; 
+            	}	
             	display_views();
             }
 
@@ -954,7 +992,7 @@ and open the template in the editor.
             	
             	
             	if(current_view==5){
-            		d3.select("#main_header").text("Scatter Plot Panel and Analysis Panel")
+            		d3.select("#main_header").text("Scatter Plot Panel")
             		d3.select("#main_text").html('<p>The scatter plot panel (box highlighted in red) displays thousands of different designs '
             				+' of satellite systems. Each dot corresponds to one design, and is located based on its corresponding '
             				+' cost and science benefit score.</p>'
@@ -965,7 +1003,7 @@ and open the template in the editor.
             			.style('border-width','5px')
             			.style('border-color','#FF2D65');
             	}
-            	else if(current_view==6){
+            	else if(current_view==6){ // skip for baseline condition
             		
             		d3.select("#main_header").text("Selection Panel")
             		d3.select("#main_text").html('<p>The selection panel contains menus and options you can use to '
@@ -978,7 +1016,7 @@ and open the template in the editor.
 	        			.style('border-color','#FF2D65');
             		
             	}	
-            	else if(current_view==7){
+            	else if(current_view==7){ // skip for baseline condition
             		if(!view7_completed){
             			deactivate_right_arrow();
             		}

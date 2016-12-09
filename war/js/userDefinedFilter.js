@@ -112,7 +112,8 @@ function newFilter_addFeature(){
                     			selectedOption == "notInOrbit" || selectedOption == "together" || 
                     			selectedOption == "togetherInOrbit" || selectedOption == "separate" || 
                     			selectedOption == "emptyOrbit" || selectedOption=="numOrbitUsed" || 
-                    			selectedOption=="subsetOfInstruments"){
+                    			selectedOption=="subsetOfInstruments"||
+                    			selectedOption=="numOfInstruments"){
                     		
                     		 var newExpression = prevExpression + selectedOption + "(" + filterInput1 + filterInput2 + filterInput3 + ")";
 
@@ -374,7 +375,8 @@ function applyUserDefFilter_single(expression,prev,logic,bitString){
                 filterType === "inOrbit" || filterType === "notInOrbit" || 
                 filterType === "together" || filterType === "togetherInOrbit" || 
                 filterType === "separate" || filterType === "emptyOrbit" || 
-                filterType==="numOrbitUsed" || filterType==="subsetOfInstruments"){
+                filterType==="numOrbitUsed" || filterType==="subsetOfInstruments"||
+                filterType==="numOfInstruments"){
 			if(presetFilter2(filterType,bitString,params,neg)){
 				output = true;
 			} else{

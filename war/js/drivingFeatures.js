@@ -539,6 +539,24 @@ function selectFilterOption_filterInput(selectedOption,userDefOption){
 		        .html('<p>Valid orbit names: 1000, 2000, 3000, 4000, 5000</p>'
 		        		+'Valid instrument names: A, B, C, D, E, F, G, H, I, J, K, L');         
     } 
+    else if (selectedOption=="numOfInstruments"){
+    	filterInputField_numOfInstruments();
+        d3.select("[id=filter_inputs]")
+                .append("div")
+                .attr("id","filter_explanation")
+                .style("margin-top","15px")
+                .style("margin-left","10px")
+                .text("(Hint: This highlights all the designs with the specified number of instruments. You can also specify the instrument name, and only those instruments will be counted.)")
+                .style("color", "#696969");  
+        d3.select("[id=filter_inputs]")
+		        .append("div")
+		        .attr("id","filter_explanation_valid_inputs")
+		        .style("margin-top","15px")
+		        .style("margin-left","10px")
+		        .style("color", "#696969")
+		        .html('<p>Valid orbit names: 1000, 2000, 3000, 4000, 5000</p>'
+		        		+'Valid instrument names: A, B, C, D, E, F, G, H, I, J, K, L');         
+    } 
     else if(selectedOption=="subsetOfInstruments"){
         filterInputField_subsetOfInstruments();
         d3.select("[id=filter_inputs]")
@@ -685,6 +703,32 @@ function filterInputField_numOrbitInput(){
                 .attr("id","filter_input1_textBox")
                 .attr("type","text");
 }
+function filterInputField_numOfInstruments(){
+    var filterInput = d3.select("[id=filter_inputs]");
+    filterInput.append("div")
+            .attr("id","filter_input1")
+            .text("Input instrument name (Could be N/A): ");
+
+    filterInput.select("[id=filter_input1]")
+            .append("input")
+            .attr("id","filter_input1_textBox")
+            .attr("type","text");
+    
+    d3.select("#filter_input1_textBox").attr("value","N/A");
+
+    filterInput.append("div")
+            .attr("id","filter_input2")
+	    .text("Input a number of instrument used (should be greater than or equal to 0): ");
+
+    filterInput.select("[id=filter_input2]")
+            .append("input")
+            .attr("id","filter_input2_textBox")
+            .attr("type","text")
+            .style("width","300px")
+            .style("margin-left","5px")
+            .style("margin-right","10px")
+            .style("margin-bottem","5px");
+}
 function filterInputField_subsetOfInstruments(){
         var filterInput = d3.select("[id=filter_inputs]");
         filterInput.append("div")
@@ -765,7 +809,8 @@ function applyFilter_new(){
 
     }
     else if (filterType == "present" || filterType == "absent" || filterType == "inOrbit" || filterType == "notInOrbit" || filterType == "together" || filterType == "togetherInOrbit" || filterType == "separate" || 
-            filterType == "emptyOrbit" || filterType=="numOrbitUsed" || filterType=="subsetOfInstruments"){
+            filterType == "emptyOrbit" || filterType=="numOrbitUsed" || filterType=="subsetOfInstruments"||
+            filterType=="numOfInstruments"){
 
         var filterInputs = [];
         if(d3.select("[id=filter_input1_textBox]")[0][0]!==null){
@@ -866,7 +911,8 @@ function applyFilter_within(){
     }
     else if (filterType == "present" || filterType == "absent" || filterType == "inOrbit" || filterType == "notInOrbit" || 
             filterType == "together" || filterType == "togetherInOrbit" || filterType == "separate" || 
-            filterType == "emptyOrbit" || filterType=="numOrbitUsed" || filterType=="subsetOfInstruments"){
+            filterType == "emptyOrbit" || filterType=="numOrbitUsed" || filterType=="subsetOfInstruments"||
+            filterType=="numOfInstruments"){
 
 
         var filterInputs = [];
@@ -958,7 +1004,8 @@ function applyFilter_add(){
     }
     else if (filterType == "present" || filterType == "absent" || filterType == "inOrbit" || filterType == "notInOrbit" || 
             filterType == "together" || filterType == "togetherInOrbit" || filterType == "separate" || 
-            filterType == "emptyOrbit" || filterType=="numOrbitUsed" || filterType =="subsetOfInstruments"){
+            filterType == "emptyOrbit" || filterType=="numOrbitUsed" || filterType =="subsetOfInstruments"||
+            filterType=="numOfInstruments"){
 
 
         var filterInputs = [];
@@ -1310,7 +1357,7 @@ function display_drivingFeatures(source,sortby) {
                     
                     if(type=="present" || type=="absent" || type=="inOrbit" ||type=="notInOrbit"||type=="together2"||
                     		type=="togetherInOrbit2"||type=="separate2"||type=="together3"||type=="togetherInOrbit3"||
-                    		type=="separate3"||type=="emptyOrbit"||type=="numOrbits"){
+                    		type=="separate3"||type=="emptyOrbit"||type=="numOrbits" || type=="numOfInstruments"){
                     	
                     	var type_modified;
                     	var filterInputs = [];
@@ -1327,7 +1374,7 @@ function display_drivingFeatures(source,sortby) {
                         	
                     	if(type_modified=="present" || type_modified=="absent" || type_modified=="emptyOrbit"
                     				|| type_modified=="numOrbits" || type_modified=="together" 
-                    					|| type_modified=="separate"){
+                    					|| type_modified=="separate" || type_modified=="numOfInstruments"){
                     		filterInputs.push(arg);
                     	}else if(type_modified=="inOrbit" || type_modified=="notInOrbit" || 
                     											type_modified=="togetherInOrbit"){
@@ -1703,6 +1750,58 @@ function presetFilter2(filterName,bitString,inputs,neg){
         } else{
             output= false;
         }
+    } else if(filterName === "numOfInstruments"){
+        output = false;
+
+        var all_instruments = false;
+        var thisInstr = -1;
+        
+        var instrument;
+        var num_of_instruments;
+        if(filterInput1.indexOf(",") != -1){
+        	var comma = filterInput1.indexOf(",");
+        	instrument = filterInput1.substring(0,comma);
+        	num_of_instruments = filterInput1.substring(comma+1);
+        }else{
+        	instrument = filterInput1;
+        	num_of_instruments = filterInput2;
+        }
+        
+        if(instrument=="N/A"){
+        	//continue;
+        	all_instruments = true;
+        }
+        else{
+            thisInstr = $.inArray(relabelback(instrument),instrList);
+            if(thisInstr==-1){
+            	return null;
+            }
+        }        
+        var cnt = 0;
+        for(var i=0;i<orbitList.length;i++){
+        	if(all_instruments){
+        		for(var j=0;j<instrList.length;j++){
+                	if(bitString[i*ninstr + j] === true){
+                        cnt = cnt+1;
+                    }
+        		}
+        	}else{
+            	if(bitString[i*ninstr + thisInstr] === true){
+                    cnt = cnt+1;
+                }
+        	}
+        }
+
+            
+        if(num_of_instruments== ""+cnt){
+        	output=true;
+        }else{
+        	output=false;
+        }
+        return checkNeg(output,neg)     
+        
+        
+        
     } else if(filterName === "subsetOfInstruments"){ 
         var thisOrbit = $.inArray(relabelback(filterInput1),orbitList);
         var minmax = filterInput2.split(",");

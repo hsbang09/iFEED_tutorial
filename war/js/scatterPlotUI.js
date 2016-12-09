@@ -219,6 +219,29 @@ function draw_scatterPlot(source) {
         d3.select(d).attr("paretoRank",-1);
     });
 
+    
+    
+    if(testType=="1"){
+    	
+    	d3.select('#selection_option_div').select('div').remove();
+    	d3.select('#OptionsPane').select('div').select('div').remove();
+    	
+    	d3.select("#tab3").text('-');
+    	d3.select("#view3").select('g').remove();
+    	d3.select("#tab4").text('-');
+    	d3.select("#view4").select('g').remove();
+    	
+    }else if(testType=="2"){
+    	
+    	d3.select("#tab3").text('Empty tab');
+    	d3.select("#view3").select('g').remove();
+    	
+    }else if(testType=="3"){
+    	
+    	// Do nothing
+    	
+    }
+    
 
     orbitList = getOrbitList();
     instrList = getInstrumentList();
@@ -1032,7 +1055,9 @@ function initialize_tabs_driving_features(){
 		return;
 	}
 	
-	
+	if(testType=="1"){
+		return;
+	}
 	
 	d3.select("[id=basicInfoBox_div]").select("[id=view3]").select("g").remove();
 	var guideline = d3.select("[id=basicInfoBox_div]").select("[id=view3]")
