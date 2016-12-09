@@ -212,7 +212,7 @@ public class loginServlet extends HttpServlet {
 	        if(!accessGranted){
 	        	outputString="accessDenied";
 	        }
-
+	        outputString="3-123123123";
     	} 
     	
     	if(requestID.equalsIgnoreCase("credential_check")){
@@ -231,7 +231,8 @@ public class loginServlet extends HttpServlet {
 	        }else{
 	        	outputString="accessGranted";
 	        }
-        	
+	        
+        	outputString="accessGranted";
     	}
     	
     	

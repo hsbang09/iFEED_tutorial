@@ -950,7 +950,7 @@ and open the template in the editor.
 
             function display_views(){
             	clear_view();
-            	d3.select('#tutorial_page_number').text("" + current_view);
+            	d3.select('#tutorial_page_number').text("" + current_view + "/24");
             	
             	
             	if(current_view==5){
@@ -1050,7 +1050,7 @@ and open the template in the editor.
 	        			.style('border-color','#FF2D65');
 
             	}
-            	else if(current_view==12){
+            	else if(current_view==12){ 
             		d3.select("#main_header").text("Analysis Panel")
             		d3.select("#main_text").html('<p>The analysis panel is located below the scatter plot, '
             				+'and you can use it to analyze the data displayed on the scatter plot.</p>');
@@ -1267,7 +1267,7 @@ and open the template in the editor.
 	        			.style('border-style','solid')
 	        			.style('border-color','#FF2D65');            	    
             	}
-            	else if(current_view==21){
+            	else if(current_view==21){ // Show only for testType= 2 or 3
             		if(!view21_completed){
             			deactivate_right_arrow();
             		}
@@ -1292,7 +1292,7 @@ and open the template in the editor.
 
         	    	
             	}
-            	else if(current_view==22){
+            	else if(current_view==22){ // Show only for testType= 2 or 3
             		if(!view22_completed){
             			deactivate_right_arrow();
             		}
@@ -1318,7 +1318,7 @@ and open the template in the editor.
 	        			.style('border-style','solid')
 	        			.style('border-color','#FF2D65');  
             	}
-            	else if(current_view==23){
+            	else if(current_view==23){ // Show only for testType= 3
             		if(!view23_completed){
             			deactivate_right_arrow();
             		}
@@ -1347,7 +1347,7 @@ and open the template in the editor.
 	        			.style('border-style','solid')
 	        			.style('border-color','#FF2D65');  
             	}
-            	else if(current_view==24){
+            	else if(current_view==24){ 
 					deactivate_right_arrow();
 					
             		d3.select("#main_header").text("Tutorial Finished")

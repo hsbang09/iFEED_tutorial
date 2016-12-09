@@ -402,7 +402,7 @@ function selectFilterOption_filterInput(selectedOption,userDefOption){
                 .attr("id","filter_explanation")
                 .style("margin-top","15px")
                 .style("margin-left","10px")
-                .text("(Hint: Designs that does not have the specified instrument are selected)")
+                .text("(Hint: Designs that do not have the specified instrument are selected)")
                 .style("color", "#696969");   
         d3.select("[id=filter_inputs]")
         .append("div")
@@ -438,7 +438,7 @@ function selectFilterOption_filterInput(selectedOption,userDefOption){
                 .attr("id","filter_explanation")
                 .style("margin-top","15px")
                 .style("margin-left","10px")
-                .text("(Hint: Designs that does not have the specified instrument inside the chosen orbit are selected)")
+                .text("(Hint: Designs that do not have the specified instrument inside the chosen orbit are selected)")
                 .style("color", "#696969");   
         d3.select("[id=filter_inputs]")
         .append("div")
@@ -492,7 +492,7 @@ function selectFilterOption_filterInput(selectedOption,userDefOption){
                 .attr("id","filter_explanation")
                 .style("margin-top","15px")
                 .style("margin-left","10px")
-                .text("(Hint: Designs that does not have the specified instruments in the same orbit are chosen)")
+                .text("(Hint: Designs that do not have the specified instruments in the same orbit are chosen)")
                 .style("color", "#696969");   
         d3.select("[id=filter_inputs]")
         .append("div")
