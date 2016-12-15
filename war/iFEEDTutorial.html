@@ -40,7 +40,10 @@
     
 	<div id="logIn_window" style="width:100%; margin-bottom:30px;">
         <div style="width:400px;margin:auto">
-        	Please log in to start:
+        	<p> Please log in to start. This is a Google sign-in system, so you MUST have a Google account to continue. 
+        	Since the sign-in done through Google, the researchers are NOT able to see your password or any other personal information. 
+        	This process is done just to ensure that each subject uses this tool only once, and only for a given amount of time.</p>
+        	
         </div>
 		<div id="signin_div" class="g-signin2" data-onsuccess="onSignIn" style="width:400px;margin:auto"></div>
 	</div>
@@ -103,8 +106,17 @@ try{
 	     	testType = credential_split[0];
 	     	account_id = credential_split[1];
 	     	activate_right_arrow();
+	    	
+	     	if(testType=="1"){
+	    		max_view=16;
+	    	}else if(testType=="2"){
+	    		max_view=23;
+	    	}
+	    	d3.select('#tutorial_page_number').text("" + current_view + "/" + max_view);
+	     	
 	     }else{ // access not granted
 // 	     	signOut();
+	    	 window.location.replace("session_end.html");
 	     }
 	}
 
@@ -130,7 +142,7 @@ try{
 var current_view;
 if(window.location.search){
 	current_view = 4;	
-	
+
     var testType;
     var account_id;
     var cred = window.location.search;
@@ -208,7 +220,15 @@ function activate_right_arrow(){
 
 function display_views(){
 	clear_view();
-	d3.select('#tutorial_page_number').text("" + current_view + "/24");
+	
+	var max_view=24;
+	if(testType=="1"){
+		max_view=16;
+	}else if(testType=="2"){
+		max_view=23;
+	}
+	
+	d3.select('#tutorial_page_number').text("" + current_view + "/" + max_view);
 	
 	if(current_view==1){
 		
@@ -218,14 +238,19 @@ function display_views(){
 		
 		d3.select("#main_header").text("Experiment overview");
 		d3.select("#main_text").html('<p>In this experiment, you will first go through the tutorial on how to use iFEED'
-				+' (Interactive Feature Extraction in Engineering Design). iFEED is a web-based data analysis tool aimed to help '
-				+'engineers in complex engineering design tasks. The tutorial will walk you through all of its capabilities '
-				+'and explain how you can use them. </p>'
-				+'<p>After the tutorial is finished, you will be given 30 minutes to use iFEED to analyze a given set of data. '
-				+'The given data will contain a large number of satellite system designs. Your task will be to interact with the '
-				+'analysis tool and to learn about the data as much as possible. </p>'
-				+'<p>After the 30 minutes of using iFEED, you will be given a problem set to solve. The questions will test '
-				+'how much knowledge you have gained during your interaction with the tool.</p>'
+				+', a web-based data analysis tool aimed to help '
+				+'engineers in complex engineering design tasks. '
+				+'The task at hand deals with designing a constellation of satellites for Earth observation, '
+				+'but don\'t worry if you don\'t know much about the topic. All the details have been left out so you '
+				+'will only have to deal with numbers. '
+				+'The tutorial will walk you through the capabilities of iFEED '
+				+'and explain how you can use them to analyze a dataset. </p>'
+				+'<p>After the tutorial is finished, you will be given 30 minutes to use iFEED to analyze a given dataset. '
+				+'The data contains a large number of satellite system designs (selection of "instruments" and "orbits"). '
+				+'Your task will be to interact with the '
+				+'analysis tool and to learn as much as possible about the data. </p>'
+				+'<p>After the 30 minutes of using iFEED, you will be given a set of questions to solve. The questions will '
+				+'attempt to measure how much knowledge you have gained during your interaction with the tool.</p>'
 				+'<p>Click the right arrow below to continue with the tutorial.</p>');
 				
 		d3.select("#main_img").attr("src","images/a-train.png")
@@ -239,10 +264,13 @@ function display_views(){
 	else if (current_view==2){
 		d3.select("#main_header").text("Design Task: Satellite system design");
 		d3.select("#main_text").html('<p>Before introducing iFEED, we will first explain the basic structure of the data. '
-				+'The dataset that you will be asked to analyze contains various designs of satellite system.'
-				+' Each design consists of multiple satellites working together to satisfy the measurement requirements'
-				+' related to climate monitoring. Different designs will be defined by what measurement instruments are used'
-				+' in each spacecraft, and in what orbits those spacecrafts fly.</p>');
+				+'The dataset that you will be asked to analyze contains various points which '
+				+'correspond to designs of satellite systems.'
+				+' Each design consists of multiple satellites carrying different sensors '
+				+'working together to satisfy some measurement requirements'
+				+' related to climate monitoring. A design is defined by what sensors (called "instruments") are used'
+				+' in each spacecraft, and the "orbits" (e.g., altitude above the Earth, inclination'
+				+' with respect to the Equator) those spacecrafts fly.</p>');
 		d3.select("#main_img").attr("src","images/sat_instruments_labeled.png")
 				.style("width","30%")
 				.style('opacity',1);
@@ -266,8 +294,10 @@ function display_views(){
 				.style('font-size','18px')
 				.text('The figure shows which set of instruments are assigned to fly in a particular orbit. '
 						+'Multiple instruments assigned to one orbit indicates that one spacecraft will carry all those'
-						+' instruments and fly in the given orbit. Empty orbit means no spacecraft will fly in that orbit.'
-						+' The real names of orbits and instruments were changed to numbers and alphabetical letters to simplify the analysis task');
+						+' instruments and fly in the given orbit. An empty orbit (i.e., an orbit with no instruments)'
+						+' means that no spacecraft will fly in that orbit.'
+						+' The real names of orbits and instruments were changed to numbers and alphabetical '
+						+'letters respectively, to simplify the analysis task');
 
 		d3.select("#main_img2").attr("src","images/candidate_list.png")
 				.style("width","40%")
@@ -277,24 +307,26 @@ function display_views(){
 				.text('There are total 5 candidate orbits, and 12 available measurement instruments as shown above.');
 	}
 	else if (current_view==4){
-		d3.select("#main_header").text("Design Task: Synergies between instruments");
+		d3.select("#main_header").text("Design Task: What do good designs (high science value, low cost) have in common?");
 		d3.select("#main_text")
-				.html('<p>Each design will have corresponding science benefit score and cost. '
-						+'The science benefit score is a score that is computed using a very complex model'
-						+' to evaluate the performance and capabilities of each satellite system. '
-						+'The low-cost and high-science score designs are desirable. </p>'
+				.html('<p>Each design will have a corresponding science benefit score and a cost. '
+						+'The science benefit score is a number that tells us how well a particular satellite system'
+						+' satisfies the measurement requirements of the climate monitoring community. The cost'
+						+' is a measure of how much is going to cost (in million dollars) to design, implement, launch'
+						+' and operate those systems. Naturally, low-cost and high-science designs are desirable.</p>'
 						+'<p>Note that, particular combinations of instruments and instrument-to-orbit assignments '
 						+'may have synergistic effects. For example, instrument X may increase the science score by 0.3 '
-						+'when it is assigned to orbit 3000, whereas the score increases by 0.1 when it is assigned to orbit 4000. '
+						+'when it is assigned to orbit 3000, whereas the score may only increases by 0.1 when it is '
+						+'assigned to orbit 4000. '
 						+'Or, assigning instruments X and Y together in the same orbit may result in much higher score than '
-						+'having four arbitrary instruments in that orbit, because X and Y have synergistic behavior.</p>');
+						+'having them on separate orbits.</p>');
 		
 		d3.select('#main_div').insert('p','#main_img2')
 			.attr('id','main_text2')
 			.style('font-size','18px')
-			.html('<p>Your goal in this task is to do the following:</p>'
-							+'<p> Find as many patterns (instrument-to-orbit assignments) as possible that maximizes '
-							+'science benefit score, while keeping the cost low. </p>'
+			.html('<p>Your specific goal in this task is to do the following:</p>'
+							+'<p> Find as many patterns (e.g. instrument-to-orbit assignments) as possible that seem to '
+							+'systematically lead to high science benefit score, while keeping the cost low. </p>'
 							+'<p>Next, we will introduce how the iFEED interface looks like and how you can use it for data analysis.'
 							+' (Loading the next page may take few seconds)</p>');
 	}

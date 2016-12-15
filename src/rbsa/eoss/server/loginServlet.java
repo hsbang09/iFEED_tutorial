@@ -199,7 +199,7 @@ public class loginServlet extends HttpServlet {
 	    	        
 	    	        outputString = Integer.toString(testType) + "-" + key;
 	    	        
-	    	    	if(testType==4){
+	    	    	if(testType==3){
 	    	    		testType = 1;
 	    	    	} else{
 	    	    		testType += 1;
@@ -212,7 +212,6 @@ public class loginServlet extends HttpServlet {
 	        if(!accessGranted){
 	        	outputString="accessDenied";
 	        }
-	        outputString="3-123123123";
     	} 
     	
     	if(requestID.equalsIgnoreCase("credential_check")){
