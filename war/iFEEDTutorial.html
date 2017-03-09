@@ -38,23 +38,23 @@
   <body>
     <h1>iFEED Tutorial</h1>
     
-	<div id="logIn_window" style="width:100%; margin-bottom:30px;">
-        <div style="width:400px;margin:auto">
-        	<p> Please log in to start. This is a Google sign-in system, so you MUST have a Google account to continue. 
-        	Since the sign-in done through Google, the researchers are NOT able to see your password or any other personal information. 
-        	This process is done just to ensure that each subject uses this tool only once, and only for a given amount of time.</p>
+<!-- 	<div id="logIn_window" style="width:100%; margin-bottom:30px;"> -->
+<!--         <div style="width:400px;margin:auto"> -->
+<!--         	<p> Please log in to start. This is a Google sign-in system, so you MUST have a Google account to continue.  -->
+<!--         	Since the sign-in done through Google, the researchers are NOT able to see your password or any other personal information.  -->
+<!--         	This process is done just to ensure that each subject uses this tool only once, and only for a given amount of time.</p> -->
         	
-        </div>
-		<div id="signin_div" class="g-signin2" data-onsuccess="onSignIn" style="width:400px;margin:auto"></div>
-	</div>
+<!--         </div> -->
+<!-- 		<div id="signin_div" class="g-signin2" data-onsuccess="onSignIn" style="width:400px;margin:auto"></div> -->
+<!-- 	</div> -->
     
    
-    <div id="main_div" style="margin:auto;width:80%;background-color:#F9E39D;padding:20px">
+    <div id="main_div" style="margin:auto;width:1100px; background-color:#F9E39D;padding:20px">
     	<h3 id="main_header"></h3>
-    	<p id="main_text" style="font-size:18px"></p>
+    	<p id="main_text" style="font-size:22px"></p>
     	<img id="main_img" style="margin:auto;">
     	<img id="main_img2" style="margin:auto;">
-    	<p id="main_text3" style="font-size:18px"></p>
+    	<p id="main_text3" style="font-size:22px"></p>
     	
     	<p id="main_img_credit" style="margin-top:5px; font-size:10px"></p>
     	
@@ -62,7 +62,7 @@
     	<div id="arrow_div" style="margin-top:30px">
     		<img src="images/rightarrow.png" class="img-hor-vert" id="leftarrow" width="48" height="31">
     		<img src="images/rightarrow.png" id="rightarrow" width="48" height="31">
-    		<div id="tutorial_page_number" style="font-size:12px; margin:0 48%"></div>
+    		<div id="tutorial_page_number" style="font-size:14px; margin:0 48%"></div>
     	</div>
     </div>
     
@@ -80,80 +80,79 @@ var account_id = -1;
 
 try{
 
-	function onSignIn(googleUser) {
-		id_token = googleUser.getAuthResponse().id_token;
-	    var firstLoginTime = Date.parse(new Date());
-	    var credential;
-	     $.ajax(
-	             {
-	                 url: "loginServlet",
-	                 type: "POST",
-	                 data: {ID: "login", IDToken: id_token, loginTime:firstLoginTime},
-	                 async: false,
-	                 success: function (data, textStatus, jqXHR)
-	                 {
-	                 	d3.select("[id=logIn_window]").remove();
-						credential = data;
-	                 },
-	                 error: function (jqXHR, textStatus, errorThrown)
-	                 {
-	                     alert("Login error");
-	                 }
-	             });
-	     if(credential!=="accessDenied"){  // access granted
-	    	console.log(credential);
-	     	var credential_split = credential.split('-');
-	     	testType = credential_split[0];
-	     	account_id = credential_split[1];
-	     	activate_right_arrow();
+// 	function onSignIn(googleUser) {
+// 		id_token = googleUser.getAuthResponse().id_token;
+// 	    var firstLoginTime = Date.parse(new Date());
+// 	    var credential;
+// 	     $.ajax(
+// 	             {
+// 	                 url: "loginServlet",
+// 	                 type: "POST",
+// 	                 data: {ID: "login", IDToken: id_token, loginTime:firstLoginTime},
+// 	                 async: false,
+// 	                 success: function (data, textStatus, jqXHR)
+// 	                 {
+// 	                 	d3.select("[id=logIn_window]").remove();
+// 						credential = data;
+// 	                 },
+// 	                 error: function (jqXHR, textStatus, errorThrown)
+// 	                 {
+// 	                     alert("Login error");
+// 	                 }
+// 	             });
+// 	     if(credential!=="accessDenied"){  // access granted
+// 	    	console.log(credential);
+// 	     	var credential_split = credential.split('-');
+// 	     	testType = credential_split[0];
+// 	     	account_id = credential_split[1];
+// 	     	activate_right_arrow();
 	    	
-	     	if(testType=="1"){
-	    		max_view=16;
-	    	}else if(testType=="2"){
-	    		max_view=23;
-	    	}
-	    	d3.select('#tutorial_page_number').text("" + current_view + "/" + max_view);
+// 	     	if(testType=="1"){
+// 	    		max_view=16;
+// 	    	}else if(testType=="2"){
+// 	    		max_view=23;
+// 	    	}
+// 	    	d3.select('#tutorial_page_number').text("" + current_view + "/" + max_view);
 	     	
-	     }else{ // access not granted
-// 	     	signOut();
-	    	 window.location.replace("session_end.html");
-	     }
-	}
+// 	     }else{ // access not granted
+// // 	     	signOut();
+// 	    	 window.location.replace("session_end.html");
+// 	     }
+// 	}
 
-	function renderButton() {
-	    gapi.signin2.render('my-signin2', {
-	      'scope': 'profile',
-	      'width': 240,
-	      'height': 50,
-	      'longtitle': true,
-	      'theme': 'dark',
-	      'onsuccess': onSuccess,
-	      'onfailure': onFailure
-	    });
-	}
+// 	function renderButton() {
+// 	    gapi.signin2.render('my-signin2', {
+// 	      'scope': 'profile',
+// 	      'width': 240,
+// 	      'height': 50,
+// 	      'longtitle': true,
+// 	      'theme': 'dark',
+// 	      'onsuccess': onSuccess,
+// 	      'onfailure': onFailure
+// 	    });
+// 	}
 } catch (err) {
     console.log(err.message);
 }
 
 
 
-
-
 var current_view;
-if(window.location.search){
-	current_view = 4;	
+// if(window.location.search){
+// 	current_view = 4;	
 
-    var testType;
-    var account_id;
-    var cred = window.location.search;
-    cred = cred.substring(1);
-    if(cred){
-    		testType = cred.split("-")[0];
-    		account_id = cred.split("-")[1];
-    }
-}else{
+//     var testType;
+//     var account_id;
+//     var cred = window.location.search;
+//     cred = cred.substring(1);
+//     if(cred){
+//     		testType = cred.split("-")[0];
+//     		account_id = cred.split("-")[1];
+//     }
+// }else{
 	current_view = 1;
-}
+// }
+
 
 
 function allowDrop(ev) {
@@ -241,8 +240,8 @@ function display_views(){
 				+', a web-based data analysis tool aimed to help '
 				+'engineers in complex engineering design tasks. '
 				+'The task at hand deals with designing a constellation of satellites for Earth observation, '
-				+'but don\'t worry if you don\'t know much about the topic. All the details have been left out so you '
-				+'will only have to deal with numbers. '
+				+'but don\'t worry if you don\'t know much about the topic. All the details have been left out so that you '
+				+'only have to deal with numbers. '
 				+'The tutorial will walk you through the capabilities of iFEED '
 				+'and explain how you can use them to analyze a dataset. </p>'
 				+'<p>After the tutorial is finished, you will be given 30 minutes to use iFEED to analyze a given dataset. '
@@ -264,11 +263,11 @@ function display_views(){
 	else if (current_view==2){
 		d3.select("#main_header").text("Design Task: Satellite system design");
 		d3.select("#main_text").html('<p>Before introducing iFEED, we will first explain the basic structure of the data. '
-				+'The dataset that you will be asked to analyze contains various points which '
-				+'correspond to designs of satellite systems.'
+				+'The dataset that you will be asked to analyze contains various '
+				+'designs of a satellite system.'
 				+' Each design consists of multiple satellites carrying different sensors '
 				+'working together to satisfy some measurement requirements'
-				+' related to climate monitoring. A design is defined by what sensors (called "instruments") are used'
+				+' related to climate monitoring. A design is defined by what measurement instruments (sensors) are used'
 				+' in each spacecraft, and the "orbits" (e.g., altitude above the Earth, inclination'
 				+' with respect to the Equator) those spacecrafts fly.</p>');
 		d3.select("#main_img").attr("src","images/sat_instruments_labeled.png")
@@ -291,13 +290,15 @@ function display_views(){
 		
 		d3.select('#main_div').insert('p','#main_img2')
 				.attr('id','main_text2')
-				.style('font-size','18px')
-				.text('The figure shows which set of instruments are assigned to fly in a particular orbit. '
-						+'Multiple instruments assigned to one orbit indicates that one spacecraft will carry all those'
+				.style('font-size','22px')
+				.html('<p>The figure shows which set of instruments are assigned to fly in a particular orbit. '
+						+'Each row represents one spacecraft flying in a specified orbit. The columns represent '
+						+'what measurement instruments are onboard each of those spacecraft.</p> '
+						+'<p>Multiple instruments assigned to one orbit indicates that one spacecraft will carry all those'
 						+' instruments and fly in the given orbit. An empty orbit (i.e., an orbit with no instruments)'
-						+' means that no spacecraft will fly in that orbit.'
-						+' The real names of orbits and instruments were changed to numbers and alphabetical '
-						+'letters respectively, to simplify the analysis task');
+						+' means that no spacecraft will fly in that orbit.</p>'
+						+'<p> The real names of orbits and instruments were changed to numbers and alphabetical '
+						+'letters respectively, to simplify the analysis task</p>');
 
 		d3.select("#main_img2").attr("src","images/candidate_list.png")
 				.style("width","40%")
@@ -323,7 +324,7 @@ function display_views(){
 		
 		d3.select('#main_div').insert('p','#main_img2')
 			.attr('id','main_text2')
-			.style('font-size','18px')
+			.style('font-size','22px')
 			.html('<p>Your specific goal in this task is to do the following:</p>'
 							+'<p> Find as many patterns (e.g. instrument-to-orbit assignments) as possible that seem to '
 							+'systematically lead to high science benefit score, while keeping the cost low. </p>'
@@ -342,6 +343,23 @@ function display_views(){
 d3.select("#leftarrow").on("click",click_leftarrow);
 d3.select("#rightarrow").on("click",click_rightarrow);
 display_views();
+
+
+
+
+
+testType = 3;
+account_id = 0000;
+activate_right_arrow();
+
+max_view=24;
+d3.select('#tutorial_page_number').text("" + current_view + "/" + max_view);
+
+
+
+
+
+
 
 
 

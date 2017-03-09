@@ -5,75 +5,13 @@
  */
 
 
-//function getClassificationTree(){
-//	
-//    highlight_basic_info_box()
-//	
-//	if(selection_changed == false && jsonObj_tree != null){
-//		display_classificationTree(jsonObj_tree);
-//		return;
-//	}
-//
-//    var selectedArchs = d3.selectAll("[class=dot_clicked]");
-//    var nonSelectedArchs = d3.selectAll("[class=dot]");
-//    var numOfSelectedArchs = selectedArchs.size();
-//    var numOfNonSelectedArchs = nonSelectedArchs.size();
-//    var selectedBitStrings = [];
-//    var nonSelectedBitStrings = [];
-//    selectedBitStrings.length = 0;
-//    nonSelectedBitStrings.length=0;
-//    
-//    
-//    buttonClickCount_classificationTree += 1;
-//    getClassificationTree_numOfArchs.push([{numOfSelectedArchs,numOfNonSelectedArchs}]);
-//
-//    
-//    for (var i = 0; i < numOfSelectedArchs; i++) {
-//        var tmpBitString = booleanArray2String(selectedArchs[0][i].__data__.archBitString);
-//        selectedBitStrings.push(tmpBitString);
-//    }
-//    for (var i = 0; i < numOfNonSelectedArchs; i++) {
-//        var tmpBitString = booleanArray2String(nonSelectedArchs[0][i].__data__.archBitString);
-//        nonSelectedBitStrings.push(tmpBitString);
-//    }
-//   
-//    jsonObj_tree = buildClassificationTree(selectedBitStrings,nonSelectedBitStrings,support_threshold,confidence_threshold,lift_threshold,userDefFilters);
-//    display_classificationTree(jsonObj_tree);
-//    selection_changed = false;
-//    
-//}
-
-
-//function buildClassificationTree(selected,nonSelected,
-//		support_threshold,confidence_threshold,lift_threshold,
-//		userDefFilters){
-//	
-//	var output;
-//    $.ajax({
-//        url: "classificationTreeServlet",
-//        type: "POST",
-//        data: {ID: "buildClassificationTree",selected: JSON.stringify(selected),nonSelected:JSON.stringify(nonSelected),
-//        	supp:support_threshold,conf:confidence_threshold,lift:lift_threshold,
-//        	userDefFilters:JSON.stringify(userDefFilters)},
-//        async: false,
-//        success: function (data, textStatus, jqXHR)
-//        {
-//        	output = JSON.parse(data);
-//        },
-//        error: function (jqXHR, textStatus, errorThrown)
-//        {alert("error");}
-//    });
-//    
-//    return output;
-//}
-
 function buildClassificationTree(){
 	
 	var output;
     $.ajax({
-        url: "drivingFeatureServlet",
+        url: "IFEEDServlet",
         type: "POST",
-        data: {ID: "buildClassificationTree"},
+        data: {ID: "build_classification_tree"},
         async: false,
         success: function (data, textStatus, jqXHR)
         {
@@ -96,38 +34,28 @@ function constructNestedTreeStructure(tree_objs){
 function addBranches(parent,objs){
 	
 	if (parent.name==="leaf"){
-//		parent.children = false;
 		return;
 	} 
-	var i = searchByNodeID(parent.id_c1,objs);
-	var j = searchByNodeID(parent.id_c2,objs);
+	var c1 = searchByNodeID(parent.id_c1,objs);
+	var c2 = searchByNodeID(parent.id_c2,objs);
 	
-	if(i>=0 && j>=0){
-		var c1 = objs[i];
+	if(c1!==null && c2!==null){
+		c1.cond=true;
 		addBranches(c1,objs);
-		c1.cond = true;
-//		parent.child1 = c1;
-		var c2 = objs[j];
+		c2.cond=false;
 		addBranches(c2,objs);
-		c2.cond = false;
-//		parent.child2 = c2;
-//		parent.hasChildren = true;
 		parent.children = [c1, c2];
-	} else{
-//		parent.hasChildren = false;
 	}
 
 }
 function searchByNodeID(id,objs){
 	for(var i=0;i<objs.length;i++){
 		if(objs[i].nodeID===id){
-			return i;
+			return objs[i];
 		}
 	}
-	return -1;
+	return null;
 }
-
-
 
 
 
@@ -149,7 +77,7 @@ function display_classificationTree(source){
 	// top  right bottem left
 	var margin_tree = [15, 120, 20, 350],
 	    width_tree = 3280 - margin_tree[1] - margin_tree[3],
-	    height_tree = 500 - margin_tree[0] - margin_tree[2];
+	    height_tree = 630 - margin_tree[0] - margin_tree[2];
 
 	tree = d3.layout.tree().size([height_tree, width_tree]);
 	
@@ -207,17 +135,11 @@ function update(source) {
             var highlighted = d3.selectAll("[class=dot_DFhighlighted]");
             highlighted.attr("class", "dot")
                     .style("fill", function (d) {
-                        if (d.status == "added") {
-                            return "#188836";
-                        } else if (d.status == "justAdded") {
-                            return "#20FE5B";
-                        } else {
                             return "#000000";
-                        }
                     });     
             d3.selectAll("[class=dot_selected_DFhighlighted]")
-            		.attr("class", "dot_clicked")
-                    .style("fill","#0040FF");     
+            		.attr("class", "dot_highlighted")
+                    .style("fill","#19BAD7");     
         });
     
     nodeEnter.append("svg:circle")
@@ -275,7 +197,7 @@ function update(source) {
             var out="";
 
             if(d.children){
-            	out += relabelDrivingFeatureName(d.name) + "?";
+            	out += ppdf(d.name) + "?";
             }else { // leafNode
             	if(d.num_b >= d.num_nb){
             		// classified as selected
@@ -415,13 +337,6 @@ function update(source) {
 
 // Toggle children.
 function toggle_tree(d) {
-	if(current_view==23){
-		view23_ready = view23_ready + 1;
-		if(view23_ready > 1){
-			view23_completed=true;
-			activate_right_arrow();
-		}
-	}
 
     if (d.children) {
       d._children = d.children;
@@ -433,151 +348,37 @@ function toggle_tree(d) {
 }
 
 
-function apply_filter_name(name, isFirst, condInput){
-	
-	var paren = name.indexOf("[");
-	
-	var type;
-	if (paren == -1){
-		type = name;
-	} else{
-		type = name.substring(0,paren);
-	}
-	
-    if(type=="present" || type=="absent" || type=="inOrbit" ||type=="notInOrbit"||type=="together2"||
-    		type=="togetherInOrbit2"||type=="separate2"||type=="together3"||type=="togetherInOrbit3"||
-    		type=="separate3"||type=="emptyOrbit"||type=="numOrbits" ||type=="numOfInstruments"){
-    	
-    	var type_modified;
-    	var filterInputs = [];
-    	if(type=="together2"||type=="together3"||type=="separate2"||type=="separate3"||
-    		type=="togetherInOrbit2"||type=="togetherInOrbit3"){
-    		type_modified = type.substring(0,type.length-1);
-    	}else{
-    		type_modified = type;
-    	}
-    	var arg = name.substring(name.indexOf("[")+1,name.indexOf("]"));
-            
-    	if(type_modified=="present" || type_modified=="absent" || type_modified=="emptyOrbit"
-    				|| type_modified=="numOrbits" || type_modified=="together" 
-    					|| type_modified=="separate"||type=="numOfInstruments"){
-    		
-    		filterInputs.push(arg);
-    		
-    	}else if(type_modified=="inOrbit" || type_modified=="notInOrbit" || 
-    											type_modified=="togetherInOrbit"){
-    		var first = arg.substring(0,arg.indexOf(","));
-    		var second = arg.substring(arg.indexOf(",")+1);
-    		filterInputs.push(first);
-    		filterInputs.push(second);
-    	} else{
-    		filterInputs.push(arg);
-    	}
-            
-    	if(isFirst==true){
-            d3.selectAll("[class=dot]")[0].forEach(function (d) {
-            	var bitString = d.__data__.archBitString;
-        		if (presetFilter2(type_modified,bitString,filterInputs,false)==condInput){
-        			d3.select(d).attr("class", "dot_DFhighlighted")
-        						.style("fill", "#F75082");
-    			}
-            });
-            d3.selectAll("[class=dot_clicked]")[0].forEach(function (d) {
-            	var bitString = d.__data__.archBitString;
-        		if (presetFilter2(type_modified,bitString,filterInputs,false)==condInput){
-        			d3.select(d).attr("class", "dot_selected_DFhighlighted")
-        						.style("fill", "#F75082");
-    			}
-            });
-    	}else{
-            d3.selectAll("[class=dot_DFhighlighted]")[0].forEach(function (d) {
-            	var bitString = d.__data__.archBitString;
-        		if (presetFilter2(type_modified,bitString,filterInputs,false) != condInput){
-        			d3.select(d).attr("class", "dot")
-                            .style("fill", function (d) {
-                                if (d.status == "added") {
-                                    return "#188836";
-                                } else if (d.status == "justAdded") {
-                                    return "#20FE5B";
-                                } else {
-                                    return "#000000";
-                                }
-                            });   
-    			}
-            });
-            d3.selectAll("[class=dot_selected_DFhighlighted]")[0].forEach(function (d) {
-            	var bitString = d.__data__.archBitString;
-        		if (presetFilter2(type_modified,bitString,filterInputs,false) != condInput){
-                   
-        			d3.select(d).attr("class", "dot_clicked")
-                    		.style("fill","#0040FF");     
-    			}
-            });
-    	}
-    }else{
-    		type_modified = type;
-        	if(first==true){
-                d3.selectAll("[class=dot]")[0].forEach(function (d) {
-                	var bitString = d.__data__.archBitString;
-            		if (applyUserDefFilterFromExpression(type_modified,bitString) == condInput){
-            			d3.select(d).attr("class", "dot_DFhighlighted")
-            						.style("fill", "#F75082");
-        			}
-                });
-                d3.selectAll("[class=dot_clicked]")[0].forEach(function (d) {
-                	var bitString = d.__data__.archBitString;
-            		if (applyUserDefFilterFromExpression(type_modified,bitString) == condInput){
-            			d3.select(d).attr("class", "dot_selected_DFhighlighted")
-            						.style("fill", "#F75082");
-        			}
-                });
-        	}else{
-                d3.selectAll("[class=dot_DFhighlighted]")[0].forEach(function (d) {
-                	var bitString = d.__data__.archBitString;
-            		if (applyUserDefFilterFromExpression(type_modified,bitString) != condInput){
-                        
-            			d3.select(d).attr("class", "dot")
-                                .style("fill", function (d) {
-                                    if (d.status == "added") {
-                                        return "#188836";
-                                    } else if (d.status == "justAdded") {
-                                        return "#20FE5B";
-                                    } else {
-                                        return "#000000";
-                                    }
-                                });   
-        			}
-                });
-                d3.selectAll("[class=dot_selected_DFhighlighted]")[0].forEach(function (d) {
-                	var bitString = d.__data__.archBitString;
-            		if (applyUserDefFilterFromExpression(type_modified,bitString) != condInput){
-                       
-            			d3.select(d).attr("class", "dot_clicked")
-                        		.style("fill","#0040FF");     
-        			}
-                });
-        	}
-    }
-}
+
+
+
 
 
 function tree_node_mouse_over(d){
 
 	if(d.children==null){
-		
 		if(d.depth==0){
 			return;
 		}
 		
+		// Remove remaining traces of actions from driving features tab
+		remove_df_application_status();		
+		
 		var condition = d.cond;
 		var currentNode = d.parent;
 		var name = currentNode.name;
+
+		var expression = "";
 		
+
 		for(var i=0;i<d.depth;i++){
-			if(i==0){
-				apply_filter_name(name, true, condition);
-			}else{
-				apply_filter_name(name, false, condition);
+			if(i>0){
+				expression = expression + "&&";
+			}
+			
+			if(condition){ // true
+				expression = expression + name;
+			}else{ // false
+				expression = expression + "{~" + name.substring(1,name.length);
 			}
 			if (currentNode.depth==0){
 				break;
@@ -586,7 +387,62 @@ function tree_node_mouse_over(d){
 			currentNode = currentNode.parent;
 			name = currentNode.name;
 		}
+		
+		console.log(expression);
+		
+
+		var ids = [];
+		var bitStrings = [];
+		var paretoRankings = [];
+		d3.selectAll('.dot')[0].forEach(function(d){
+			ids.push(d.__data__.id);
+			bitStrings.push(d.__data__.bitString);
+		    paretoRankings.push(parseInt(d3.select(d).attr("paretoRank")));
+		});  
+		d3.selectAll('.dot_highlighted')[0].forEach(function(d){
+			ids.push(d.__data__.id);
+			bitStrings.push(d.__data__.bitString);
+		    paretoRankings.push(parseInt(d3.select(d).attr("paretoRank")));
+		});  
+
+		var arch_info = {bitStrings:bitStrings,paretoRankings:paretoRankings};
+		var indices = [];
+		for(var i=0;i<ids.length;i++){
+			indices.push(i);
+		}
+		// Note that indices and ids are different!
+		var matchedIndices = processFilterExpression(expression, indices, "&&", arch_info);
+		var matchedIDs = [];
+		for(var i=0;i<matchedIndices.length;i++){
+			var index = matchedIndices[i];
+			matchedIDs.push(ids[index]);
+		}
+		
+		
+		var highlighted = 0;
+		d3.selectAll("[class=dot]")[0].forEach(function (d) {
+			if(matchedIDs.indexOf(d.__data__.id)>-1){
+				d3.select(d).attr("class", "dot_DFhighlighted")
+				.style("fill", "#F75082");
+				highlighted++;
+			}
+		});
+		d3.selectAll("[class=dot_highlighted]")[0].forEach(function (d) {
+			if(matchedIDs.indexOf(d.__data__.id)>-1){
+				d3.select(d).attr("class", "dot_selected_DFhighlighted")
+				.style("fill", "#F75082");
+				highlighted++;
+			}          
+		});
+		
+		//console.log(highlighted);
+		
 	}else{
 		return;
 	}
 }
+
+
+
+
+

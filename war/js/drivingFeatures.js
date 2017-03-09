@@ -11,15 +11,15 @@
 
 
 function runDataMining() {
-	
-	if(current_view==21){
-		view21_completed=true;
-		activate_right_arrow();
-	}
-	
 	document.getElementById('tab3').click();
     highlight_basic_info_box()
     
+    
+	// Remove remaining traces of previous actions from driving features tab
+	remove_df_application_status();
+	
+	
+	
 	if(selection_changed == false && sortedDFs != null){
 		display_drivingFeatures(sortedDFs,"lift");
 		if(testType=="3"){
@@ -28,7 +28,7 @@ function runDataMining() {
 		return;
 	}
 	
-    var selectedArchs = d3.selectAll("[class=dot_clicked]");
+    var selectedArchs = d3.selectAll("[class=dot_highlighted]");
     var nonSelectedArchs = d3.selectAll("[class=dot]");
     var numOfSelectedArchs = selectedArchs.size();
     var numOfNonSelectedArchs = nonSelectedArchs.size();
@@ -41,24 +41,27 @@ function runDataMining() {
         getDrivingFeatures_numOfArchs.push({numOfSelectedArchs,numOfNonSelectedArchs});
         getDrivingFeatures_thresholds.push({supp:support_threshold,lift:lift_threshold,conf:confidence_threshold});
         
-        
-        var selectedBitStrings = [];
-        var nonSelectedBitStrings = [];
-        selectedBitStrings.length = 0;
-        nonSelectedBitStrings.length=0;
+        var selected = [];
+        var non_selected = [];
+        selected.length = 0;
+        non_selected.length=0;
 
         for (var i = 0; i < numOfSelectedArchs; i++) {
-            var tmpBitString = booleanArray2String(selectedArchs[0][i].__data__.archBitString);
-            selectedBitStrings.push(tmpBitString);
+            var id = selectedArchs[0][i].__data__.id;
+            selected.push(id);
         }
         for (var i = 0; i < numOfNonSelectedArchs; i++) {
-            var tmpBitString = booleanArray2String(nonSelectedArchs[0][i].__data__.archBitString);
-            nonSelectedBitStrings.push(tmpBitString);
+            var id = nonSelectedArchs[0][i].__data__.id;
+            non_selected.push(id);
         }
 
-        sortedDFs = generateDrivingFeatures(selectedBitStrings,nonSelectedBitStrings,support_threshold,confidence_threshold,lift_threshold,userDefFilters,"lift");
+        sortedDFs = generateDrivingFeatures(selected,non_selected,support_threshold,confidence_threshold,lift_threshold,userdef_features,"lift");
         if(testType=="3"){
-            jsonObj_tree = buildClassificationTree();
+           jsonObj_tree = buildClassificationTree();
+        }
+        
+        if(sortedDFs.length==0){
+        	return;
         }
         
         display_drivingFeatures(sortedDFs,"lift");
@@ -73,25 +76,28 @@ function runDataMining() {
 
 
 
-
-
-
-
-
-function generateDrivingFeatures(selected,nonSelected,
+function generateDrivingFeatures(selected,non_selected,
 		support_threshold,confidence_threshold,lift_threshold,
-		userDefFilters,sortBy){
+		userdef_features,sortBy){
 	
 	var output;
     $.ajax({
-        url: "drivingFeatureServlet",
+        url: "IFEEDServlet",
         type: "POST",
-        data: {ID: "generateDrivingFeatures",selected: JSON.stringify(selected),nonSelected:JSON.stringify(nonSelected),
-        	supp:support_threshold,conf:confidence_threshold,lift:lift_threshold,
-        	userDefFilters:JSON.stringify(userDefFilters),sortBy:sortBy},
+        data: {ID: "get_driving_features",
+        	selected: JSON.stringify(selected),
+        	non_selected:JSON.stringify(non_selected),
+        	supp:support_threshold,
+        	conf:confidence_threshold,
+        	lift:lift_threshold,
+        	userDefFilters:JSON.stringify(userdef_features),
+        	sortBy:sortBy},
         async: false,
         success: function (data, textStatus, jqXHR)
         {
+        	if(data=="[]"){
+        		alert("No driving feature mined. Please try modifying the selection. (Try selecting more designs)");
+        	}
         	output = JSON.parse(data);
         },
         error: function (jqXHR, textStatus, errorThrown)
@@ -180,882 +186,6 @@ function sortDrivingFeatures(drivingFeatures,sortBy){
 
 
 
-function display_filterOption(){
-	
-	document.getElementById('tab2').click();
-
-    d3.select("[id=basicInfoBox_div]").select("[id=view2]").select("g").remove();
-
-    var archInfoBox = d3.select("[id=basicInfoBox_div]").select("[id=view2]").append("g");
-    archInfoBox.append("div")
-            .attr("id","filter_title")
-            .style("width","90%")
-            .style("margin-top","10px")
-            .style("margin-bottom","15px")
-            .style("margin-left","2px")
-            .style("float","left")
-            .append("p")
-            .text("Filter Setting")
-            .style("font-size", "18px");
-    var filterOptions = archInfoBox.append("div")
-            .attr("id","filter_options")
-            .style("width","100%")
-            .style("height","40px")
-            .style("float","left")
-            .style("margin-bottom","10px");
-
-    var filterDropdownMenu = d3.select("[id=filter_options]")
-            .append("select")
-            .attr("id","dropdown_presetFilters")
-            .style("width","200px")
-            .style("float","left")
-            .style("margin-left","2px")
-            .style("height","24px");
-
-    filterDropdownMenu.selectAll("option").remove();
-    filterDropdownMenu.selectAll("option")
-            .data(filterDropdownOptions)
-            .enter()
-            .append("option")
-            .attr("value",function(d){
-                return d.value;
-            })
-            .text(function(d){
-                return d.text;
-            });
-
-    d3.select("[id=filter_options]").append("button")
-            .attr("id","applyFilterButton_new")
-            .attr("class","filterOptionButtons")
-            .style("margin-left","6px")
-            .style("float","left")
-            .text("Apply new filter");
-    d3.select("[id=filter_options]").append("button")
-            .attr("class","filterOptionButtons")
-            .attr("id","applyFilterButton_add")
-            .style("margin-left","6px")
-            .style("float","left")
-            .text("Add to selection");
-    d3.select("[id=filter_options]").append("button")
-            .attr("id","applyFilterButton_within")
-            .attr("class","filterOptionButtons")
-            .style("margin-left","6px")
-            .style("float","left")
-            .text("Search within selection");
-//    d3.select("[id=filter_options]").append("button")
-//		    .attr("id","applyFilterButton_complement")
-//		    .attr("class","filterOptionButtons")
-//		    .style("margin-left","6px")
-//		    .style("float","left")
-//		    .text("Select complement");
-    d3.select("[id=filter_options]").append("button")
-            .attr("id","saveFilter")
-            .attr("class","filterOptionButtons")
-            .style("margin-left","6px")
-            .style("float","left")
-            .text("Save this filter")
-            .attr('disabled', true);
-
-    d3.select("[id=filter_options]").select("select").on("change",selectFilterOption);
-    d3.select("[id=applyFilterButton_add]").on("click",applyFilter_add);
-    d3.select("[id=applyFilterButton_new]").on("click",applyFilter_new);
-    d3.select("[id=applyFilterButton_within]").on("click",applyFilter_within);
-//    d3.select("[id=applyFilterButton_complement]").on("click",applyFilter_complement);
-    
-    highlight_basic_info_box()
-}
-
-
-
-function selectFilterOption(){
-
-    var archInfoBox = d3.select("[id=basicInfoBox_div]").select("[id=view2]").select("g");
-
-    archInfoBox.select("[id=filter_inputs]").remove();
-
-    var filterDropdownMenu = d3.select("[id=dropdown_presetFilters]");
-    var selectedOption = filterDropdownMenu[0][0].value;
-
-    var filterInput = archInfoBox.append("div")
-                .attr("id","filter_inputs");
-
-    if (selectedOption==="defineNewFilter"){
-
-        filterInput.append("div")
-                .attr("id","newFilterDesignOptions")
-                .text("Select preset filter to add: ");
-
-        filterInput.select("[id=newFilterDesignOptions]")
-                .append("select")
-                .attr("id","dropdown_newFilterOption")
-                .style("width","200px")
-//                                .style("float","left")
-                .style("margin-left","2px")
-                .style("height","24px");
-
-        var newFilterOptionDropdown = d3.select("[id=dropdown_newFilterOption]");
-
-        newFilterOptionDropdown.selectAll("option").remove();
-
-        var filterDropdownOptions_withoutUserDef = [];
-        for(var i=0;i<filterDropdownOptions.length;i++){
-            if(filterDropdownOptions[i].value!=="defineNewFilter"){
-                filterDropdownOptions_withoutUserDef.push(filterDropdownOptions[i]);
-            }
-        }
-
-        newFilterOptionDropdown.selectAll("option")
-                .data(filterDropdownOptions_withoutUserDef)
-                .enter()
-                .append("option")
-                .attr("value",function(d){
-                    return d.value;
-                })
-                .text(function(d){
-                    return d.text;
-                });
-
-        var filterDescription = filterInput.append("div")
-                    .attr("id","userDefinedFilter_name_div")
-                    .style("width","100%")
-                    .style("float","left")
-                    .style("margin-top","15px");
-        filterDescription.append("div")
-                .text("Filter name: ")
-                .style("float","left");
-        filterDescription.append("input")
-                    .attr("id","userDefinedFilter_name")
-                    .attr("type","text")
-                    .style("width","450px")
-                    .style("float","left")
-                    .style("margin-left","5px")
-                    .style("margin-right","10px");
-
-        var filterExpression = filterInput.append("div")
-                    .attr("id","filter_expression_div")
-                    .style("width","100%")
-                    .style("float","left")
-                    .style("margin-top","15px")
-                    .style("margin-bottom","5px");
-        filterExpression.append("div")
-                .text("Filter expression: ")
-                .style("float","left");
-        filterExpression.append("div")
-                    .attr("id","filter_expression");
-
-        userDefFilterExpressionHistory.length=0;
-        d3.select("[id=dropdown_newFilterOption]").on("change",selectNewFilterOption); 
-
-
-    } else if(selectedOption==="not_selected"){
-        
-    }else{
-        selectFilterOption_filterInput(selectedOption,false); 
-        d3.select("[id=saveFilter]").attr('disabled', true);
-    }
-
-}
-
-
-function selectFilterOption_filterInput(selectedOption,userDefOption){
-
-	
-        d3.select("[id=filter_inputs]")
-                .select("[id=filter_explanation]").remove();
-
-    var filterInput = d3.select("[id=filter_inputs]");
-    if(selectedOption=="not_selected"){
-    }
-    else if(selectedOption=="paretoFront"){
-
-        filterInput.append("div")
-                .attr("id","filter_input1")
-                .text("Input Pareto Ranking (Integer number between 0-15): ");
-
-        filterInput.select("[id=filter_input1]")
-                .append("input")
-                .attr("id","filter_input1_textBox")
-                .attr("type","text");
-    }
-    else if (selectedOption=="present"){
-        filterInputField_singleInstInput();
-        d3.select("[id=filter_inputs]")
-                .append("div")
-                .attr("id","filter_explanation")
-                .style("margin-top","15px")
-                .style("margin-left","10px")
-                .text("(Hint: Designs that have the specified instrument are selected)")
-                .style("color", "#696969");   
-        d3.select("[id=filter_inputs]")
-        .append("div")
-        .attr("id","filter_explanation_valid_inputs")
-        .style("margin-top","15px")
-        .style("margin-left","10px")
-        .style("color", "#696969")
-        .html('<p>Valid orbit names: 1000, 2000, 3000, 4000, 5000</p>'
-        		+'Valid instrument names: A, B, C, D, E, F, G, H, I, J, K, L');     
-    }
-    else if (selectedOption=="absent"){
-        filterInputField_singleInstInput();
-        d3.select("[id=filter_inputs]")
-                .append("div")
-                .attr("id","filter_explanation")
-                .style("margin-top","15px")
-                .style("margin-left","10px")
-                .text("(Hint: Designs that do not have the specified instrument are selected)")
-                .style("color", "#696969");   
-        d3.select("[id=filter_inputs]")
-        .append("div")
-        .attr("id","filter_explanation_valid_inputs")
-        .style("margin-top","15px")
-        .style("margin-left","10px")
-        .style("color", "#696969")
-        .html('<p>Valid orbit names: 1000, 2000, 3000, 4000, 5000</p>'
-        		+'Valid instrument names: A, B, C, D, E, F, G, H, I, J, K, L');     
-    }
-    else if (selectedOption=="inOrbit"){
-        filterInputField_orbitAndInstInput();
-        d3.select("[id=filter_inputs]")
-                .append("div")
-                .attr("id","filter_explanation")
-                .style("margin-top","15px")
-                .style("margin-left","10px")
-                .text("(Hint: Designs that have the specified instrument inside the chosen orbit are selected)")
-                .style("color", "#696969");   
-        d3.select("[id=filter_inputs]")
-        .append("div")
-        .attr("id","filter_explanation_valid_inputs")
-        .style("margin-top","15px")
-        .style("margin-left","10px")
-        .style("color", "#696969")
-        .html('<p>Valid orbit names: 1000, 2000, 3000, 4000, 5000</p>'
-        		+'Valid instrument names: A, B, C, D, E, F, G, H, I, J, K, L');     
-    }
-    else if (selectedOption=="notInOrbit"){
-        filterInputField_orbitAndInstInput();
-        d3.select("[id=filter_inputs]")
-                .append("div")
-                .attr("id","filter_explanation")
-                .style("margin-top","15px")
-                .style("margin-left","10px")
-                .text("(Hint: Designs that do not have the specified instrument inside the chosen orbit are selected)")
-                .style("color", "#696969");   
-        d3.select("[id=filter_inputs]")
-        .append("div")
-        .attr("id","filter_explanation_valid_inputs")
-        .style("margin-top","15px")
-        .style("margin-left","10px")
-        .style("color", "#696969")
-        .html('<p>Valid orbit names: 1000, 2000, 3000, 4000, 5000</p>'
-        		+'Valid instrument names: A, B, C, D, E, F, G, H, I, J, K, L');     
-    }
-    else if (selectedOption=="together"){
-        filterInputField_multipleInstInput();
-        d3.select("[id=filter_inputs]")
-                .append("div")
-                .attr("id","filter_explanation")
-                .style("margin-top","15px")
-                .style("margin-left","10px")
-                .text("(Hint: Designs that have the specified instruments in any one orbit are chosen)")
-                .style("color", "#696969");   
-        d3.select("[id=filter_inputs]")
-        .append("div")
-        .attr("id","filter_explanation_valid_inputs")
-        .style("margin-top","15px")
-        .style("margin-left","10px")
-        .style("color", "#696969")
-        .html('<p>Valid orbit names: 1000, 2000, 3000, 4000, 5000</p>'
-        		+'Valid instrument names: A, B, C, D, E, F, G, H, I, J, K, L');     
-    } 
-    else if (selectedOption=="togetherInOrbit"){
-        filterInputField_orbitAndMultipleInstInput();
-        d3.select("[id=filter_inputs]")
-                .append("div")
-                .attr("id","filter_explanation")
-                .style("margin-top","15px")
-                .style("margin-left","10px")
-                .text("(Hint: Designs that have the specified instruments in the specified orbit are chosen)")
-                .style("color", "#696969");   
-        d3.select("[id=filter_inputs]")
-        .append("div")
-        .attr("id","filter_explanation_valid_inputs")
-        .style("margin-top","15px")
-        .style("margin-left","10px")
-        .style("color", "#696969")
-        .html('<p>Valid orbit names: 1000, 2000, 3000, 4000, 5000</p>'
-        		+'Valid instrument names: A, B, C, D, E, F, G, H, I, J, K, L');     
-    } 
-    else if (selectedOption=="separate"){
-        filterInputField_multipleInstInput();
-        d3.select("[id=filter_inputs]")
-                .append("div")
-                .attr("id","filter_explanation")
-                .style("margin-top","15px")
-                .style("margin-left","10px")
-                .text("(Hint: Designs that do not have the specified instruments in the same orbit are chosen)")
-                .style("color", "#696969");   
-        d3.select("[id=filter_inputs]")
-        .append("div")
-        .attr("id","filter_explanation_valid_inputs")
-        .style("margin-top","15px")
-        .style("margin-left","10px")
-        .style("color", "#696969")
-        .html('<p>Valid orbit names: 1000, 2000, 3000, 4000, 5000</p>'
-        		+'Valid instrument names: A, B, C, D, E, F, G, H, I, J, K, L');     
-    } 
-    else if (selectedOption=="emptyOrbit"){
-        filterInputField_orbitInput();
-        d3.select("[id=filter_inputs]")
-                .append("div")
-                .attr("id","filter_explanation")
-                .style("margin-top","15px")
-                .style("margin-left","10px")
-                .text("(Hint: Designs that have no instrument inside the specified orbit are chosen)")
-                .style("color", "#696969");   
-        d3.select("[id=filter_inputs]")
-	        .append("div")
-	        .attr("id","filter_explanation_valid_inputs")
-	        .style("margin-top","15px")
-	        .style("margin-left","10px")
-	        .style("color", "#696969")
-	        .html('<p>Valid orbit names: 1000, 2000, 3000, 4000, 5000</p>'
-	        		+'Valid instrument names: A, B, C, D, E, F, G, H, I, J, K, L');         
-    } 
-    else if (selectedOption=="numOrbitUsed"){
-        filterInputField_numOrbitInput();
-        d3.select("[id=filter_inputs]")
-                .append("div")
-                .attr("id","filter_explanation")
-                .style("margin-top","15px")
-                .style("margin-left","10px")
-                .text("(Hint: Designs that have the specified number of non-empty orbits are chosen)")
-                .style("color", "#696969");  
-        d3.select("[id=filter_inputs]")
-		        .append("div")
-		        .attr("id","filter_explanation_valid_inputs")
-		        .style("margin-top","15px")
-		        .style("margin-left","10px")
-		        .style("color", "#696969")
-		        .html('<p>Valid orbit names: 1000, 2000, 3000, 4000, 5000</p>'
-		        		+'Valid instrument names: A, B, C, D, E, F, G, H, I, J, K, L');         
-    } 
-    else if (selectedOption=="numOfInstruments"){
-    	filterInputField_numOfInstruments();
-        d3.select("[id=filter_inputs]")
-                .append("div")
-                .attr("id","filter_explanation")
-                .style("margin-top","15px")
-                .style("margin-left","10px")
-                .text("(Hint: This highlights all the designs with the specified number of instruments. You can also specify the instrument name, and only those instruments will be counted.)")
-                .style("color", "#696969");  
-        d3.select("[id=filter_inputs]")
-		        .append("div")
-		        .attr("id","filter_explanation_valid_inputs")
-		        .style("margin-top","15px")
-		        .style("margin-left","10px")
-		        .style("color", "#696969")
-		        .html('<p>Valid orbit names: 1000, 2000, 3000, 4000, 5000</p>'
-		        		+'Valid instrument names: A, B, C, D, E, F, G, H, I, J, K, L');         
-    } 
-    else if(selectedOption=="subsetOfInstruments"){
-        filterInputField_subsetOfInstruments();
-        d3.select("[id=filter_inputs]")
-                .append("div")
-                .attr("id","filter_explanation")
-                .style("margin-top","15px")
-                .style("margin-left","10px")
-                .text("(Hint: The specified orbit should contain at least m number and at maximum M number of instruments from the specified instrument set. m is the first entry and M is the second entry in the second field)")
-                .style("color", "#696969");  
-        d3.select("[id=filter_inputs]")
-		        .append("div")
-		        .attr("id","filter_explanation_valid_inputs")
-		        .style("margin-top","15px")
-		        .style("margin-left","10px")
-		        .style("color", "#696969")
-		        .html('<p>Valid orbit names: 1000, 2000, 3000, 4000, 5000</p>'
-		        		+'Valid instrument names: A, B, C, D, E, F, G, H, I, J, K, L'); 
-    } else if(selectedOption=="defineNewFilter"){
-    	
-    } else{
-        
-    	if(!userDefOption){
-    		
-            var filterInput = d3.select("[id=filter_inputs]");
-
-            var filterExpression = filterInput.append("div")
-                        .attr("id","filter_expression_div")
-                        .style("width","100%")
-                        .style("float","left")
-                        .style("margin-top","15px")
-                        .style("margin-bottom","5px");
-            filterExpression.append("div")
-                    .text("Filter expression: ")
-                    .style("float","left");
-            filterExpression.append("div")
-                        .attr("id","filter_expression");
-    		
-            var expression;
-            for(var i=0;i<userDefFilters.length;i++){
-                if(userDefFilters[i].name===selectedOption){
-                    expression = userDefFilters[i].expression;
-                }
-            }
-
-            d3.select("[id=filter_expression]")
-                    .style("height","120px")
-                    .text(expression);
-    	}
-
-    }    
-}
-
-function filterInputField_singleInstInput(){
-    var filterInput = d3.select("[id=filter_inputs]");
-        filterInput.append("div")
-                .attr("id","filter_input1")
-                .text("Input single instrument name: ");
-        filterInput.select("[id=filter_input1]")
-                .append("input")
-                .attr("id","filter_input1_textBox")  
-                .attr("type","text");
-}
-function filterInputField_orbitInput(){
-    var filterInput = d3.select("[id=filter_inputs]");
-
-        filterInput.append("div")
-                .attr("id","filter_input1")
-                .text("Input orbit name");
-
-        filterInput.select("[id=filter_input1]")
-                .append("input")
-                .attr("id","filter_input1_textBox")
-                .attr("type","text");
-}
-function filterInputField_orbitAndInstInput(){
-    var filterInput = d3.select("[id=filter_inputs]");
-
-        filterInput.append("div")
-                .attr("id","filter_input1")
-                .text("Input orbit name: ");
-
-        filterInput.select("[id=filter_input1]")
-                .append("input")
-                .attr("id","filter_input1_textBox")
-                .attr("type","text");
-
-        filterInput.append("div")
-                .attr("id","filter_input2")
-                .text("Input single instrument name: ");
-
-        filterInput.select("[id=filter_input2]")
-                .append("input")
-                .attr("id","filter_input2_textBox")
-                .attr("type","text")
-                .style("width","300px")
-                .style("margin-left","5px")
-                .style("margin-right","10px")
-                .style("margin-bottem","5px");
-}
-function filterInputField_multipleInstInput(){
-        var filterInput = d3.select("[id=filter_inputs]");
-        filterInput.append("div")
-                .attr("id","filter_input1")
-                .text("Input instrument names (2 or 3) separated by comma:");
-
-        filterInput.select("[id=filter_input1]")
-                .append("input")
-                .attr("id","filter_input1_textBox")
-                .attr("type","text");
-}
-function filterInputField_orbitAndMultipleInstInput(){
-        var filterInput = d3.select("[id=filter_inputs]");
-        filterInput.append("div")
-                .attr("id","filter_input1")
-                .text("Input orbit name: ");
-
-        filterInput.select("[id=filter_input1]")
-                .append("input")
-                .attr("id","filter_input1_textBox")
-                .attr("type","text");
-
-        filterInput.append("div")
-                .attr("id","filter_input2")
-                .text("Input instrument names (2 or 3) separated by comma: ");
-
-        filterInput.select("[id=filter_input2]")
-                .append("input")
-                .attr("id","filter_input2_textBox")
-                .attr("type","text")
-                .style("width","300px")
-                .style("margin-left","5px")
-                .style("margin-right","10px")
-                .style("margin-bottem","5px");
-}
-function filterInputField_numOrbitInput(){
-        var filterInput = d3.select("[id=filter_inputs]");
-
-        filterInput.append("div")
-                .attr("id","filter_input1")
-                .text("Input number of orbits");
-
-        filterInput.select("[id=filter_input1]")
-                .append("input")
-                .attr("id","filter_input1_textBox")
-                .attr("type","text");
-}
-function filterInputField_numOfInstruments(){
-    var filterInput = d3.select("[id=filter_inputs]");
-    filterInput.append("div")
-            .attr("id","filter_input1")
-            .text("Input instrument name (Could be N/A): ");
-
-    filterInput.select("[id=filter_input1]")
-            .append("input")
-            .attr("id","filter_input1_textBox")
-            .attr("type","text");
-    
-    d3.select("#filter_input1_textBox").attr("value","N/A");
-
-    filterInput.append("div")
-            .attr("id","filter_input2")
-	    .text("Input a number of instrument used (should be greater than or equal to 0): ");
-
-    filterInput.select("[id=filter_input2]")
-            .append("input")
-            .attr("id","filter_input2_textBox")
-            .attr("type","text")
-            .style("width","300px")
-            .style("margin-left","5px")
-            .style("margin-right","10px")
-            .style("margin-bottem","5px");
-}
-function filterInputField_subsetOfInstruments(){
-        var filterInput = d3.select("[id=filter_inputs]");
-        filterInput.append("div")
-                .attr("id","filter_input1")
-                .text("Input orbit name: ");
-
-        filterInput.select("[id=filter_input1]")
-                .append("input")
-                .attr("id","filter_input1_textBox")
-                .attr("type","text");
-
-        filterInput.append("div")
-                .attr("id","filter_input2")
-                .text("Input the min and the max (optional) number of instruments in the subset, separated by comma: ")
-                ;
-
-        filterInput.select("[id=filter_input2]")
-                .append("input")
-                .attr("id","filter_input2_textBox")
-                .attr("type","text")
-                .style("width","100px")
-                .style("margin-left","5px")
-                .style("margin-right","10px")
-                .style("margin-bottem","5px");
-
-        filterInput.append("div")
-                .attr("id","filter_input3")
-                .text("Input a set of instrument names, separated by comma: ");
-
-        filterInput.select("[id=filter_input3]")
-                .append("input")
-                .attr("id","filter_input3_textBox")
-                .attr("type","text")
-                .style("width","300px")
-                .style("margin-left","5px")
-                .style("margin-right","10px")
-                .style("margin-bottem","5px");
-}
-
-
-
-function applyFilter_new(){
-	
-    buttonClickCount_applyFilter += 1;
-
-    cancelDotSelections();
-    var wrong_arg = false;
-    var filterType = d3.select("[id=dropdown_presetFilters]")[0][0].value;
-    var neg = false;
-    
-	if(current_view==15 && filterType == "paretoFront"){
-		view15_completed=true;
-		activate_right_arrow();
-	}
-	else if(current_view==16 && filterType == "present"){
-		view16_completed = true;
-		activate_right_arrow();
-	}
-	else if(current_view==17 && filterType =="inOrbit"){
-		view17_completed = true;
-		activate_right_arrow();
-	}
-	else if(current_view==19 && filterType == "defineNewFilter"){
-		view19_completed = true;
-		activate_right_arrow();
-	}
-	
-    
-    if (filterType == "paretoFront"){
-        var filterInput = d3.select("[id=filter_input1_textBox]")[0][0].value;
-        var unClickedArchs = d3.selectAll("[class=dot]")[0].forEach(function (d) {
-        	var rank = parseInt(d3.select(d).attr("paretoRank"));
-            if (rank <= +filterInput && rank >= 0){
-                d3.select(d).attr("class", "dot_clicked")
-                            .style("fill", "#0040FF");
-            }
-        });
-
-    }
-    else if (filterType == "present" || filterType == "absent" || filterType == "inOrbit" || filterType == "notInOrbit" || filterType == "together" || filterType == "togetherInOrbit" || filterType == "separate" || 
-            filterType == "emptyOrbit" || filterType=="numOrbitUsed" || filterType=="subsetOfInstruments"||
-            filterType=="numOfInstruments"){
-
-        var filterInputs = [];
-        if(d3.select("[id=filter_input1_textBox]")[0][0]!==null){
-            filterInputs.push(d3.select("[id=filter_input1_textBox]")[0][0].value);
-        }
-        if(d3.select("[id=filter_input2_textBox]")[0][0]!==null){
-            filterInputs.push(d3.select("[id=filter_input2_textBox]")[0][0].value);
-        }
-        if(d3.select("[id=filter_input3_textBox]")[0][0]!==null){
-            filterInputs.push(d3.select("[id=filter_input3_textBox]")[0][0].value);
-        }
-
-        var unClickedArchs = d3.selectAll("[class=dot]")[0].forEach(function (d) {
-            var bitString = d.__data__.archBitString;
-            var temp = presetFilter2(filterType,bitString,filterInputs,neg);
-            if(temp==null){
-            	wrong_arg = true;
-            	return;
-            }
-            else if (temp){
-                d3.select(d).attr("class", "dot_clicked")
-                            .style("fill", "#0040FF");
-            }
-        });
-    } else if(filterType == "defineNewFilter" || (filterType =="not_selected" && userDefFilters.length !== 0)){
-        var filterExpression = d3.select("[id=filter_expression]").text();
-        tmpCnt =0;
-
-        d3.selectAll("[class=dot]")[0].forEach(function(d){
-        	
-            var bitString = d.__data__.archBitString;
-            if(applyUserDefFilterFromExpression(filterExpression,bitString)){
-                d3.select(d).attr("class", "dot_clicked")
-                            .style("fill", "#0040FF");
-            }
-        });
-
-        d3.select("[id=saveFilter]").attr('disabled', null)
-                                    .on("click",saveNewFilter);
-    }
-    else{
-        for(var k=0 ; k < userDefFilters.length; k++){
-           if(userDefFilters[k].name == filterType){
-                var filterExpression = userDefFilters[k].expression;
-                d3.selectAll("[class=dot]")[0].forEach(function(d){
-                    var bitString = d.__data__.archBitString;
-                    if(applyUserDefFilterFromExpression(filterExpression,bitString)){
-                        d3.select(d).attr("class", "dot_clicked")
-                                    .style("fill", "#0040FF");
-                    }
-                }); 
-           } 
-        }
-    }
-    if(wrong_arg){
-    	alert("Invalid input argument");
-    }
-    d3.select("[id=numOfSelectedArchs_inputBox]").attr("value",numOfSelectedArchs());  
-}
-
-function applyFilter_within(){
-	
-	if(current_view==18){
-		if(view18_ready < 1){
-			view18_ready = view18_ready +1;
-		}else{
-			view18_completed=true;
-			activate_right_arrow();
-		}
-	}
-	
-	
-    buttonClickCount_applyFilter += 1;
-    var wrong_arg = false;
-    var filterType = d3.select("[id=dropdown_presetFilters]")[0][0].value;
-    var neg = false;
-
-    if (filterType == "paretoFront"){
-        var filterInput = d3.select("[id=filter_input1_textBox]")[0][0].value;
-        var clickedArchs = d3.selectAll("[class=dot_clicked]")[0].forEach(function (d) {
-
-        	var rank = parseInt(d3.select(d).attr("paretoRank"));
-            if (rank <= +filterInput && rank >= 0){
-            }else {
-                d3.select(d).attr("class", "dot")
-                            .style("fill", function (d) {
-                                if (d.status == "added") {
-                                    return "#188836";
-                                } else if (d.status == "justAdded") {
-                                    return "#20FE5B";
-                                } else {
-                                    return "#000000";
-                                }
-                            });
-            }
-        });
-
-    }
-    else if (filterType == "present" || filterType == "absent" || filterType == "inOrbit" || filterType == "notInOrbit" || 
-            filterType == "together" || filterType == "togetherInOrbit" || filterType == "separate" || 
-            filterType == "emptyOrbit" || filterType=="numOrbitUsed" || filterType=="subsetOfInstruments"||
-            filterType=="numOfInstruments"){
-
-
-        var filterInputs = [];
-        if(d3.select("[id=filter_input1_textBox]")[0][0]!==null){
-            filterInputs.push(d3.select("[id=filter_input1_textBox]")[0][0].value);
-        }
-        if(d3.select("[id=filter_input2_textBox]")[0][0]!==null){
-            filterInputs.push(d3.select("[id=filter_input2_textBox]")[0][0].value);
-        }
-        if(d3.select("[id=filter_input3_textBox]")[0][0]!==null){
-            filterInputs.push(d3.select("[id=filter_input3_textBox]")[0][0].value);
-        }
-
-
-        var clickedArchs = d3.selectAll("[class=dot_clicked]")[0].forEach(function (d) {
-//                            var bitString = booleanArray2String(d.__data__.archBitString)
-
-            var bitString = d.__data__.archBitString;
-            var temp = presetFilter2(filterType,bitString,filterInputs,neg);
-            if(temp==null){
-            	wrong_arg = true;
-            	return;
-            } else if(temp){
-            } else {
-                d3.select(d).attr("class", "dot")
-                            .style("fill", function (d) {
-                                if (d.status == "added") {
-                                    return "#188836";
-                                } else if (d.status == "justAdded") {
-                                    return "#20FE5B";
-                                } else {
-                                    return "#000000";
-                                }
-                            });
-            }
-
-
-        });
-    }
-    else{
-        for(var k=0 ; k < userDefFilters.length; k++){
-           if(userDefFilters[k].name == filterType){
-                var filterExpression = userDefFilters[k].expression;
-                d3.selectAll("[class=dot_clicked]")[0].forEach(function(d){
-                    var bitString = d.__data__.archBitString;
-                    if(applyUserDefFilterFromExpression(filterExpression,bitString)){
-                        d3.select(d).attr("class", "dot_clicked")
-                                    .style("fill", "#0040FF");
-                    }
-                }); 
-           } 
-        }
-    }
-    if(wrong_arg){
-    	alert("Invalid input argument");
-    }
-    d3.select("[id=numOfSelectedArchs_inputBox]").attr("value",numOfSelectedArchs());  
-}
-
-
-function applyFilter_add(){
-	
-	if(current_view==18){
-		if(view18_ready < 1){
-			view18_ready = view18_ready +1;
-		}else{
-			view18_completed=true;
-			activate_right_arrow();
-		}
-	}
-	
-	
-	
-    buttonClickCount_applyFilter += 1;
-    var wrong_arg = false;
-    var filterType = d3.select("[id=dropdown_presetFilters]")[0][0].value;
-    var neg = false;
-    
-    if (filterType == "paretoFront"){
-        var filterInput = d3.select("[id=filter_input1_textBox]")[0][0].value;
-        var unClickedArchs = d3.selectAll("[class=dot]")[0].forEach(function (d) {
-        	var rank = parseInt(d3.select(d).attr("paretoRank"));
-            if (rank <= +filterInput && rank >= 0){
-            	d3.select(d).attr("class", "dot_clicked")
-                            .style("fill", "#0040FF");
-            }
-        });
-
-    }
-    else if (filterType == "present" || filterType == "absent" || filterType == "inOrbit" || filterType == "notInOrbit" || 
-            filterType == "together" || filterType == "togetherInOrbit" || filterType == "separate" || 
-            filterType == "emptyOrbit" || filterType=="numOrbitUsed" || filterType =="subsetOfInstruments"||
-            filterType=="numOfInstruments"){
-
-
-        var filterInputs = [];
-        if(d3.select("[id=filter_input1_textBox]")[0][0]!==null){
-            filterInputs.push(d3.select("[id=filter_input1_textBox]")[0][0].value);
-        }
-        if(d3.select("[id=filter_input2_textBox]")[0][0]!==null){
-            filterInputs.push(d3.select("[id=filter_input2_textBox]")[0][0].value);
-        }
-        if(d3.select("[id=filter_input3_textBox]")[0][0]!==null){
-            filterInputs.push(d3.select("[id=filter_input3_textBox]")[0][0].value);
-        }
-
-        var unClickedArchs = d3.selectAll("[class=dot]")[0].forEach(function (d) {
-//                            var bitString = booleanArray2String(d.__data__.archBitString)
-            var bitString = d.__data__.archBitString;
-            var temp = presetFilter2(filterType,bitString,filterInputs,neg);
-            if(temp==null){
-            	wrong_arg = true;
-            	return;
-            }
-            else if (temp){
-                d3.select(d).attr("class", "dot_clicked")
-                            .style("fill", "#0040FF");
-            }
-        });
-    }
-    else{
-        for(var k=0 ; k < userDefFilters.length; k++){
-           if(userDefFilters[k].name == filterType){
-                var filterExpression = userDefFilters[k].expression;
-                d3.selectAll("[class=dot]")[0].forEach(function(d){
-                    var bitString = d.__data__.archBitString;
-                    if(applyUserDefFilterFromExpression(filterExpression,bitString)){
-                        d3.select(d).attr("class", "dot_clicked")
-                                    .style("fill", "#0040FF");
-                    }
-                }); 
-           } 
-        }
-    }
-    if(wrong_arg){
-    	alert("Invalid input argument");
-    }
-    d3.select("[id=numOfSelectedArchs_inputBox]").attr("value",numOfSelectedArchs());  
-}
-
-
-
-
 
 
 
@@ -1072,13 +202,14 @@ function display_drivingFeatures(source,sortby) {
 
     var size = source.length;
     var drivingFeatures = [];
-    var drivingFeatureNames = [];
     var drivingFeatureTypes = [];
     i_drivingFeatures=0;
     var lifts=[];
     var supps=[];
     var conf1s=[];
     var conf2s=[];
+    
+    selected_features = [];
 
     for (var i=0;i<size;i++){
         lifts.push(source[i].metrics[1]);
@@ -1087,28 +218,64 @@ function display_drivingFeatures(source,sortby) {
         conf2s.push(source[i].metrics[3]);
         drivingFeatures.push(source[i]);
         if(source[i].preset===true){
-            drivingFeatureNames.push(source[i].name);
-            drivingFeatureTypes.push(source[i].type);
-        } else{
-            drivingFeatureNames.push(source[i].type);
             drivingFeatureTypes.push(source[i].name);
         }
     }
 
-//                    InOrbit [orbit,inst1,inst2];
 
     var margin_df = {top: 20, right: 20, bottom: 10, left:65},
     width_df = 800 - 35 - margin_df.left - margin_df.right,
     height_df = 430 - 20 - margin_df.top - margin_df.bottom;
 
-//    xScale_df = d3.scale.ordinal()
-//            .rangeBands([0, width_df]);
     xScale_df = d3.scale.linear()
             .range([0, width_df]);
     yScale_df = d3.scale.linear().range([height_df, 0]);
     xScale_df.domain([0,drivingFeatures.length-1]);
     
     
+    
+    d3.select("[id=basicInfoBox_div]").select("[id=view3]").select("g").remove();
+    
+    var infoBox = d3.select("[id=basicInfoBox_div]").select("[id=view3]")
+            .append("g")
+
+	var application_status = infoBox.append('div')
+		.attr('id','df_application_status');
+    
+	infoBox.append('div')
+		.attr('id','df_options');
+	
+	infoBox.append("div")
+		.attr('id','df_bar_chart')
+		.style("width", width_df + margin_df.left + margin_df.right)
+		.style("height", height_df + margin_df.top + margin_df.bottom);
+	infoBox.append("div")
+		.attr("id","df_venn_diagram")
+		.append('div')
+		.text('Total number of designs: ' + numOfArchs());
+    
+	
+	d3.select('#df_options')
+		.append('button')
+		.attr('id','df_save_feature')
+		.attr('class','df_options_button')
+		.text('Save current feature')
+		.on('click',save_selected_driving_features)
+	d3.select('#df_options')
+		.append('button')
+		.attr('id','df_cancel_selection')
+		.attr('class','df_options_button')
+		.text('Cancel current selection')
+		.on('click',remove_df_application_status);
+	d3.select('#df_options')
+		.append('button')
+		.attr('id','df_reset')
+		.attr('class','df_options_button')
+		.text('Reset data mining')
+		.on('click',initialize_tabs_driving_features)
+    d3.select('#df_save_feature')[0][0].disabled= true;
+    d3.select('#df_cancel_selection')[0][0].disabled=true;
+	
     var minval;
     if(sortby==="lift"){
         minval = d3.min(lifts);
@@ -1137,22 +304,18 @@ function display_drivingFeatures(source,sortby) {
             .scale(yScale_df)
             .orient("left");
 
-    d3.select("[id=basicInfoBox_div]").select("[id=view3]").select("g").remove();
-    var infoBox = d3.select("[id=basicInfoBox_div]").select("[id=view3]")
-            .append("g");
-
-    var svg_df = infoBox.append("svg")
-    		.style("float","left")
+    var svg_df = d3.select('#df_bar_chart')
+    		.append("svg")
+    		.attr('id','df_svg')
             .attr("width", width_df + margin_df.left + margin_df.right)
             .attr("height", height_df + margin_df.top + margin_df.bottom)
                 .call(
                     d3.behavior.zoom()
                     .x(xScale_df)
-                    .scaleExtent([1, 10])
+                    .scaleExtent([1, 20])
                     .on("zoom", function (d) {
 
-                        var svg = d3.select("[id=basicInfoBox_div]").select("[id=view3]")
-                                .select("svg");
+                        var svg = d3.select('#df_bar_chart').select("svg");
                         var scale = d3.event.scale;
 
                         svg.select(".x.axis").call(xAxis_df);
@@ -1172,29 +335,9 @@ function display_drivingFeatures(source,sortby) {
 
     
     
+
     
-    
-    var df_explanation_box = infoBox.append("div")
-		.attr("id","df_explanation_box")
-		.style("float","left")
-		.style("background-color","#E7E7E7")
-	    .style('height','350px')
-	    .style('margin-top','15px')
-	    .style('padding','15px')
-	    .style('width','320px');
-    
-    df_explanation_box.append('div')
-		.style("font-family","sans-serif")
-		.style('margin-left','10px')
-		.style("font-size","18px")
-    	.style('width','100%')
-    	.text('Total number of designs: ' + numOfArchs());
-    
-    df_explanation_box.append("svg")
-		.style('width','320px')  			
-		.style('height','305px')
-		.style('margin-top','10px')
-		.style('margin-bottom','10px'); 
+
     
 
 ////////////////////////////////////////////////////////
@@ -1237,7 +380,8 @@ function display_drivingFeatures(source,sortby) {
     var objects = svg_df.append("svg")
             .attr("class","dfbars_svg")
             .attr("width",width_df)
-            .attr("height",height_df);
+            .attr("height",height_df)
+            .style('margin-bottom','30px');
 
     //Create main 0,0 axis lines:
     objects.append("svg:line")
@@ -1301,18 +445,54 @@ function display_drivingFeatures(source,sortby) {
     dfbar_width = d3.select("[class=bar]").attr("width");
 
     var bars = d3.selectAll("[class=bar]")
-   
+            .on("click",function(d){
+                var id = d.id;
+                var expression = d.expression;
+                //console.log(id);
+                var was_selected = false;
+                for(var i=0;i<selected_features.length;i++){
+                    if(selected_features[i]===id){
+                    	selected_features.splice(i,1);
+                    	selected_features_expressions.splice(i,1);
+                        was_selected = true;
+                    }
+                }
+                if(was_selected){
+                    d3.selectAll("[class=bar]").filter(function(d){
+                        if(d.id===id){
+                            return true;
+                        }else{
+                            return false;
+                        }
+                    }).style("stroke-width",0);
+                    remove_df_application_status(expression);
+                }else{
+                    d3.selectAll("[class=bar]").filter(function(d){
+                        if(d.id===id){
+                            return true;
+                        }else{
+                            return false;
+                        }
+                    }).style("stroke-width",3); 
+                    selected_features.push(id);
+                    selected_features_expressions.push(expression);
+                    update_df_application_status(expression);
+                    console.log(id+": " + expression);
+                }
+                
+            })
+
                 .on("mouseover",function(d){
 
                 	numOfDrivingFeatureViewed = numOfDrivingFeatureViewed+1;
                 	
-                    var mouseLoc_x = d3.mouse(d3.select("[id=basicInfoBox_div]").select("[id=view3]").select("[class=dfbars_svg]")[0][0])[0];
-                    var mouseLoc_y = d3.mouse(d3.select("[id=basicInfoBox_div]").select("[id=view3]").select("[class=dfbars_svg]")[0][0])[1];
+                    var mouseLoc_x = d3.mouse(d3.select("[class=dfbars_svg]")[0][0])[0];
+                    var mouseLoc_y = d3.mouse(d3.select("[class=dfbars_svg]")[0][0])[1];
                     var featureInfoLoc = {x:0,y:0};
                     var h_threshold = (width_df + margin_df.left + margin_df.right)*0.5;
                     var v_threshold = (height_df + margin_df.top + margin_df.bottom)*0.55;
-                    var tooltip_width = 350;
-                    var tooltip_height = 170;
+                    var tooltip_width = 360;
+                    var tooltip_height = 210;
                     if(mouseLoc_x >= h_threshold){
                         featureInfoLoc.x = -10 - tooltip_width;
                     } else{
@@ -1323,7 +503,7 @@ function display_drivingFeatures(source,sortby) {
                     } else{
                         featureInfoLoc.y = -10 -tooltip_height;
                     }
-                    var svg_tmp = d3.select("[id=basicInfoBox_div]").select("[id=view3]").select("[class=dfbars_svg]");
+                    var svg_tmp = d3.select("[class=dfbars_svg]");
                     var featureInfoBox = svg_tmp.append("g")
                                                 .attr("id","featureInfo_tooltip")
                                                 .append("rect")
@@ -1332,14 +512,16 @@ function display_drivingFeatures(source,sortby) {
                                                     var x = mouseLoc_x + featureInfoLoc.x;
                                                     var y = mouseLoc_y + featureInfoLoc.y;
                                                     return "translate(" + x + "," + y + ")";
-                                                })
+                                                 })
                                                 .attr("width",tooltip_width)
                                                 .attr("height",tooltip_height)
                                                 .style("fill","#4B4B4B")
                                                 .style("opacity", 0.92);
-                    var tmp= d.id;
-                    var name = relabelDrivingFeatureName(d.name);
-                    var type = d.type;
+                    
+                    var tmp= d.id; 
+                    //console.log(tmp);
+                    var name = d.name;
+                    var expression = d.expression;
                     var lift = d.metrics[1];
                     var supp = d.metrics[0];
                     var conf = d.metrics[2];
@@ -1352,81 +534,11 @@ function display_drivingFeatures(source,sortby) {
                             return false;
                         }
                     }).style("stroke-width",1.5)
-                            .style("stroke","black");
+                        .style("stroke","black");
 
-                    
-                    if(type=="present" || type=="absent" || type=="inOrbit" ||type=="notInOrbit"||type=="together2"||
-                    		type=="togetherInOrbit2"||type=="separate2"||type=="together3"||type=="togetherInOrbit3"||
-                    		type=="separate3"||type=="emptyOrbit"||type=="numOrbits" || type=="numOfInstruments"){
-                    	
-                    	var type_modified;
-                    	var filterInputs = [];
-                    	
-                    	if(type=="together2"||type=="together3"||type=="separate2"||type=="separate3"||
-                    		type=="togetherInOrbit2"||type=="togetherInOrbit3"){
-                    		type_modified = type.substring(0,type.length-1);
-                    	}else{
-                    		type_modified = type;
-                    	}
-                    	
-                    	var arg = name.substring(name.indexOf("[")+1,name.indexOf("]"));
-                            
-                        	
-                    	if(type_modified=="present" || type_modified=="absent" || type_modified=="emptyOrbit"
-                    				|| type_modified=="numOrbits" || type_modified=="together" 
-                    					|| type_modified=="separate" || type_modified=="numOfInstruments"){
-                    		filterInputs.push(arg);
-                    	}else if(type_modified=="inOrbit" || type_modified=="notInOrbit" || 
-                    											type_modified=="togetherInOrbit"){
-                    		var first = arg.substring(0,arg.indexOf(","));
-                    		var second = arg.substring(arg.indexOf(",")+1);
-                    		filterInputs.push(first);
-                    		filterInputs.push(second);
-                    	} else{
-                    		filterInputs.push(arg);
-                    	}
-                            
-                        d3.selectAll("[class=dot]")[0].forEach(function (d) {
-                        	var bitString = d.__data__.archBitString;
-                            var temp = presetFilter2(type_modified,bitString,filterInputs,false);
-                            if(temp==null){
-                            	return;
-                            }
-                            else if (temp){
-                    			d3.select(d).attr("class", "dot_DFhighlighted")
-                    						.style("fill", "#F75082");
-                			}
-                        });
-                        d3.selectAll("[class=dot_clicked]")[0].forEach(function (d) {
-                        	var bitString = d.__data__.archBitString;
-                            var temp = presetFilter2(type_modified,bitString,filterInputs,false);
-                            if(temp==null){
-                            	return;
-                            }
-                            else if (temp){
-                    			d3.select(d).attr("class", "dot_selected_DFhighlighted")
-                    						.style("fill", "#F75082");
-                			}
-                        });
-
-                    }else{
-                    		type_modified = type;
-                            d3.selectAll("[class=dot]")[0].forEach(function (d) {
-                            	var bitString = d.__data__.archBitString;
-                        		if (applyUserDefFilterFromExpression(type_modified,bitString)){
-                        			d3.select(d).attr("class", "dot_DFhighlighted")
-                        						.style("fill", "#F75082");
-                    			}
-                            });
-                            d3.selectAll("[class=dot_clicked]")[0].forEach(function (d) {
-                            	var bitString = d.__data__.archBitString;
-                        		if (applyUserDefFilterFromExpression(type_modified,bitString)){
-                        			d3.select(d).attr("class", "dot_selected_DFhighlighted")
-                        						.style("fill", "#F75082");
-                    			}
-                            });
-                    }
-                    
+                 // Preset filter: {presetName[orbits;instruments;numbers]}   
+           
+                    highlight_dots_with_feature(expression);
 
                     
                     var fo = d3.select("[id=basicInfoBox_div]").select("[id=view3]").select("[class=dfbars_svg]")
@@ -1449,7 +561,7 @@ function display_drivingFeatures(source,sortby) {
                                                 'class': 'fo_tooltip'
                                             });
                     var textdiv = fo_div.selectAll("div")
-                            .data([{name:name,supp:supp,conf:conf,conf2:conf2,lift:lift}])
+                            .data([{name:name,expression:expression,supp:supp,conf:conf,conf2:conf2,lift:lift}])
                             .enter()
                             .append("div")
                             .style("padding","15px");
@@ -1458,18 +570,22 @@ function display_drivingFeatures(source,sortby) {
                           
 //                    
                     textdiv.html(function(d){
-                        var output= "" + d.name + "<br><br> The % of designs in the intersection out of all designs: " + round_num_2_perc(d.supp) + 
+                        var output= "" + ppdf(d.expression) + "<br><br> The % of designs in the intersection out of all designs: " + round_num_2_perc(d.supp) + 
                         "% <br> The % of selected designs among designs with the feature: " + round_num_2_perc(d.conf) + 
                         "%<br> The % of designs with the feature among selected designs: " + round_num_2_perc(d.conf2) +"%";
                         return output;
-                    }).style("color", "#F7FF55");                         
+                    }).style("color", "#F7FF55")
+                    .style('word-wrap','break-word');                         
 
-                    draw_venn_diagram(df_explanation_box,supp,conf,conf2);
+                    var venn_diagram_container = d3.select('#df_venn_diagram').select('div');
+                    draw_venn_diagram(venn_diagram_container,supp,conf,conf2);
 
                 })
                 .on("mouseout",function(d){
                     d3.select("[id=basicInfoBox_div]").select("[id=view3]").selectAll("[id=featureInfo_tooltip]").remove();
                     d3.select("[id=basicInfoBox_div]").select("[id=view3]").selectAll("[id=foreignObject_tooltip]").remove();
+                    
+                    
                     var tmp= d.id;
                     d3.selectAll("[class=bar]").filter(function(d){
                            if(d.id===tmp){
@@ -1477,32 +593,15 @@ function display_drivingFeatures(source,sortby) {
                            }else{
                                return false;
                            }
-                       }).style("stroke-width",0)
-                               .style("stroke","black");
-                    
-                    var highlighted = d3.selectAll("[class=dot_DFhighlighted]");
-                    highlighted.attr("class", "dot")
-                            .style("fill", function (d) {
-                                if (d.status == "added") {
-                                    return "#188836";
-                                } else if (d.status == "justAdded") {
-                                    return "#20FE5B";
-                                } else {
-                                    return "#000000";
-                                }
-                            });     
-                    d3.selectAll("[class=dot_selected_DFhighlighted]")
-                    		.attr("class", "dot_clicked")
-                            .style("fill","#0040FF");    
-                    
-                    
-                    if(current_view==22){
-                    	view22_ready = view22_ready+1;
-                    	if(view22_ready > 2){
-                    		view22_completed=true;
-                    		activate_right_arrow();
-                    	}
-                    }
+                       }).style("stroke-width",function(d){
+                    	   if(selected_features.indexOf(d.id)==-1){
+                    		   return 0;
+                    	   }else{
+                    		   return 3;
+                    	   }
+                       });                    
+                    highlight_dots_with_feature();
+
                 });
 
 
@@ -1551,308 +650,14 @@ function dfsort(){
 }
                 
 
-function openFilterOptions(){
-    d3.select("[id=basicInfoBox_div]").select("[id=view2]").select("g").remove();
-    d3.select("[id=instrumentOptions]").select("table").remove();
-    display_filterOption();
-    
-    buttonClickCount_filterOptions += 1;
-}
 
 
 
-                
-   
-   
-   
-   
 
+function draw_venn_diagram(container,supp,conf,conf2){
 
-function presetFilter2(filterName,bitString,inputs,neg){
-    var filterInput1;
-    var filterInput2;
-    var filterInput3;
-
-    filterInput1 = inputs[0];
-    if(inputs.length > 1){
-        filterInput2 = inputs[1];
-    }
-    if(inputs.length > 2){
-        filterInput3 = inputs[2];
-    }
-
-    var output;
-    var leng = bitString.length;
-    var norb = orbitList.length;
-    var ninstr = instrList.length;
-
-    if(filterName==="present"){
-        filterInput1 = relabelback(filterInput1);
-        var thisInstr = $.inArray(filterInput1,instrList);
-        if(thisInstr==-1){
-        	return null;
-        }
-        output = false;
-        for(var i=0;i<orbitList.length;i++){
-            if(bitString[ninstr*i+thisInstr]===true){
-                output = true;
-                break;
-            }
-        }
-    } else if(filterName==="absent"){
-        filterInput1 = relabelback(filterInput1);
-        var thisInstr = $.inArray(filterInput1,instrList);
-        if(thisInstr==-1){
-        	return null;
-        }
-        output = true;
-        for(var i=0;i<orbitList.length;i++){
-            if(bitString[ninstr*i+thisInstr]===true){
-                output = false;
-                break;
-            }
-        }
-    } else if(filterName==="inOrbit"){
-        filterInput1 = relabelback(filterInput1);
-        filterInput2 = relabelback(filterInput2);
-        output = false;
-        var thisOrbit = $.inArray(filterInput1,orbitList);
-        var thisInstr = $.inArray(filterInput2,instrList);
-        
-        if(thisInstr==-1 || thisOrbit==-1){
-        	return null;
-        }
-            if(bitString[thisOrbit*ninstr + thisInstr]===true){
-                output = true;
-            }
-    } else if(filterName==="notInOrbit"){
-        filterInput1 = relabelback(filterInput1);
-        filterInput2 = relabelback(filterInput2);
-        output = true;
-        var thisOrbit = $.inArray(filterInput1,orbitList);
-        var thisInstr = $.inArray(filterInput2,instrList);
-        if(thisInstr==-1 || thisOrbit==-1){
-        	return null;
-        }
-            if(bitString[thisOrbit*ninstr + thisInstr]===true){
-                output = false;
-            }
-    } else if(filterName === "together"){
-        output = false;
-        var splitInstruments = filterInput1.split(",");
-        var thisInstr1 = $.inArray(relabelback(splitInstruments[0]),instrList);
-        var thisInstr2 = $.inArray(relabelback(splitInstruments[1]),instrList);
-        var thisInstr3;
-        if(splitInstruments.length===2){
-            if(thisInstr1==-1 || thisInstr2==-1){
-            	return null;
-            }
-            for(var i=0;i<norb;i++){
-                if(bitString[i*ninstr + thisInstr1] === true && bitString[i*ninstr + thisInstr2] === true){
-                    output = true;
-                    break;
-                }
-            }
-        } else {
-            thisInstr3 = $.inArray(relabelback(splitInstruments[2]),instrList);
-            if(thisInstr1==-1 || thisInstr2==-1 || thisInstr3==-1){
-            	return null;
-            }
-            for(var i=0;i<norb;i++){
-                if(bitString[i*ninstr + thisInstr1] === true && bitString[i*ninstr + thisInstr2] === true
-                        && bitString[i*ninstr + thisInstr3] === true){
-                    output = true;
-                    break;
-                }
-            }
-        }
-    } else if(filterName === "togetherInOrbit"){
-        output = false;
-        var thisOrbit =  $.inArray(relabelback(filterInput1),orbitList);
-        var splitInstruments = filterInput2.split(",");
-        var thisInstr1 = $.inArray(relabelback(splitInstruments[0]),instrList);
-        var thisInstr2 = $.inArray(relabelback(splitInstruments[1]),instrList);
-        var thisInstr3;
-        if(splitInstruments.length===2){
-            if(thisInstr1==-1 || thisInstr2==-1 || thisOrbit==-1){
-            	return null;
-            }
-            if(bitString[thisOrbit*ninstr + thisInstr1] === true && bitString[thisOrbit*ninstr + thisInstr2] === true){
-                output = true;
-            }
-        } else {
-            thisInstr3 = $.inArray(relabelback(splitInstruments[2]),instrList);
-            if(thisInstr1==-1 || thisInstr2==-1 || thisInstr3==-1 || thisOrbit==-1){
-            	return null;
-            }
-            if(bitString[thisOrbit*ninstr + thisInstr1] === true && bitString[thisOrbit*ninstr + thisInstr2] === true
-                        && bitString[thisOrbit*ninstr + thisInstr3] === true){
-                output = true;
-            }
-        }
-    } else if(filterName ==="separate"){
-        output = true;
-        var splitInstruments = filterInput1.split(",");
-        var thisInstr1 = $.inArray(relabelback(splitInstruments[0]),instrList);
-        var thisInstr2 = $.inArray(relabelback(splitInstruments[1]),instrList);
-        var thisInstr3;
-        if(splitInstruments.length===2){
-            if(thisInstr1==-1 || thisInstr2==-1){
-            	return null;
-            }
-            for(var i=0;i<norb;i++){
-                if(bitString[i*ninstr + thisInstr1] === true && bitString[i*ninstr + thisInstr2] === true){
-                    output = false;
-                    break;
-                }
-            }
-        } else {
-            thisInstr3 = $.inArray(relabelback(splitInstruments[2]),instrList);
-            if(thisInstr1==-1 || thisInstr2==-1 || thisInstr3==-1){
-            	return null;
-            }
-            for(var i=0;i<norb;i++){
-                if(bitString[i*ninstr + thisInstr1] === true && bitString[i*ninstr + thisInstr2] === true
-                        && bitString[i*ninstr + thisInstr3] === true){
-                    output = false;
-                    break;
-                }
-            }
-        }
-    } else if(filterName ==="emptyOrbit"){
-        var thisOrbit =  $.inArray(relabelback(filterInput1),orbitList);
-        if(thisOrbit==-1){
-        	return null;
-        }
-        output = true;
-        for(var i=0;i<ninstr;i++){
-            if(bitString[thisOrbit*ninstr + i]===true){
-                output=false;
-                break;
-            }
-        }
-    } else if(filterName ==="numOrbitUsed"){
-        var numOrbits = filterInput1;
-        if(numOrbits > 5 || numOrbits < 0){
-        	return null;
-        }
-        var cnt = 0;
-        for (var i=0;i<norb;i++){
-            for (var j=0;j<ninstr;j++){
-                if(bitString[i*ninstr+j]==true){
-                    cnt++;
-                    break;
-                }
-            }
-        }
-        if(cnt==numOrbits){
-            output = true;
-        } else{
-            output= false;
-        }
-    } else if(filterName === "numOfInstruments"){
-        output = false;
-
-        var all_instruments = false;
-        var thisInstr = -1;
-        
-        var instrument;
-        var num_of_instruments;
-        if(filterInput1.indexOf(",") != -1){
-        	var comma = filterInput1.indexOf(",");
-        	instrument = filterInput1.substring(0,comma);
-        	num_of_instruments = filterInput1.substring(comma+1);
-        }else{
-        	instrument = filterInput1;
-        	num_of_instruments = filterInput2;
-        }
-        
-        if(instrument=="N/A"){
-        	//continue;
-        	all_instruments = true;
-        }
-        else{
-            thisInstr = $.inArray(relabelback(instrument),instrList);
-            if(thisInstr==-1){
-            	return null;
-            }
-        }        
-        var cnt = 0;
-        for(var i=0;i<orbitList.length;i++){
-        	if(all_instruments){
-        		for(var j=0;j<instrList.length;j++){
-                	if(bitString[i*ninstr + j] === true){
-                        cnt = cnt+1;
-                    }
-        		}
-        	}else{
-            	if(bitString[i*ninstr + thisInstr] === true){
-                    cnt = cnt+1;
-                }
-        	}
-        }
-
-            
-        if(num_of_instruments== ""+cnt){
-        	output=true;
-        }else{
-        	output=false;
-        }
-        return checkNeg(output,neg)     
-        
-        
-        
-    } else if(filterName === "subsetOfInstruments"){ 
-        var thisOrbit = $.inArray(relabelback(filterInput1),orbitList);
-        var minmax = filterInput2.split(",");
-        var instruments = filterInput3.split(",");
-
-        var constraint = minmax.length;
-        var numOfInstr = instruments.length;
-
-        var min,max;
-        if(constraint===1){ // only the minimum number of instruments is typed in
-            min = minmax[0];
-            max = 100;
-        } else if(constraint===2){
-            min = minmax[0];
-            max = minmax[1];
-        }
-
-        var size = instruments.length;
-        var cnt=0;
-
-        for(var i=0;i<size;i++){ //var thisInstr1 = $.inArray(splitInstruments[0],instrList);
-            var thisInstr = $.inArray(relabelback(instruments[i]),instrList);
-            if(bitString[thisOrbit*ninstr + thisInstr]===true){
-                cnt++;
-            }
-        }
-        if(cnt <= max && cnt >= min){
-            output = true;
-        }else{
-            output = false;
-        }
-    }
-
-    return checkNeg(output,neg)
-}
-
-
-function checkNeg(original,neg){
-	if(neg==true){
-		return !original;
-	}else{
-		return original;
-	}
-}
-
-
-
-function draw_venn_diagram(df_explanation_box,supp,conf,conf2){
-
-	df_explanation_box.select("svg").remove();
-	var svg_venn_diag = df_explanation_box
+	container.select("svg").remove();
+	var svg_venn_diag = container
 								.append("svg")
 					    		.style('width','320px')  			
 								.style('border-width','3px')
@@ -1938,70 +743,225 @@ function draw_venn_diagram(df_explanation_box,supp,conf,conf2){
 
 
 
-function applyFilter(filterType,filterInput){
-    cancelDotSelections();
-    var wrong_arg = false;
-    var neg = false;
-    if (filterType == "paretoFront"){
-        var unClickedArchs = d3.selectAll("[class=dot]")[0].forEach(function (d) {
-        	var rank = parseInt(d3.select(d).attr("paretoRank"));
-            if (rank <= +filterInput && rank >= 0){
-                d3.select(d).attr("class", "dot_clicked")
-                            .style("fill", "#0040FF");
-            }
-        });
 
-    }
-    else if (filterType == "present" || filterType == "absent" || filterType == "inOrbit" || filterType == "notInOrbit" || filterType == "together" || filterType == "togetherInOrbit" || filterType == "separate" || 
-            filterType == "emptyOrbit" || filterType=="numOrbitUsed" || filterType=="subsetOfInstruments"){
 
-        var unClickedArchs = d3.selectAll("[class=dot]")[0].forEach(function (d) {
-            var bitString = d.__data__.archBitString;
-            var temp = presetFilter2(filterType,bitString,filterInputs,neg);
-            if(temp==null){
-            	wrong_arg = true;
-            	return;
-            }
-            else if (temp){
-                d3.select(d).attr("class", "dot_clicked")
-                            .style("fill", "#0040FF");
-            }
-        });
-    } else if(filterType == "defineNewFilter" || (filterType =="not_selected" && userDefFilters.length !== 0)){
-        var filterExpression = d3.select("[id=filter_expression]").text();
-        tmpCnt =0;
 
-        d3.selectAll("[class=dot]")[0].forEach(function(d){
-        	
-            var bitString = d.__data__.archBitString;
-            if(applyUserDefFilterFromExpression(filterExpression,bitString)){
-                d3.select(d).attr("class", "dot_clicked")
-                            .style("fill", "#0040FF");
-            }
-        });
 
-        d3.select("[id=saveFilter]").attr('disabled', null)
-                                    .on("click",saveNewFilter);
-    }
-    else{
-    	
-        for(var k=0 ; k < userDefFilters.length; k++){
-           if(userDefFilters[k].name == filterType){
-                var filterExpression = userDefFilters[k].expression;
-                d3.selectAll("[class=dot]")[0].forEach(function(d){
-                    var bitString = d.__data__.archBitString;
-                    if(applyUserDefFilterFromExpression(filterExpression,bitString)){
-                        d3.select(d).attr("class", "dot_clicked")
-                                    .style("fill", "#0040FF");
-                    }
-                }); 
-           } 
+
+
+
+
+
+
+
+function highlight_dots_with_feature(expression){
+
+	// De-highlight all dots when no feature is selected
+	if(expression==null && selected_features.length==0){
+	    var highlighted = d3.selectAll("[class=dot_DFhighlighted]")
+	    		.attr("class", "dot")
+	            .style("fill", "#000000");     
+	    d3.selectAll("[class=dot_selected_DFhighlighted]")
+	    		.attr("class", "dot_highlighted")
+	            .style("fill","#19BAD7");  
+	    return;
+	}
+	
+	if(expression==null){
+		expression = "";
+	}
+
+	
+    if(selected_features.length!=0){
+        var combined = "";
+        for(var i=0;i<selected_features.length;i++){
+        	if(i>0){
+        		combined = combined + "&&";
+        	}
+        	combined = combined + selected_features_expressions[i];
         }
+        if(expression.length!=0) {
+        	combined = combined + "&&" + expression;
+        }
+        expression = combined;
     }
-    if(wrong_arg){
-    	alert("Invalid input argument");
+    	
+	var ids = [];
+	var bitStrings = [];
+	var paretoRankings = [];
+    d3.selectAll('.dot')[0].forEach(function(d){
+    	ids.push(d.__data__.id);
+    	bitStrings.push(d.__data__.bitString);
+        paretoRankings.push(parseInt(d3.select(d).attr("paretoRank")));
+    });  
+    d3.selectAll('.dot_highlighted')[0].forEach(function(d){
+    	ids.push(d.__data__.id);
+    	bitStrings.push(d.__data__.bitString);
+        paretoRankings.push(parseInt(d3.select(d).attr("paretoRank")));
+    });  
+    d3.selectAll('.dot_DFhighlighted')[0].forEach(function(d){
+    	ids.push(d.__data__.id);
+    	bitStrings.push(d.__data__.bitString);
+        paretoRankings.push(parseInt(d3.select(d).attr("paretoRank")));
+    });  
+    d3.selectAll('.dot_selected_DFhighlighted')[0].forEach(function(d){
+    	ids.push(d.__data__.id);
+    	bitStrings.push(d.__data__.bitString);
+        paretoRankings.push(parseInt(d3.select(d).attr("paretoRank")));
+    });  
+    
+
+    var arch_info = {bitStrings:bitStrings,paretoRankings:paretoRankings};
+    var indices = [];
+    for(var i=0;i<ids.length;i++){
+    	indices.push(i);
     }
-    d3.select("[id=numOfSelectedArchs_inputBox]").attr("value",numOfSelectedArchs());  
+    // Note that indices and ids are different!    
+    var matchedIndices = processFilterExpression(expression, indices, "&&", arch_info);
+    var matchedIDs = [];
+    for(var i=0;i<matchedIndices.length;i++){
+    	var index = matchedIndices[i];
+    	matchedIDs.push(ids[index]);
+    }
+
+
+    d3.selectAll("[class=dot]")[0].forEach(function (d) {
+    	if(matchedIDs.indexOf(d.__data__.id)>-1){
+    		d3.select(d).attr("class", "dot_DFhighlighted")
+			.style("fill", "#F75082");
+		}
+    });
+    d3.selectAll("[class=dot_highlighted]")[0].forEach(function (d) {
+    	if(matchedIDs.indexOf(d.__data__.id)>-1){
+			d3.select(d).attr("class", "dot_selected_DFhighlighted")
+			.style("fill", "#F75082");
+		}               	
+    });	
+
+    d3.selectAll("[class=dot_DFhighlighted]")[0].forEach(function (d) {
+    	if(matchedIDs.indexOf(d.__data__.id)==-1){
+    		d3.select(d).attr("class", "dot")
+			.style("fill", "#000000");
+		}
+    });
+    d3.selectAll("[class=dot_selected_DFhighlighted]")[0].forEach(function (d) {
+    	if(matchedIDs.indexOf(d.__data__.id)==-1){
+			d3.select(d).attr("class", "dot_highlighted")
+			.style("fill", "#19BAD7");
+		}       	
+    });	
 }
 
 
+
+
+
+
+function remove_df_application_status(expression){
+	if(expression==null){
+		d3.selectAll('.applied_driving_feature').remove();
+	    d3.selectAll("[class=bar]")[0].forEach(function(d){
+        	d3.select(d).style("stroke-width",0);
+	    });
+	    selected_features=[];
+	    selected_features_expressions=[];
+	    
+	    d3.selectAll("[class=dot_DFhighlighted]")
+	    		.attr("class", "dot")
+	            .style("fill", "#000000");     
+	    d3.selectAll("[class=dot_selected_DFhighlighted]")
+	    		.attr("class", "dot_highlighted")
+	            .style("fill","#19BAD7");  
+	    return;
+	}
+	
+    d3.selectAll('.applied_driving_feature')[0].forEach(function(d){
+    	var exp = d3.select(d).select('.driving_feature_application_expression').attr('expression');
+    	console.log(exp);
+    	if(expression===exp){
+    		d.remove();
+    	}
+    });
+    
+    d3.selectAll("[class=bar]")[0].forEach(function(d){
+        if(d.__data__.expression===expression){
+        	d3.select(d).style("stroke-width",0);
+        }
+    });
+    
+    for(var i=0;i<selected_features.length;i++){
+    	if(selected_features_expressions[i]===expression){
+	    	selected_features.splice(i,1);
+	    	selected_features_expressions.splice(i,1);
+    	}
+    }
+    
+    if(selected_features.length!=0){
+        d3.select('#df_save_feature')[0][0].disabled= false;
+    	d3.select('#df_save_feature').text('Save current feature')
+	}
+    
+    highlight_dots_with_feature();
+    
+}
+
+function update_df_application_status(expression){    
+
+    var application_status = d3.select('#df_application_status');
+    var count = application_status.selectAll('.applied_driving_feature').size();
+    
+    var thisFilter = application_status.append('div')
+            .attr('id',function(){
+                var num = count+1;
+                return 'applied_driving_feature_' + num;
+            })
+            .attr('class','applied_driving_feature');
+    
+
+    thisFilter.append('div')
+            .attr('class','driving_feature_application_expression')
+            .attr('expression',function(d){
+            	return expression;
+            })
+            .text(ppdf(expression));
+
+    thisFilter.append('button')
+            .attr('class','driving_feature_application_delete')
+            .text('Remove');
+    
+    thisFilter.select(".driving_feature_application_delete").on("click",function(d){
+        var exp = thisFilter.select('.driving_feature_application_expression').attr('expression');
+        remove_df_application_status(exp);
+        
+        if(d3.selectAll('.applied_driving_feature')[0].length===0){
+            d3.select('#df_save_feature')[0][0].disabled= true;
+            d3.select('#df_cancel_selection')[0][0].disabled=true;
+        }else{
+        	highlight_dots_with_feature();
+        }
+    });
+    
+
+    d3.select('#df_save_feature')[0][0].disabled= false;
+	d3.select('#df_save_feature').text('Save current feature')
+    d3.select('#df_cancel_selection')[0][0].disabled=false;
+
+}
+
+function save_selected_driving_features(){
+    if(selected_features.length!=0){
+        var combined = "";
+        for(var i=0;i<selected_features.length;i++){
+        	if(i>0){
+        		combined = combined + "&&";
+        	}
+        	combined = combined + selected_features_expressions[i];
+        }
+        var expression = combined;
+        update_filter_application_status(expression,'deactivated');
+        save_user_defined_filter(expression);
+        
+        d3.select('#df_save_feature')[0][0].disabled= true;
+        d3.select('#df_save_feature').text('Current feature saved');
+    }
+}

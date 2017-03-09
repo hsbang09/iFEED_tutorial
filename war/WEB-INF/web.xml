@@ -12,48 +12,21 @@
 
   <!-- Servlets -->
   <servlet>
-    <servlet-name>resultsGUIServlet</servlet-name>
-    <servlet-class>rbsa.eoss.server.resultsGUIServlet</servlet-class>
+    <servlet-name>IFEEDServlet</servlet-name>
+    <servlet-class>rbsa.eoss.server.IFEEDServlet</servlet-class>
   </servlet>
   
   <servlet-mapping>
-    <servlet-name>resultsGUIServlet</servlet-name>
-    <url-pattern>/resultsGUIServlet</url-pattern>
+    <servlet-name>IFEEDServlet</servlet-name>
+    <url-pattern>/IFEEDServlet</url-pattern>
   </servlet-mapping>
   
   <!-- Default page to serve -->
   <welcome-file-list>
     <welcome-file>iFEEDTutorial.html</welcome-file>
   </welcome-file-list>
-  <servlet>
-  	<servlet-name>drivingFeatureServlet</servlet-name>
-  	<servlet-class>rbsa.eoss.server.drivingFeatureServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-  	<servlet-name>drivingFeatureServlet</servlet-name>
-  	<url-pattern>/drivingFeatureServlet</url-pattern>
-  </servlet-mapping>
-	
-  <servlet>
-    <servlet-name>loginServlet</servlet-name>
-    <servlet-class>rbsa.eoss.server.loginServlet</servlet-class>
-  </servlet>
-  
-  <servlet-mapping>
-    <servlet-name>loginServlet</servlet-name>
-    <url-pattern>/loginServlet</url-pattern>
-  </servlet-mapping>
-	
-	
-	<filter>
-	    <filter-name>ObjectifyFilter</filter-name>
-	    <filter-class>com.googlecode.objectify.ObjectifyFilter</filter-class>
-	</filter>
-	<filter-mapping>
-	    <filter-name>ObjectifyFilter</filter-name>
-	    <url-pattern>/*</url-pattern>
-	</filter-mapping>
-  
+
+
 	
 
 </web-app>

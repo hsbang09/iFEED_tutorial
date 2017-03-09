@@ -85,7 +85,7 @@ function draw_scatterPlot(source) {
                                 var yCoord = yMap(d);
                                 return "translate(" + xCoord + "," + yCoord + ")";
                             });
-                    svg.selectAll("[class=dot_clicked]")
+                    svg.selectAll("[class=dot_highlighted]")
                             .attr("transform", function (d) {
                                 var xCoord = xMap(d);
                                 var yCoord = yMap(d);
@@ -164,14 +164,13 @@ function draw_scatterPlot(source) {
             .data(source)
             .enter().append("circle")
             .attr("class", "dot")
-            .attr("r", 4)
+            .attr("r", 3.3)
             .attr("transform", function (d) {
                 var xCoord = xMap(d);
                 var yCoord = yMap(d);
                 return "translate(" + xCoord + "," + yCoord + ")";
             })
-//                .attr("cx", xMap)
-//                .attr("cy", yMap)
+
             .style("fill", function (d) {
                 if (d.status == "origianlData") {
                     return "#000000";
@@ -187,7 +186,7 @@ function draw_scatterPlot(source) {
 
     dots.on("mouseover", dot_mouseover)
             .on("mouseout", function (d) {
-                if (d3.select(this).attr("class") == "dot_clicked") {
+                if (d3.select(this).attr("class") == "dot_highlighted") {
                 } else if (d3.select(this)[0][0].__data__.status == "justAdded") {
                     d3.select(this).style("fill", "#20FE5B");
                 } else if (d3.select(this)[0][0].__data__.status == "added") {
@@ -218,7 +217,7 @@ function draw_scatterPlot(source) {
     d3.selectAll("[class=dot]")[0].forEach(function(d,i){
         d3.select(d).attr("paretoRank",-1);
     });
-
+    
     
     
     if(testType=="1"){
@@ -227,7 +226,7 @@ function draw_scatterPlot(source) {
     	d3.select('#OptionsPane').select('div').select('div').remove();
     	
     	d3.select("#tab3").text('-');
-    	d3.select("#view3").select('g').remove();
+    	d3.select("#view3").selectAll('g').remove();
     	d3.select("#tab4").text('-');
     	d3.select("#view4").select('g').remove();
     	
@@ -236,12 +235,11 @@ function draw_scatterPlot(source) {
     	d3.select("#tab4").text('-');
     	d3.select("#view4").select('g').remove();
     	
-    }else if(testType=="3"){
+    }else {
     	
     	// Do nothing
     	
     }
-    
 
     orbitList = getOrbitList();
     instrList = getInstrumentList();
@@ -268,13 +266,7 @@ function add_newArchs_to_scatterPlot() {
 
 function selectArchsWithinRange() {
 	
-	
-	if(current_view==9){
-		view9_completed=true;
-		activate_right_arrow();
-	}
-
-    var clickedArchs = d3.selectAll("[class=dot_clicked]");
+    var clickedArchs = d3.selectAll("[class=dot_highlighted]");
     var unClickedArchs = d3.selectAll("[class=dot]");
 
     var minCost = d3.select("[id=selectArchsWithinRange_minCost]")[0][0].value;
@@ -303,8 +295,8 @@ function selectArchsWithinRange() {
             return true;
         }
     })
-            .attr("class", "dot_clicked")
-            .style("fill", "#0040FF");
+            .attr("class", "dot_highlighted")
+            .style("fill", "#19BAD7");
 
     clickedArchs.filter(function (d) {
 
@@ -325,13 +317,7 @@ function selectArchsWithinRange() {
     })
             .attr("class", "dot")
             .style("fill", function (d) {
-                if (d.status == "added") {
-                    return "#188836";
-                } else if (d.status == "justAdded") {
-                    return "#20FE5B";
-                } else {
                     return "#000000";
-                }
             });
 
     d3.select("[id=numOfSelectedArchs_inputBox]").text(""+numOfSelectedArchs());
@@ -341,23 +327,13 @@ function selectArchsWithinRange() {
 }
 
 function cancelDotSelections(){
+	remove_df_application_status();
 	
-	if(current_view==11){
-		view11_completed=true;
-		activate_right_arrow();
-	}
-
-    var clickedArchs = d3.selectAll("[class=dot_clicked]");
+    var clickedArchs = d3.selectAll("[class=dot_highlighted]");
 
     clickedArchs.attr("class", "dot")
             .style("fill", function (d) {
-                if (d.status == "added") {
-                    return "#188836";
-                } else if (d.status == "justAdded") {
-                    return "#20FE5B";
-                } else {
                     return "#000000";
-                }
             });
     d3.select("[id=instrumentOptions]")
             .select("table").remove();        
@@ -369,7 +345,7 @@ function cancelDotSelections(){
 
 function hideSelection(){
 
-    var clickedArchs = d3.selectAll("[class=dot_clicked]");
+    var clickedArchs = d3.selectAll("[class=dot_highlighted]");
 
     clickedArchs.attr("class", "dot_hidden")
             .style("opacity", 0.085);
@@ -411,11 +387,7 @@ function show_all_archs(){
 
 
 function dot_mouseover(d) {
-	
-	if(current_view==21){
-		return;
-	}
-	
+
 	if(infoBox_active==true){
 		return;
 	}
@@ -423,7 +395,7 @@ function dot_mouseover(d) {
 	numOfArchViewed = numOfArchViewed+1;
 	
 	
-    if (d3.select(this).attr("class") == "dot_clicked") {
+    if (d3.select(this).attr("class") == "dot_highlighted") {
     } else {
         d3.select(this).style("fill", "#D32020");
     }
@@ -437,22 +409,12 @@ function dot_mouseover(d) {
     archInfoBox.append("p")
             .text("Cost: " + d.cost.toFixed(1));
 
-//    archInfoBox.append("input")
-//            .attr("id", "evalNewArch")
-//            .attr("type", "button")
-//            .attr("value", "Evaluate modified architecture");
 
-
-    var bitString = booleanArray2String(d.archBitString);
+    var bitString = booleanArray2String(d.bitString);
 
     original_bitString = bitString;
     modified_bitString = bitString;
-
     draw_archBasicInfoTable(bitString);
-
-
-
-//    document.getElementById("evalNewArch").disabled = true;
 
     d3.select("[id=instrumentOptions]")
             .select("table").remove();
@@ -463,7 +425,7 @@ function dot_mouseover(d) {
 
 function dot_click(d) {
 
-    if (d3.select(this).attr("class") == "dot_clicked") {
+    if (d3.select(this).attr("class") == "dot_highlighted") {
         d3.select(this).attr("class", "dot")
                 .style("fill", function (d) {
                     if (d.status == "added") {
@@ -476,8 +438,8 @@ function dot_click(d) {
                 });
 
     } else {
-        d3.select(this).attr("class", "dot_clicked")
-                .style("fill", "#0040FF");
+        d3.select(this).attr("class", "dot_highlighted")
+                .style("fill", "#19BAD7");
 
     }
     d3.select("[id=numOfSelectedArchs_inputBox]").text(""+numOfSelectedArchs());
@@ -527,7 +489,7 @@ function scatterPlot_option(selected_option){ // three options: zoom, drag_selec
                                         var yCoord = yMap(d);
                                         return "translate(" + xCoord + "," + yCoord + ")";
                                     });
-                            svg.selectAll("[class=dot_clicked]")
+                            svg.selectAll("[class=dot_highlighted]")
                                     .attr("transform", function (d) {
                                         var xCoord = xMap(d);
                                         var yCoord = yMap(d);
@@ -637,8 +599,8 @@ function scatterPlot_option(selected_option){ // three options: zoom, drag_selec
                                 xCoord + margin.left>= b.x && xCoord + margin.left <= b.x+b.width && 
                                 yCoord + margin.top >= b.y && yCoord + margin.top  <= b.y+b.height
                             ) {
-                                d3.select(d).attr("class","dot_clicked")
-                                        .style("fill", "#0040FF");      
+                                d3.select(d).attr("class","dot_highlighted")
+                                        .style("fill", "#19BAD7");      
                                 selection_changed = true;
                                 initialize_tabs_driving_features();
                                 initialize_tabs_classification_tree();
@@ -646,7 +608,7 @@ function scatterPlot_option(selected_option){ // three options: zoom, drag_selec
                         });
 
                     }else{
-                        dots = d3.selectAll("[class=dot_clicked]")[0].forEach(function(d,i){
+                        dots = d3.selectAll("[class=dot_highlighted]")[0].forEach(function(d,i){
                             var sci = d.__data__.science;
                             var cost = d.__data__.cost;
                             var xCoord = xScale(sci);
@@ -683,14 +645,6 @@ function scatterPlot_option(selected_option){ // three options: zoom, drag_selec
 
            // remove selection frame
         svg_tmp.selectAll( "rect.selection").remove();
-        
-        if(current_view==7 && option=="selection"){
-        	view7_completed = true;
-        	activate_right_arrow();
-        }else if(current_view==8 && option=="deselection"){
-        	view8_completed = true;
-        	activate_right_arrow();
-        }
         
     })
     }               
@@ -818,14 +772,7 @@ function calculateParetoRanking(){
 
 
 function highlight_basic_info_box(){
-	if(current_view==13){
-		if(view13_ready < 2){
-			view13_ready = view13_ready + 1;
-		}else{
-			view13_completed=true;
-			activate_right_arrow();
-		}
-	}
+
     d3.select("[id=scatterPlotFigure]")
     	.style("border-width","1px");
 	d3.select("[id=basicInfoBox_div]")
@@ -833,14 +780,7 @@ function highlight_basic_info_box(){
 	infoBox_active=true;
 }
 function unhighlight_basic_info_box(){
-	if(current_view==13){
-		if(view13_ready < 2){
-			view13_ready = view13_ready + 1;
-		}else{
-			view13_completed=true;
-			activate_right_arrow();
-		}
-	}
+
     d3.select("[id=scatterPlotFigure]")
 			.style("border-width","3.3px");
 	d3.select("[id=basicInfoBox_div]")
@@ -849,104 +789,6 @@ function unhighlight_basic_info_box(){
 }
 
 
-
-
-
-var cars;
-function getDrivingFeatures_automated(){
-	
-    cancelDotSelections();
-    var selectedArchs = d3.selectAll("[class=dot]");
-    var nonSelectedArchs = d3.selectAll("[class=dot]");
-
-    var minCost = 0;
-    var maxCost = 5000;
-    var minScience = 0.15;
-    var maxScience = 1;
-
-    nonSelectedArchs = nonSelectedArchs.filter(function (d) {
-
-        var sci = d.science;
-        var cost = d.cost;
-
-        if (sci < minScience) {
-            return true;
-        } else if (sci > maxScience) {
-            return true;
-        } else if (cost < minCost) {
-            return true;
-        } else if (cost > maxCost) {
-            return true;
-        } else {
-            return false;
-        }
-    });
-
-    selectedArchs = selectedArchs.filter(function (d) {
-
-        var sci = d.science;
-        var cost = d.cost;
-
-        if (sci < minScience) {
-            return false;
-        } else if (sci > maxScience) {
-            return false;
-        } else if (cost < minCost) {
-            return false;
-        } else if (cost > maxCost) {
-            return false;
-        } else {
-            return true;
-        }
-    });
-//    d3.select("[id=numOfSelectedArchs_inputBox]").attr("value",numOfSelectedArchs());
-    
-    var support_threshold = d3.select("[id=support_threshold_input]")[0][0].value;
-    var confidence_threshold = d3.select("[id=confidence_threshold_input]")[0][0].value;
-    var lift_threshold = d3.select("[id=lift_threshold_input]")[0][0].value;
-
-
-    var numOfSelectedArchs = selectedArchs.size();
-    var numOfNonSelectedArchs = nonSelectedArchs.size();
-    
-    
-    buttonClickCount_drivingFeatures += 1;
-    getDrivingFeatures_numOfArchs.push({numOfSelectedArchs,numOfNonSelectedArchs});
-    getDrivingFeatures_thresholds.push({supp:support_threshold,lift:lift_threshold,conf:confidence_threshold});
-    
-    
-    var selectedBitStrings = [];
-    var nonSelectedBitStrings = [];
-    selectedBitStrings.length = 0;
-    nonSelectedBitStrings.length=0;
-
-    for (var i = 0; i < numOfSelectedArchs; i++) {
-        var tmpBitString = booleanArray2String(selectedArchs[0][i].__data__.archBitString);
-        selectedBitStrings.push(tmpBitString);
-    }
-    for (var i = 0; i < numOfNonSelectedArchs; i++) {
-        var tmpBitString = booleanArray2String(nonSelectedArchs[0][i].__data__.archBitString);
-        nonSelectedBitStrings.push(tmpBitString);
-    }
-
-    $.ajax({
-        url: "drivingFeatureServlet",
-        type: "POST",
-        data: {ID: "automaticFeatureGeneration",selected: JSON.stringify(selectedBitStrings),nonSelected:JSON.stringify(nonSelectedBitStrings),
-        	supp:support_threshold,conf:confidence_threshold,lift:lift_threshold,
-        	sortBy:"confave"},
-        async: false,
-        success: function (data, textStatus, jqXHR)
-        {
-//        	console.log(data);
-        	sortedDFs = JSON.parse(data);
-        },
-        error: function (jqXHR, textStatus, errorThrown)
-        {alert("error");}
-    });
-
-    display_drivingFeatures(sortedDFs,"confave");
-}
 
 
 
@@ -970,94 +812,21 @@ function initialize_tabs_inspection(){
 			.style("font-size","21px")
 			.text("If you hover the mouse over a design, relevant information will be displayed here.");
 }
+
 function initialize_tabs_filter_options(){
-
-	d3.select("[id=basicInfoBox_div]").select("[id=view2]").select("g").remove();
-	var archInfoBox = d3.select("[id=basicInfoBox_div]").select("[id=view2]").append("g");
-    archInfoBox.append("div")
-            .attr("id","filter_title")
-            .style("width","90%")
-            .style("margin-top","10px")
-            .style("margin-bottom","15px")
-            .style("margin-left","2px")
-            .style("float","left")
-            .append("p")
-            .text("Filter Setting")
-            .style("font-size", "18px");
-    var filterOptions = archInfoBox.append("div")
-            .attr("id","filter_options")
-            .style("width","100%")
-            .style("height","40px")
-            .style("float","left")
-            .style("margin-bottom","10px");
-
-    var filterDropdownMenu = d3.select("[id=filter_options]")
-            .append("select")
-            .attr("id","dropdown_presetFilters")
-            .style("width","200px")
-            .style("float","left")
-            .style("margin-left","2px")
-            .style("height","24px");
-
-    filterDropdownMenu.selectAll("option").remove();
-    filterDropdownMenu.selectAll("option")
-            .data(filterDropdownOptions)
-            .enter()
-            .append("option")
-            .attr("value",function(d){
-                return d.value;
-            })
-            .text(function(d){
-                return d.text;
-            });
-
-    d3.select("[id=filter_options]").append("button")
-            .attr("id","applyFilterButton_new")
-            .attr("class","filterOptionButtons")
-            .style("margin-left","6px")
-            .style("float","left")
-            .text("Apply new filter");
-    d3.select("[id=filter_options]").append("button")
-            .attr("class","filterOptionButtons")
-            .attr("id","applyFilterButton_add")
-            .style("margin-left","6px")
-            .style("float","left")
-            .text("Add to selection");
-    d3.select("[id=filter_options]").append("button")
-            .attr("id","applyFilterButton_within")
-            .attr("class","filterOptionButtons")
-            .style("margin-left","6px")
-            .style("float","left")
-            .text("Search within selection");
-//    d3.select("[id=filter_options]").append("button")
-//		    .attr("id","applyFilterButton_complement")
-//		    .attr("class","filterOptionButtons")
-//		    .style("margin-left","6px")
-//		    .style("float","left")
-//		    .text("Select complement");
-    d3.select("[id=filter_options]").append("button")
-            .attr("id","saveFilter")
-            .attr("class","filterOptionButtons")
-            .style("margin-left","6px")
-            .style("float","left")
-            .text("Save this filter")
-            .attr('disabled', true);
-    
-    d3.select("[id=filter_options]").select("select").on("change",selectFilterOption);
-    d3.select("[id=applyFilterButton_add]").on("click",applyFilter_add);
-    d3.select("[id=applyFilterButton_new]").on("click",applyFilter_new);
-    d3.select("[id=applyFilterButton_within]").on("click",applyFilter_within);
-    
+    openFilterOptions(); 
 }
+
+
+
 function initialize_tabs_driving_features(){
-	
-	if(current_view==21){
-		return;
-	}
 	
 	if(testType=="1"){
 		return;
 	}
+	
+	remove_df_application_status();
+	
 	
 	d3.select("[id=basicInfoBox_div]").select("[id=view3]").select("g").remove();
 	var guideline = d3.select("[id=basicInfoBox_div]").select("[id=view3]")
@@ -1084,13 +853,7 @@ function initialize_tabs_driving_features(){
 }
 
 function initialize_tabs_classification_tree(){
-	
-	if(current_view==21){
-		return;
-	}
-	
-	
-	
+
 	if(testType=="3"){
 		d3.select("[id=basicInfoBox_div]").select("[id=view4]").select("g").remove();
 		var guideline = d3.select("[id=basicInfoBox_div]").select("[id=view4]")
@@ -1143,5 +906,6 @@ function set_selection_option(selected_option){
 
 
 function round_num_2_perc(num){
-	return Math.round((num + 0.01) * 100);
+	var temp = num*100;
+	return temp.toFixed(1);
 }

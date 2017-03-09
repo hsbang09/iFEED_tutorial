@@ -5,22 +5,17 @@
 	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER"/>
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry kind="lib" path="/Users/bang/Documents/workspace/iFEED_tutorial/war/WEB-INF/lib/combinatoricslib-2.0.jar"/>
-	<classpathentry kind="lib" path="/Users/bang/Documents/workspace/iFEED_tutorial/war/WEB-INF/lib/commons-lang3-3.1.jar"/>
-	<classpathentry kind="lib" path="/Users/bang/Documents/workspace/iFEED_tutorial/war/WEB-INF/lib/gson-2.3.1.jar"/>
-	<classpathentry kind="lib" path="/Users/bang/Documents/workspace/iFEED_tutorial/war/WEB-INF/lib/jcommon-1.0.22.jar"/>
-	<classpathentry kind="lib" path="/Users/bang/Documents/workspace/iFEED_tutorial/war/WEB-INF/lib/jess.jar"/>
-	<classpathentry kind="lib" path="/Users/bang/Documents/workspace/iFEED_tutorial/war/WEB-INF/lib/jfreechart-1.0.18.jar"/>
-	<classpathentry kind="lib" path="/Users/bang/Documents/workspace/iFEED_tutorial/war/WEB-INF/lib/jxl.jar"/>
-	<classpathentry kind="lib" path="/Users/bang/Documents/workspace/iFEED_tutorial/war/WEB-INF/lib/madkit-5.0.5.jar"/>
-	<classpathentry kind="lib" path="/Users/bang/Documents/workspace/iFEED_tutorial/war/WEB-INF/lib/matlabcontrol-4.0.0.jar"/>
-	<classpathentry kind="lib" path="/Users/bang/Documents/workspace/iFEED_tutorial/war/WEB-INF/lib/weka.jar"/>
-	<classpathentry kind="lib" path="/Users/bang/Documents/workspace/iFEED_tutorial/war/WEB-INF/lib/google-api-client-1.21.0.jar"/>
-	<classpathentry kind="lib" path="/Users/bang/Documents/workspace/iFEED_tutorial/war/WEB-INF/lib/objectify-5.1.12.jar"/>
-	<classpathentry kind="lib" path="/Users/bang/Documents/workspace/iFEED_tutorial/war/WEB-INF/lib/google-http-client-1.21.0.jar"/>
-	<classpathentry kind="lib" path="/Users/bang/Documents/workspace/iFEED_tutorial/war/WEB-INF/lib/google-http-client-gson-1.21.0.jar"/>
-	<classpathentry kind="lib" path="/Users/bang/Documents/workspace/iFEED_tutorial/war/WEB-INF/lib/guava-jdk5-17.0.jar"/>
-	<classpathentry kind="lib" path="/Users/bang/Documents/workspace/iFEED_tutorial/war/WEB-INF/lib/gwt-servlet.jar"/>
-	<classpathentry kind="lib" path="/Users/bang/Documents/workspace/iFEED_tutorial/war/WEB-INF/lib/google-oauth-client-1.21.0.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/combinatoricslib-2.0.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-lang3-3.1.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gson-2.3.1.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/jcommon-1.0.22.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/jess.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/jfreechart-1.0.18.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/jxl.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/madkit-5.0.5.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/matlabcontrol-4.0.0.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/swt.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/weka.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/jblas-1.2.4.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
