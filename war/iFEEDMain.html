@@ -28,7 +28,7 @@ and open the template in the editor.
             #scatterPlotFigure {
 			    border-style: solid;
 			    border-width: 3.3px;
-                width: 960px;
+                width: 1220px;
                 height: 540px;
                 float: left;
                 margin-right: 10px;
@@ -231,25 +231,41 @@ and open the template in the editor.
         </div>
 
 		
-		<div style="float:left;width:100%; margin-top: 20px">
+		<div style="float:left;width:100%; height:1400px;margin-top: 20px">
 			<div style="width:1300px; margin:auto">
 			
 			
-			    <div id="main_div" style="margin:auto;width:80%;background-color:#F9E39D;padding:20px">
-			    	<h3 id="main_header"></h3>
-			    	<p id="main_text" style="font-size:22px"></p>
-			    	<img id="main_img" style="margin:auto;">
-			    	<img id="main_img2" style="margin:auto;">
-			    	<p id="main_text3" style="font-size:22px"></p>
-			    	
-			    	<p id="main_img_credit" style="margin-top:5px; font-size:10px"></p>
-			    	
-			    	
-			    	<div id="arrow_div" style="margin-top:30px">
-			    		<img src="images/rightarrow.png" class="img-hor-vert" id="leftarrow" width="48" height="31">
-			    		<img src="images/rightarrow.png" id="rightarrow" width="48" height="31">
-    					<div id="tutorial_page_number" style="font-size:12px; margin:0 48%"></div>
+			    <div id="main_div" style="float:left;margin-left:70px;width:80%;background-color:#F9E39D;padding:20px">
+					<div id='exp_body' style='width:800px;float:left;'>	
+								    	
+						<h3 id="main_header"></h3>
+				    	<p id="main_text" style="font-size:22px"></p>
+				    	<img id="main_img" style="margin:auto;">
+				    	<img id="main_img2" style="margin:auto;">
+				    	<p id="main_text3" style="font-size:22px"></p>
+				    	<p id="main_img_credit" style="margin-top:5px; font-size:10px"></p>
+				    	
+				    	<div id="arrow_div" style="margin-top:30px">
+				    		<img src="images/rightarrow.png" class="img-hor-vert" id="leftarrow" width="48" height="31">
+				    		<img src="images/rightarrow.png" id="rightarrow" width="48" height="31">
+	    					<div id="tutorial_page_number" style="font-size:12px; margin:0 48%"></div>
+				    	</div>			    	
 			    	</div>
+
+			    	<div id='exp_clock' style='float:right;'>
+						<div id="clockdiv">
+							  <div>
+							    <span class="minutes"></span>
+							    <div class="smalltext">Minutes</div>
+							  </div>
+							  <div>
+							    <span class="seconds"></span>
+							    <div class="smalltext">Seconds</div>
+							  </div>
+						</div>	
+			    	</div>
+
+
 			    </div>
 						
 
@@ -275,69 +291,6 @@ and open the template in the editor.
 		            
 		            <figure id="scatterPlotFigure"></figure>
 		            
-		            <div id="OptionsPane" class="main_options" style="float:left; width: 250px; height: 540px;border: 1px black double;">
-		            	<div style="width:225px;height:535px;margin:auto;">
-		            		
-		            		<div style="float:left;width:190px;padding:15px;height:115px;background-color:#D9D9D9;margin-top:15px">
-			            		<div class="toggle-selection-option-div" style="height: 110px;float:left;">
-									<div style="font-size:18px;font-weight: bold;">
-										Mouse Selection
-									</div>
-									<div class="tooltip">
-										<span class="tooltiptext" style="right:230px;padding:11px;width:230px">Zoom/Pan: This option allows zooming/panning on the scatter plot</span>
-										<div style="margin-top:3px" onclick="set_selection_option(1);">
-									    	Zoom/Pan:
-									    	<input id="zoom-pan" type="radio" checked="True"/>
-								    	</div>
-									</div>
-								    
-									<div class="tooltip">
-										<span class="tooltiptext" style="right:230px;padding:11px;width:230px">Drag-select: This option allows selecting designs by dragging over points</span>
-									    <div onclick="set_selection_option(2);">
-									    	Drag-select:
-									    	<input id="drag-select" type="radio"/>
-								    	</div>
-									</div>
-								    
-									<div class="tooltip">
-										<span class="tooltiptext" style="right:230px;padding:11px;width:230px">Deselect: This option allows de-selecting designs by dragging over points</span>
-									    <div onclick="set_selection_option(3);">
-									    	Deselect:
-									    	<input id="de-select" type="radio"/>
-								    	</div>
-									</div>
-
-
-			            		</div>
-		            		</div>
-		
-		
-		
-			                <div id="selection_option_div" style="float:left;width:220px;margin-top: 20px;">
-								<div style="margin:auto;width:200;padding:15px;background-color:#D9D9D9">
-									<div style="font-size:18px;font-weight: bold;margin-bottom:10px">
-										Range Selection
-									</div>
-				                    Cost range: <br/>
-				                    <input id="selectArchsWithinRange_minCost" class="select_within_range_text_box" type="text" value="0"/>&nbsp; ~&nbsp; <input id="selectArchsWithinRange_maxCost" class="select_within_range_text_box" type="text" value="inf"/>
-				                    <br/> Science Benefit range: <br/>
-				                    <input id="selectArchsWithinRange_minScience" class="select_within_range_text_box" type="text" value="0"/>&nbsp; ~&nbsp; <input id="selectArchsWithinRange_maxScience" class="select_within_range_text_box" type="text" value="1"/>
-				                    <br/>
-			                    	<button type="button" id="selectArchsWithinRangeButton" style="margin-top:10px;margin-bottom:3px;width:170px" disabled="True">Select Designs</button>
-
-								</div>
-<!-- 			                    <button type="button"  id="hide_selection" disabled="True">Hide selections</button> -->
-<!-- 			                    <button type="button"  id="show_all_archs" disabled="True">Show all architectures</button> -->
-            				    <button type="button"  id="cancel_selection" disabled="True" style="width:220px;height:35px;margin-top:20px">Cancel all selections</button>
-			                	
-			                
-			                </div>
-
-
-		            	</div>
-		            	
-		
-		            </div>
 		        </div>
 		
 		      
@@ -346,9 +299,11 @@ and open the template in the editor.
 		        
 		        
 				    <div id="basicInfoBox_div" style="width: 1212px; margin: 0 auto; float:left;border-style: solid;
-				    					border-width: 1px;height: 430px;overflow: scroll;
+				    					border-width: 1px;
 				    					hbmargin-left: 0px;font-family: 'Helvetica Neue', Helvetica; 
-		              					font-weight: 300; padding: 5px;">
+		              					font-weight: 300; 
+		              					overflow-y: scroll;
+		              					padding: 5px;">
 				        <ul class="tabs" data-persist="true">
 				            <li><a id="tab1" href="#view1">Inspect Design</a></li>
 				            <li><a id="tab2" href="#view2">Filter Setting</a></li>
@@ -374,6 +329,7 @@ and open the template in the editor.
        <script src="js/userDefinedFilter.js" type="text/javascript"></script>
        <script src="js/relabel.js" type="text/javascript"></script>
        <script src="js/filters.js" type="text/javascript"></script>
+       <script src="js/tutorialInstructions.js" type="text/javascript"></script>
        
        <script>
        
@@ -381,8 +337,10 @@ and open the template in the editor.
 
 	       var testType;
 	       var account_id;
-
-           
+		   var current_view;
+		   var current_view_displayed;
+		   var max_view_reached = 0;
+		   
 			function credential_check(){
 // 				var credential_verified = false;
 				
@@ -421,47 +379,25 @@ and open the template in the editor.
 // 			    	 window.location.replace("session_end.html");
 // 				}
 
+				max_view_reached = 5;
+            	current_view=5;
+            	current_view_displayed=5;
+            	display_views();
 				testType="3";
 				account_id = 123123;
 				credential_verified=true;
 				import_new_data()
+				unhighlight_basic_info_box();
+
 			}
 	       
 
 	       
 
-    
-       		var view7_completed = false;
-       		var view6_completed = false;
-       		var view5_completed = false;
-       		var view8_completed = false;
-       		var view9_completed = false;
-       		var view10_completed = false;
-       		var view11_completed = false;
-       		var view12_completed = false;
-       		var view13_completed = false;
-       		var view14_completed = false;
-       		var view15_completed = false;
-       		var view16_completed = false;
-       		var view17_completed = false;
-       		var view18_completed = false;
-       		var view19_completed = false;
-       		var view20_completed = false;
-       		var view21_completed = false;
-       		var view22_completed = false;
-       		var view23_completed = false;
-       		var view24_completed = false;
-       		var view13_ready = 0;
-       		var view18_ready = 0;
-       		var view20_ready = 0;
-       		var view21_ready = 0;
-       		var view22_ready = 0;
-       		var view23_ready = 0;
-       
 
        		
-            var filter_arch;
-            var modified_filterArch;
+
+       		
 
             var translate_tmp = [0,0];
             var scale_tmp = 0;
@@ -491,7 +427,7 @@ and open the template in the editor.
             
             
             var margin = {top: 20, right: 20, bottom: 30, left: 60},
-            width = 960 - margin.left - margin.right,
+            width = 1220 - margin.left - margin.right,
                     height = 540 - margin.top - margin.bottom;
             var json_arch;
             var svg,
@@ -511,10 +447,10 @@ and open the template in the editor.
            	
            	
            	// Filter option variables
-            var preset_filter_options = [{value:"not_selected",text:"Preset Filters"},{value:"paretoFront",text:"Pareto front"},
+            var preset_filter_options = [{value:"not_selected",text:"Preset Filters"}, //{value:"paretoFront",text:"Pareto front"},
                 {value:"present",text:"Present"},{value:"absent",text:"Absent"},{value:"inOrbit",text:"In orbit"},
                 {value:"notInOrbit",text:"Not in orbit"},{value:"together",text:"Together"},
-                {value:"togetherInOrbit",text:"Together in orbit"},{value:"separate",text:"Separate"},
+                {value:"separate",text:"Separate"},
                 {value:"emptyOrbit",text:"Empty orbit"},{value:"numOrbits",text:"Number of orbit used"},
                 {value:"numOfInstruments",text:"Number of instruments"},
                 {value:"subsetOfInstruments",text:"Num of instruments in a subset"}];
@@ -778,700 +714,20 @@ and open the template in the editor.
             }
             
             function numOfArchs(){
-                var leng1 = d3.select("[id=scatterPlotFigure]").select("svg").selectAll("[class=dot]").size();
-                var leng2 = d3.select("[id=scatterPlotFigure]").select("svg").selectAll("[class=dot_clicked]").size();
-                var leng3 = d3.select("[id=scatterPlotFigure]").select("svg").selectAll("[class=dot_DFhighlighted]").size();
-                var leng4 = d3.select("[id=scatterPlotFigure]").select("svg").selectAll("[class=dot_selected_DFhighlighted]").size();
-                return leng1+leng2+leng3+leng4;
+                return d3.selectAll(".dot").size();
             }
             function numOfSelectedArchs(){
-                var leng1 = d3.select("[id=scatterPlotFigure]").select("svg").selectAll("[class=dot_clicked]").size();
-                var leng2 = d3.select("[id=scatterPlotFigure]").select("svg").selectAll("[class=dot_selected_DFhighlighted]").size();
-                return leng1+leng2;
+                return d3.selectAll("[status=selected]").size();
             }
 
 
-//          	testType = "3";
-//             newDataFromResultFile();
-
-            
-			credential_check();
-
-
-            
-            var current_view=5;
-            var current_view_displayed=5;
-            
-            function click_leftarrow(){
-            	if(current_view==5){
-            		window.location.replace("iFEEDTutorial.html?48375937584=23413");
-            	}
-            	if(testType=="1"){
-            		if(current_view==24){
-            			current_view=20;
-            		}else if(current_view==19){
-            			current_view=11;
-            		}else if(current_view==11){
-            			current_view=18;
-            		}else if(current_view==12){
-            			current_view=5;
-            		}else{
-            			current_view = current_view-1; 	
-            		}
-            	}else if(testType=="2"){
-					if(current_view==24){
-						current_view=22;
-					}else{
-						current_view = current_view-1; 
-					}
-            	}else{
-            		current_view = current_view-1; 
-            	}	
-            	current_view_displayed--;
-            	display_views();
-            }
-            function click_rightarrow(){
-            	if(testType=="1"){
-            		if(current_view==5){
-            			current_view=12;
-            		}else if(current_view==18){
-            			current_view=11;
-            		}else if(current_view==11){
-            			current_view=19;
-            		}else if(current_view==20){
-            			current_view=24;
-            		}else{
-            			current_view = current_view+1; 	
-            		}
-            	}else if(testType=="2"){
-					if(current_view==22){
-						current_view=24;
-					}else{
-						current_view = current_view+1; 
-					}
-            	}else{
-            		current_view = current_view+1; 
-            	}	
-            	current_view_displayed++;
-            	display_views();
-            }
-
-            function clear_view(){
-	            	
-	           	d3.select('#saveFilter')
-	                .style('border-width','0px')
-	                .style('border-color','#000000');
-	                
-	            d3.select('#basicInfoBox_div')
-	                .style('border-width','1px')
-	                .style('border-color','#000000');
-	                
-	            d3.select('#filter_options').select('select')
-	                .style('border-width','0px')
-	                .style('border-color','#000000');
-	
-	            d3.select('#getDrivingFeaturesButton')
-	                .style('border-width','0px')
-	                .style('border-color','#000000');
-	                
-	            d3.select('#applyFilterButton_add')
-	                .style('border-width','0px')
-	                .style('border-color','#000000');
-	            d3.select('#applyFilterButton_within')
-	                .style('border-width','0px')
-	                .style('border-color','#000000');
-	            d3.select('#applyFilterButton_new')
-	                .style('border-width','0px')
-	                .style('border-color','#000000');      
-	                              
-	            d3.select('#cancel_selection')
-	                .style('border-width','0px')
-	                .style('border-color','#000000');
-	
-	            d3.select('#StatusBar')
-	                .style('border-width','0px')
-	                .style('border-color','#000000');
-	                                      
-	            d3.select('#selection_option_div').select('div')
-	                .style('border-width','0px')
-	                .style('border-color','#000000');
-	
-	
-	            d3.select('#OptionsPane')
-	                .style('border-width','1px')
-	                .style('border-color','#000000');
-	                
-	                
-	            d3.select('#scatterPlotFigure')
-	                .style('border-width','1px')
-	                .style('border-color','#000000');
-	
-	            d3.select('#OptionsPane').select('div').select('div')
-	                .style('border-width','0px')
-	                .style('border-color','#000000');  
-	                    
-            	d3.select("#main_header").text("");
-            	d3.select("#main_text").text('');
-            	
-            	d3.select("#main_img").attr("src","")
-            			.style("width","0%")
-            			.style("opacity",0);
-            	
-            	d3.select("#main_text2").remove();
-
-            	d3.select("#main_img2").attr("src","")
-            			.style("width","0%")
-            			.style("opacity",0);
-            	
-            	d3.select("#main_text3").text('');
-            	
-            	d3.select("#main_img_credit").text("");
-            	activate_right_arrow();
-            	
-            	d3.select('#experiment_start_button').remove();
-            	
-            	if(d3.select('#getDrivingFeaturesButton')[0][0]){
-            		d3.selectAll('#getDrivingFeaturesButton')[0][0].disabled=true;
-            	}
-            	if(d3.select('#applyFilterButton_new')[0][0]){
-            		d3.select('#applyFilterButton_new')[0][0].disabled=true;
-            	}
-            	if(d3.select('#applyFilterButton_add')[0][0]){
-            		d3.select('#applyFilterButton_add')[0][0].disabled=true;
-            	}
-            	if(d3.select('#applyFilterButton_within')[0][0]){
-            		d3.select('#applyFilterButton_within')[0][0].disabled=true;
-            	}
-            	
-            	
-            	
-            	
-            }
-
-            function display_views(){
-            	clear_view();
-            	
-            	var max_view=24;
-            	if(testType=="1"){
-            		max_view=16;
-            	}else if(testType=="2"){
-            		max_view=23;
-            	}
-            	
-            	d3.select('#tutorial_page_number').text("" + current_view_displayed + "/"+ max_view);
-            	
-            	
-            	if(current_view==5){
-            		d3.select("#main_header").text("Scatter Plot Panel")
-            		d3.select("#main_text").html('<p>The scatter plot panel (box highlighted in red) displays thousands of different designs '
-            				+' of satellite systems. Each dot corresponds to one design, and its location indicates '
-            				+'the corresponding'
-            				+' cost and science benefit score of the design.</p>'
-            				+'<p>You can zoom in and zoom out using your mouse wheel, or using pinching motion if you are using'
-            				+' a trackpad. You can also pan the view using your mouse.</p>');
-
-            		d3.select('#scatterPlotFigure')
-            			.style('border-width','5px')
-            			.style('border-color','#FF2D65');
-            	}
-            	else if(current_view==6){ // skip for baseline condition
-            		
-            		d3.select("#main_header").text("Selection Panel")
-            		d3.select("#main_text").html('<p>The selection panel contains menus and options you can use to '
-            				+'select a group of solutions.</p> <p>Selection is useful for analyzing a group of solutions'
-            				+' as will be shown later.</p>');
-            		
-            		d3.select('#OptionsPane')
-	        			.style('border-width','5px')
-	        			.style('border-style','solid')
-	        			.style('border-color','#FF2D65');
-            		
-            	}	
-            	else if(current_view==7){ // skip for baseline condition
-            		if(!view7_completed){
-            			deactivate_right_arrow();
-            		}
-            		
-            		d3.select("#main_header").text("Drag-select Option")
-            		d3.select("#main_text").html('<p>Drag-select option allows you to '
-            				+'select designs on the scatter plot by dragging your mouse over them.</p> '
-            				+'<p>To continue, use drag-select option to select some designs.</p>');
-            		
-            		d3.select('#OptionsPane').select('div').select('div')
-	        			.style('border-width','5px')
-	        			.style('border-style','solid')
-	        			.style('border-color','#FF2D65');
-
-            	}
-            	else if(current_view==8){
-            		if(!view8_completed){
-            			deactivate_right_arrow();
-            		}
-            		
-            		d3.select("#main_header").text("Deselect Option")
-            		d3.select("#main_text").html('<p>Deselect option allows you to '
-            				+'deselect the highlighted dots on the scatter plot by dragging your mouse over them.</p> '
-            				+'<p> To continue, use deselect option to cancel selections.</p>');
-            		
-            		d3.select('#OptionsPane').select('div').select('div')
-	        			.style('border-width','5px')
-	        			.style('border-style','solid')
-	        			.style('border-color','#FF2D65');
-            	}
-            	else if(current_view==9){
-            		if(!view9_completed){
-            			deactivate_right_arrow();
-            		}
-            		
-            		d3.select("#main_header").text("Selection by Range")
-            		d3.select("#main_text").html('<p>You can also set a range of values for cost and benefit to make the selection.</p> '
-            				+'<p> To continue, set ranges of values for cost and benefit and click on the "Select Designs" button.</p>');
-            		
-            		d3.select('#selection_option_div').select('div')
-	        			.style('border-width','5px')
-	        			.style('border-style','solid')
-	        			.style('border-color','#FF2D65');
-            	}
-            	else if(current_view==10){
-            		
-            		d3.select("#main_header").text("Number of designs selected")
-            		d3.select("#main_text").html('<p>The total number of designs and the number of selected designs are displayed in'
-            				+' the boxes above the scatter plot.</p>');
-            		
-            		d3.select('#StatusBar')
-	        			.style('border-width','5px')
-	        			.style('border-style','solid')
-	        			.style('border-color','#FF2D65');
-
-            		
-            	}
-            	else if(current_view==11){
-            		if(!view11_completed){
-            			deactivate_right_arrow();
-            		}
-            		d3.select("#main_header").text("Cancel All Selections")
-            		d3.select("#main_text").html('<p>Cancel all selection button is used to cancel all the selections. </p>'
-            				+'<p>To continue, press the [Cancel all selections] button to deselect all the selected designs.</p>');
-
-            		d3.select('#cancel_selection')
-	        			.style('border-width','5px')
-	        			.style('border-style','solid')
-	        			.style('border-color','#FF2D65');
-
-            	}
-            	else if(current_view==12){ 
-            		d3.select("#main_header").text("Analysis Panel")
-            		d3.select("#main_text").html('<p>The analysis panel is located below the scatter plot, '
-            				+'and you can use it to analyze the data displayed on the scatter plot.</p>');
-
-            		d3.select('#basicInfoBox_div')
-	        			.style('border-width','5px')
-	        			.style('border-style','solid')
-	        			.style('border-color','#FF2D65');
-
-            		
-            	}
-            	else if(current_view==13){
-            		if(!view13_completed){
-            			deactivate_right_arrow();
-            		}
-            		d3.select("#main_header").text("Design Inspection")
-            		d3.select("#main_text").html('<p>If you hover your mouse over a design on the scatter plot, '
-            				+' the relevant information will be displayed on the "Inspect Design" tab.</p>'
-            				+'<p>The displayed information conatains the science benefit score and the cost, as well as'
-            				+' a figure that shows what instruments are assigned to each orbit.</p>'
-            				+'<p>The borderline of either the scatter plot or the analysis panel will be represented by bold lines.'
-            				+' The bold line means that the panel is currently focused. When the analysis panel is focused, hovering the mouse'
-            				+' over a dot on the scatter plot will not change the information already displayed on the analysis panel.'
-            				+' To enable the inspection of designs by hovering, click the scatter plot to bring the focus back to the scatter plot.</p>'
-            				+'<p>To continue, try alternating the focus by clicking on the scatter plot and the analysis panel.</p>');
-
-            		document.getElementById('tab1').click();
-            		set_selection_option(1);
-            		cancelDotSelections();
-            		unhighlight_basic_info_box();
-            		
-            		d3.select('#basicInfoBox_div')
-	        			.style('border-width','5px')
-	        			.style('border-style','solid')
-	        			.style('border-color','#FF2D65');
-            	}
-            	else if(current_view==14){
-            		d3.select("#main_header").text("Filters")
-            		d3.select("#main_text").html('<p>Filters can be used to select a group of designs '
-            				+'that share a common feature. For example, you can selectively highlight '
-            				+'designs that use instrument C in any orbit, or designs that assign instrument D and E to the orbit 4000. </p>'
-            				+'<p>Filters are useful to see how designs sharing a same '
-            				+'feature are distributed in the scatter plot. So, for example, you may discover that most of'
-            				+' the designs that have instruments D and E in the orbit 4000 are in the high-science area of'
-            				+' the scatter plot.</p>'
-            				+'<p>The most basic and useful features have been identified and built into the filter options. '
-            				+'You can select one of these preset filters to specify what patterns you want to investigate.</p>'
-            				+'<p>There are 12 different types of preset filters, but we will only explore 3 of them in this tutorial.'
-            				+' Further information will be available on the summarized manual in Mechanical Turk page.</p>');
-
-            		document.getElementById('tab2').click();
-            	    highlight_basic_info_box();
-            		
-            		d3.select('#basicInfoBox_div')
-	        			.style('border-width','5px')
-	        			.style('border-style','solid')
-	        			.style('border-color','#FF2D65');
-            		
-            	}
-            	else if(current_view==15){
-            		if(!view15_completed){
-            			deactivate_right_arrow();
-            		}
-            		d3.select("#main_header").text("Preset Filters: Pareto front")
-            		d3.select("#main_text").html('<p>We will test some of the preset filters. First, the Pareto front is used'
-            				+' to highlight a layer of dots that are closest to low-cost high-science-score region.'
-            				+' The Pareto ranking represents the number of layers that will be selected. The higher the number,'
-            				+' the more designs will be selected.'
-            				+' To use this filter, follow the steps below:</p>'
-            				+'<p>1. Select Pareto front option from the dropdown menu. </p>'
-            				+'<p>2. In the input field that appears, type in an integer number.</p>'
-            				+'<p>3. Then click [Apply new filter] button to apply the filter.</p>');
-            		
-            		document.getElementById('tab2').click();
-            	    highlight_basic_info_box();
-            	    
-            	    d3.select('#filter_options').select('select')
-	        			.style('border-width','5px')
-	        			.style('border-style','solid')
-	        			.style('border-color','#FF2D65');
-            	    d3.select('#applyFilterButton_new')
-	        			.style('border-width','5px')
-	        			.style('border-style','solid')
-	        			.style('border-color','#FF2D65');
-            	    
-
-                	if(d3.select('#applyFilterButton_new')[0][0]){
-                        		d3.select('#applyFilterButton_new')[0][0].disabled=false;
-                	}
-
-    
-            	}
-            	else if(current_view==16){
-            		if(!view16_completed){
-            			deactivate_right_arrow();
-            		}
-            		d3.select("#main_header").text("Preset Filters: Present")
-            		d3.select("#main_text").html('<p>The filter called Present is used to selectively highlight designs that '
-            				+'contain a specific instrument. It takes in one instrument name as an argument,'
-            				+' and selects designs that have the given instrument in any orbit.</p>'
-            				+'<p>1. Select Present option from the dropdown menu. </p>'
-            				+'<p>2. In the input field that appears, type in an instrument name. '
-            				+'The instrument should be an alphabet letter ranging from A to L. </p>'
-            				+'<p>3. Then click [Apply new filter] button to apply the filter.</p>');
-            		
-            		document.getElementById('tab2').click();
-            	    highlight_basic_info_box();
-            	    
-            	    d3.select('#filter_options').select('select')
-	        			.style('border-width','5px')
-	        			.style('border-style','solid')
-	        			.style('border-color','#FF2D65');
-            	    d3.select('#applyFilterButton_new')
-	        			.style('border-width','5px')
-	        			.style('border-style','solid')
-	        			.style('border-color','#FF2D65');
-            	    
-                	if(d3.select('#applyFilterButton_new')[0][0]){
-                        		d3.select('#applyFilterButton_new')[0][0].disabled=false;
-                	}
-            	    
-            	}
-            	else if(current_view==17){
-            		if(!view17_completed){
-            			deactivate_right_arrow();
-            		}
-            		d3.select("#main_header").text("Preset Filters: InOrbit")
-            		d3.select("#main_text").html('<p>The filter called InOrbit is used to selectively highlight designs that '
-            				+'assigns a specific instrument to the given orbit. It takes in an orbit name and an instrument '
-            				+'name as arguments. To continue, follow the steps below:</p>'
-            				+'<p>1. Select InOrbit option from the dropdown menu. </p>'
-            				+'<p>2. In the first input field that appears, type in an orbit name. '
-            				+'The orbit name should be a number in thousands (1000, 2000, 3000, 4000, or 5000). </p>'
-            				+'<p>2. In the second input field, type in an instrument name. '
-            				+'The instrument should be an alphabet letter ranging from A to L. </p>'
-            				+'<p>3. Then click [Apply new filter] button to apply the filter.</p>');
-            		
-            		document.getElementById('tab2').click();
-            	    highlight_basic_info_box();
-            	    
-            	    d3.select('#filter_options').select('select')
-	        			.style('border-width','5px')
-	        			.style('border-style','solid')
-	        			.style('border-color','#FF2D65');
-            	    d3.select('#applyFilterButton_new')
-	        			.style('border-width','5px')
-	        			.style('border-style','solid')
-	        			.style('border-color','#FF2D65');
-            	    
-                	if(d3.select('#applyFilterButton_new')[0][0]){
-                        		d3.select('#applyFilterButton_new')[0][0].disabled=false;
-                	}
-            	    
-            	}
-            	else if(current_view==18){
-            		if(!view18_completed){
-            			deactivate_right_arrow();
-            		}
-            		d3.select("#main_header").text("Filter application buttons")
-            		d3.select("#main_text").html('<p> There are three different buttons you can use to apply filters.'
-            				+' The first one is [Apply new filter], which simply applies the current selected filter regardless'
-            				+' of the previous selections made. The other two buttons are used when you have a group of designs'
-            				+' already selected in the scatter plot, and want to apply filters in addition to the current selection.</p>'
-            				+'<p>[Add to selection] adds the newly filtered designs to the current selection. The highlighted designs'
-            				+' on the scatter plot remains highlighted and the filter will be applied to previously unhighlighted designs.' 
-            				+' This is similar to the logical connective OR.</p>'
-		            		+'<p>[Search within selection] applies the filter to the currently selected set of designs. This is'
-		    				+' similar to the logical connective AND.</p>'
-		    				+'<p>To continue, try both options using the filters of your choice.</p>');
-            		
-            		document.getElementById('tab2').click();
-            	    highlight_basic_info_box();
-            	    
-            	    d3.select('#filter_options').select('select')
-	        			.style('border-width','5px')
-	        			.style('border-style','solid')
-	        			.style('border-color','#FF2D65');
-            	    
-            	    d3.select('#applyFilterButton_add')
-	        			.style('border-width','5px')
-	        			.style('border-style','solid')
-	        			.style('border-color','#FF2D65');
-            	    d3.select('#applyFilterButton_within')
-	        			.style('border-width','5px')
-	        			.style('border-style','solid')
-	        			.style('border-color','#FF2D65');
-            	    
-                	if(d3.select('#applyFilterButton_add')[0][0]){
-                    	d3.select('#applyFilterButton_add')[0][0].disabled=false;
-                	}
-                	if(d3.select('#applyFilterButton_within')[0][0]){
-                    	d3.select('#applyFilterButton_within')[0][0].disabled=false;
-                	}
-            	    
-            	}
-            	else if(current_view==19){
-            		if(!view19_completed){
-            			deactivate_right_arrow();
-            		}
-            		d3.select("#main_header").text("Making your own filter")
-            		d3.select("#main_text").html('<p>You can also combine existing filters to define a new filter using the [Define new Filter] option'
-            				+' from the dropdown menu. The new filter can be defined as a logical combination of preset filters,'
-            				+' and therefore you can make more sophisticated filters that better separates good'
-            				+' designs from the rest of the designs. To define a new filter, follow the steps below:</p>'
-            				+'<p>1. Select the Define new filter option from the dropdown menu. </p>'
-            				+'<p>2. Select any filter from the newly appeared dropdown menu. </p>'
-            				+'<p>3. For now, ignore the fields "Filter name" and "Filter expression", and fill in the rest of the input'
-            				+' field boxes (arguments such as instrument names and orbit names). </p>'
-            				+'<p>4. Click [Add this feature] button on the bottom right.</p>'
-            				+'<p>5. Select the another filter from the lower dropdown menu.</p>'
-            				+'<p>6. Fill in the input field boxes again. (ignore "Filer name" and "Filter expression")</p>'
-            				+'<p>7. Click on either the [AND] or the [OR] button to specify the logical connective you want to use to combine the two filters</p>'
-            				+'<p>8. Click the [Add this feature] button on the bottom left.</p>'
-            				+'<p>9. Click the [Apply new filter] button on the top, to apply the newly generated filter.</p>'
-            				+'<p> * If you make a mistake in adding a new filter, you can click the [Undo] button to reverse the action.</p>');
-            				
-            		document.getElementById('tab2').click();
-            	    highlight_basic_info_box();
-            	    
-            	    d3.select('#filter_options').select('select')
-	        			.style('border-width','5px')
-	        			.style('border-style','solid')
-	        			.style('border-color','#FF2D65');
-            	    
-                	if(d3.select('#applyFilterButton_new')[0][0]){
-                    	d3.select('#applyFilterButton_new')[0][0].disabled=false;
-                	}
-
-            	}
-            	else if(current_view==20){
-            		if(!view20_completed){
-            			deactivate_right_arrow();
-            		}
-            		d3.select("#main_header").text("Making your own filter - saving filters")
-            		d3.select("#main_text").html('<p>You can save the newly defined filter so that you can you can view it later and'
-            						+'further analyze it.</p>'
-            						+'<p>After defining your own filter, set the filter name by filling in the input field'
-            						+' box that appears when you select Define new filter option.</p>'
-            						+'<p>Then click the [Save this filter] button on the top right corner.</p>'
-            						+'<p>To continue, define your own filter and save it.</p>');
-            				
-            		document.getElementById('tab2').click();
-            	    highlight_basic_info_box();
-
-            	    d3.select('#saveFilter')
-	        			.style('border-width','5px')
-	        			.style('border-style','solid')
-	        			.style('border-color','#FF2D65');     
-            	    
-                	if(d3.select('#applyFilterButton_new')[0][0]){
-                    	d3.select('#applyFilterButton_new')[0][0].disabled=false;
-                	}
-            	    
-            	}
-            	else if(current_view==21){ // Show only for testType= 2 or 3
-            		if(!view21_completed){
-            			deactivate_right_arrow();
-            		}
-            		d3.select("#main_header").text("Data Mining - Driving Features")
-            		d3.select("#main_text").html('<p>iFEED also provides the data mining capability to help analyze the data.'
-            						+' The data mining capability extracts the driving features. Driving features are the patterns that '
-            						+'appear more often among the selected group of designs compared to all other designs. '
-            						+'Extracting these patterns can be useful to learn what constitutes good designs. </p>'
-            						+'<p>To run data mining, you first have to select a group of designs as targets. '
-            						+' The selection can be made using either the drag-selection or the range-selection.</p>'
-            						+'<p>Then click the [Run data mining] button on the Driving Features tab.</p>'
-            						+'<p>If bar graphs do not appear even after you clicked the [Run data mining] button, '
-            						+'try modifying the selection on the scatter plot. The number of selected designs should be'
-            						+' large enough so that interesting patterns can be found within those designs.</p>');
-            		
-            		document.getElementById('tab3').click();
-            	    highlight_basic_info_box();
-            		set_selection_option(2);
-            		cancelDotSelections();
-            		
-            		d3.select('#getDrivingFeaturesButton')
-	        			.style('border-width','5px')
-	        			.style('border-style','solid')
-	        			.style('border-color','#FF2D65');  
-            		
-                	if(d3.select('#getDrivingFeaturesButton')[0][0]){
-                    	d3.selectAll('#getDrivingFeaturesButton')[0][0].disabled=false;
-                	}
-
-        	    	
-            	}
-            	else if(current_view==22){ // Show only for testType= 2 or 3
-            		if(!view22_completed){
-//             			deactivate_right_arrow();
-            		}
-            		d3.select("#main_header").text("Driving Features Explained")
-            		d3.select("#main_text").html('<p>The driving features are presented as bar graphs. Each bar '
-            				+'corresponds to one driving feature, and the height of the bar'
-            				+' indicates how well the feature separates selected designs from the rest of the designs.'
-            				+' As you hover your mouse over each bar, the relevant information is presented in 3 ways.</p>'
-            				+'<p>1. Tooltip shows the name of the feature, including the arguments such as instrument names'
-            				+' and orbit names. Also, tooltip presents some basic statistics to show the composition of '
-            				+'designs with the feature and the selected designs in the dataset.</p>'
-            				+'<p>2. Scatterplot highlights (in pink) all the designs that have the given feature. </p>'
-            				+'<p>3. A Venn Diagram is presented to show the composition of designs with the feature and the'
-            				+' selected designs. The blue circle represents the selected designs, and the pink circle represents'
-            				+' designs with the feature.</p>'
-            				+'</br><p>To continue, inspect 3 features by hovering your mouse over the bars.</p>'
-            				+'<p>If you cannot see the bar graphs, go back to the previous step and run the data mining again.</p>');            				
-            
-	        		document.getElementById('tab3').click();
-	        	    highlight_basic_info_box();
-	        	    
-            		d3.select('#basicInfoBox_div')
-	        			.style('border-width','5px')
-	        			.style('border-style','solid')
-	        			.style('border-color','#FF2D65');  
-            		
-                	if(d3.select('#getDrivingFeaturesButton')[0][0]){
-                    	d3.selectAll('#getDrivingFeaturesButton')[0][0].disabled=false;
-                	}
-
-            	}
-            	else if(current_view==23){ // Show only for testType= 3
-            		if(!view23_completed){
-//             			deactivate_right_arrow();
-            		}
-            		d3.select("#main_header").text("Data Mining: Classification Tree")
-            		d3.select("#main_text").html('<p>The driving features can also be presented using a classification tree. '
-            				+'Classification tree is a decision tree that classifies whether a design belongs to the target '
-            				+'selected region or not. Each node corresponds to one driving feature. All the designs start'
-            				+'from the root node (far left) and follow the branches depending on whether it contains '
-            				+'the driving feature specified at each node. If a design contains the driving feature, '
-            				+'it will follow the green line. Otherwise, it follow the red line.</p>'
-            				+'<p>Each leaf node (far right) can be expanded by clicking on the node. '
-            				+'When it is expanded, a new driving feature will replace that node and the tree size will grow. '
-            				+'The information displayed at each leaf node indicates whether the designs that reach the node '
-            				+'are classified as selected or not selected in the scatter plot. '
-            				+'The classification accuracy is displayed inside the parentheses. The “weight” indicates '
-            				+'the number of designs that reached the leaf node.</p>'
-            				+'<p>If you hover your mouse over a leaf node (far right), corresponding designs will be'
-            				+' highlighted on the scatter plot.</p>'
-            				+'<p>To continue, try expanding and collapsing the tree by clicking on the node.</p>');            				
-            
-	        		document.getElementById('tab4').click();
-	        	    highlight_basic_info_box();
-	        	    
-            		d3.select('#basicInfoBox_div')
-	        			.style('border-width','5px')
-	        			.style('border-style','solid')
-	        			.style('border-color','#FF2D65');  
-            		
-                	if(d3.select('#getDrivingFeaturesButton')[0][0]){
-                    	d3.selectAll('#getDrivingFeaturesButton')[0][0].disabled=false;
-                	}
-
-            	}
-            	else if(current_view==24){ 
-					deactivate_right_arrow();
-					
-            		d3.select("#main_header").text("Tutorial Finished")
-            		d3.select("#main_text").html('<p style="font-weight:bold;">This is the end of the tutorial. Now you can start the experiment. Please read the directions below carefully.</p>'
-            				+'<p style="font-weight:bold;">You will not be able to return to this tutorial. If you need to refer to the tutorial, you can refer to the '
-            				+'summarized manual provided in Mechanical Turk page.</p>'
-            				+'<p style="font-weight:bold;">Now you will be given 30 minutes to use iFEED. During this time, you are encouraged to take notes'
-            				+' (either physically using pencil and papers or electronically using a text editor on you computer).</p>'
-            				+'<p style="font-weight:bold">After the 30-minute session is over, the page will be automatically reloaded to a different page. You will be provided with'
-            				+' a key number. Please COPY THIS NUMBER BEFORE YOU CLOSE THE PAGE. You will need this key number to put into the survey page,'
-            				+' and it will be used as an indication that you completed the whole session.</p>'
-            				+'<p style="font-weight:bold"> At the end of the final page, a link to the problem set will be provided. '
-            				+'The problem set is designed to test how much knowledge you have gained during your use of iFEED. A sample problem set is '
-            				+'provided in the Mechanical Turk page. The actual questions will be of similar types to this problem set, but not exactly the same. '
-            				+'To do well on this test, you should: </p>'
-            				+'<p style="font-weight:bold;color:red;"> Try to identify the features that are shared by good designs (Designs with'
-            				+' high science score and low cost). </p>'
-            				+'<p>Now you can move on to the experiment by clicking the button below. Good luck!</p>');  
-            		
-            		
-            		d3.select('#main_div')
-            			.insert('button','#main_text3')
-            			.attr("type","button")
-            			.attr("id","experiment_start_button")
-            			.style("width","220px")
-            			.style("height","30px")
-            			.style("margin-top:20px");
-            		d3.select("#experiment_start_button")
-            			.text("Start the Experiment")
-            			.on("click", start_experiment);
-            		
-//             		var tutorialFinishTime = Date.parse(new Date());
-// 	           	     $.ajax(
-// 	        	             {
-// 	        	                 url: "loginServlet",
-// 	        	                 type: "POST",
-// 	        	                 data: {ID: "session_ended", account_id: account_id, tutorial_finish_time:tutorialFinishTime},
-// 	        	                 async: false,
-// 	        	                 success: function (data, textStatus, jqXHR)
-// 	        	                 {
-// 	        	                 },
-// 	        	                 error: function (jqXHR, textStatus, errorThrown)
-// 	        	                 {
-// 	        	                     alert("error");
-// 	        	                 }
-// 	        	             });
-            	}
-
-            }
-            	
-
-            
             function start_experiment(){
         		window.location.replace("http://1-dot-airy-passkey-125416.appspot.com?" + testType + "-" + account_id);
             }
             
             function deactivate_right_arrow(){
-            	//d3.select("#rightarrow").on("click",null);
-            	//d3.select('#rightarrow').style('opacity',0.3);
+            	d3.select("#rightarrow").on("click",null);
+            	d3.select('#rightarrow').style('opacity',0.3);
             }
             function activate_right_arrow(){
             	d3.select('#rightarrow').style('opacity',1);
@@ -1480,11 +736,16 @@ and open the template in the editor.
 
             d3.select("#leftarrow").on("click",click_leftarrow);
             d3.select("#rightarrow").on("click",click_rightarrow);
-            display_views();
+            
+            
+            
+            
+            
             
             
 
-            
+			credential_check();
+
             
             
 

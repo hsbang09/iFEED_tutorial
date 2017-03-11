@@ -20,8 +20,16 @@ function openFilterOptions(){
             .append("p")
             .text("Filter Setting");
 
-    var filterApplicationStatus = archInfoBox.append('div')
+    var applied_filter_div = archInfoBox
+    		.append('div')
             .attr('id','filter_application_status');
+    var filterApplicationStatusTitle = applied_filter_div.append('div')
+			.attr('id','applied_filter_title_div');
+    var filterApplicationStatus = applied_filter_div.append('div')
+    		.attr('id','applied_filter_div');
+    var filterApplicationStatusButton = applied_filter_div.append('div')
+    		.attr('id','applied_filter_button_div');
+
     var filterOptions = archInfoBox.append("div")
             .attr("id","filter_options");
     var filterInputs = archInfoBox.append("div")
@@ -54,23 +62,17 @@ function openFilterOptions(){
     d3.select("#filter_buttons").append("button")
             .attr("id","applyFilterButton_new")
             .attr("class","filter_options_button")
-            .text("Apply new filter");
-    d3.select("#filter_buttons").append("button")
-            .attr("class","filter_options_button")
-            .attr("id","applyFilterButton_add")
-            .style("margin-left","6px")
-            .style("float","left")
-            .text("Add to selection");
-    d3.select("#filter_buttons").append("button")
-            .attr("id","applyFilterButton_within")
-            .attr("class","filter_options_button")
-            .text("Search within selection");
-
-    d3.select("#filter_buttons").append("button")
-            .attr("id","filter_application_save")
-            .attr("class","filter_options_button")
-            .text("Save currently applied filter scheme")
-            .attr('disabled', true);
+            .text("Apply filter");
+//    d3.select("#filter_buttons").append("button")
+//            .attr("class","filter_options_button")
+//            .attr("id","applyFilterButton_add")
+//            .style("margin-left","6px")
+//            .style("float","left")
+//            .text("Add to selection");
+//    d3.select("#filter_buttons").append("button")
+//            .attr("id","applyFilterButton_within")
+//            .attr("class","filter_options_button")
+//            .text("Search within selection");
     
     d3.select("#filter_options_dropdown_1").on("change",filter_options_dropdown_preset_filters);    
 
@@ -92,7 +94,6 @@ function remove_filter_option_inputs(level){
     
     d3.selectAll('.filter_inputs_div').remove(); 
     d3.selectAll('.filter_hints_div').remove();
-    d3.select('#filter_application_save')[0][0].disabled=true;
     
     d3.select('#filter_options_dropdown_4').remove();
     if(level==3){return;}
@@ -138,12 +139,12 @@ function filter_input_preset(selectedOption,userDefOption){
                 .text("(Hint: Designs that do not have the specified instrument are selected)");   
     }
     else if (selectedOption=="inOrbit"){
-        append_filterInputField_orbitAndInstInput();
+    	append_filterInputField_orbitAndMultipleInstInput();
         d3.select("#filter_hints")
                 .append("div")
                 .attr("id","filter_hints_div_1")
                 .attr('class','filter_hints_div')
-                .text("(Hint: Designs that have the specified instrument inside the chosen orbit are selected)");
+                .text("(Hint: Designs that have the specified instruments inside the chosen orbit are selected)");
     }
     else if (selectedOption=="notInOrbit"){
         append_filterInputField_orbitAndInstInput();
@@ -160,14 +161,6 @@ function filter_input_preset(selectedOption,userDefOption){
                 .attr("id","filter_hints_div_1")
                 .attr('class','filter_hints_div')
                 .text("(Hint: Designs that have the specified instruments in any one orbit are chosen)");    
-    } 
-    else if (selectedOption=="togetherInOrbit"){
-        append_filterInputField_orbitAndMultipleInstInput();
-        d3.select("#filter_hints")
-                .append("div")
-                .attr("id","filter_hints_div_1")
-                .attr('class','filter_hints_div')
-                .text("(Hint: Designs that have the specified instruments in the specified orbit are chosen)"); 
     } 
     else if (selectedOption=="separate"){
         append_filterInputField_multipleInstInput();
@@ -322,7 +315,7 @@ function append_filterInputField_orbitAndMultipleInstInput(){
             .attr('class','filter_inputs_div')
             .append('div')
             .attr('class','filter_inputs_supporting_comments_begin')
-            .text("Input instrument names (2 or 3) separated by comma: ");
+            .text("Input instrument names (minimum 1, and maximum 3) separated by comma: ");
         d3.select('#filter_inputs_div_2')
             .append("input")
             .attr("class","filter_inputs_textbox")
@@ -682,11 +675,26 @@ function applyPresetFilter(expression,bitString,rank){
         }
         break;
     case "inOrbit":
-    	resu=false;
-        if(bitString[orbit*ninstr + instr]===true){
+    	var instrument_temp = instr + '';
+    	if(instrument_temp.indexOf(',')==-1){
+    		// One instrument
+        	resu=false;
+            if(bitString[orbit*ninstr + instr]===true){
+            	resu=true;
+            }
+            break;    		
+    	}else{
+    		// Multiple instruments
         	resu=true;
-        }
-        break;
+        	var instruments = instrument_temp.split(",");
+    		for(var j=0;j<instruments.length;j++){
+    			var temp = +instruments[j];
+    			if(bitString[orbit*ninstr + temp]===false){
+    				resu= false;break;
+    			}
+    		}    		
+    	}
+    	break;
     case "notInOrbit":
     	resu=true;
         if(bitString[orbit*ninstr + instr]===true){
@@ -708,17 +716,6 @@ function applyPresetFilter(expression,bitString,rank){
     			resu=true;break;
     		}
     	}
-        break;
-
-    case "togetherInOrbit":
-    	resu=true;
-    	var instruments = instr.split(",");
-		for(var j=0;j<instruments.length;j++){
-			var temp = +instruments[j];
-			if(bitString[orbit*ninstr + temp]===false){
-				resu= false;break;
-			}
-		}
         break;
 
     case "separate":
@@ -839,6 +836,43 @@ function applyPresetFilter(expression,bitString,rank){
 
 function applyFilter(option){
 	
+	
+
+    var dropdown = d3.select("#filter_options_dropdown_1")[0][0].value;
+    
+	if(current_view==11 && dropdown=='present'){
+		if(max_view_reached < 11) max_view_reached=11;
+		activate_right_arrow();
+		alert('Success! You can move on to the next step.');
+	}
+	else if(current_view==12 && dropdown=='inOrbit'){
+		if(max_view_reached < 12 ) max_view_reached=12;
+		activate_right_arrow();
+		alert('Success! You can move on to the next step.');
+	}
+	else if(current_view==13 && dropdown=='together'){
+		if(max_view_reached < 13 ) max_view_reached=13;
+		activate_right_arrow();
+		alert('Success! You can move on to the next step.');
+	}
+	else if(current_view==14 && dropdown=='emptyOrbit'){
+		if(max_view_reached < 14 ) max_view_reached=14;
+		activate_right_arrow();
+		alert('Success! You can move on to the next step.');
+	}
+	else if(current_view==15 && dropdown=='numOfInstruments'){
+		if(max_view_reached < 15 ) max_view_reached=15;
+		activate_right_arrow();
+		alert('Success! You can move on to the next step.');
+	}
+	else if(current_view==16 && dropdown=='subsetOfInstruments'){
+		if(max_view_reached < 16 ) max_view_reached=16;
+		activate_right_arrow();
+		alert('Success! You can move on to the next step.');
+	}
+	
+	
+	
 	// Remove remaining traces of actions from driving features tab
 	remove_df_application_status();
 	
@@ -849,7 +883,6 @@ function applyFilter(option){
     var filterExpression;
     var matchedArchIDs = [];
 
-    var dropdown = d3.select("#filter_options_dropdown_1")[0][0].value;
 
     var numInputs = get_number_of_inputs();
     var input_textbox = [];
@@ -878,7 +911,7 @@ function applyFilter(option){
         var instrument = input_textbox[0];
         instrument = instrument.replace(/\s+/, "");
         filterExpression = presetFilter + "[;" + DisplayName2Index(instrument.toUpperCase(),"instrument") + ";]";
-    }else if(presetFilter == "inOrbit" || presetFilter == "notInOrbit" || presetFilter=="togetherInOrbit"){
+    }else if(presetFilter == "inOrbit" || presetFilter == "notInOrbit"){
         var orbit = input_textbox[0].trim();
         var instrument = input_textbox[1];
         instrument = instrument.replace(/\s+/, "");
@@ -942,26 +975,43 @@ function applyFilter(option){
             d3.selectAll('.dot')[0].forEach(function(d){
                 var bitString = d.__data__.bitString;
                 if(applyPresetFilter(filterExpression,bitString)){
-                    d3.select(d).attr('class','dot_highlighted')
-                                .style("fill", "#19BAD7");
+                	if(d3.select(d).attr('status')=='selected'){
+                        d3.select(d).attr('status','selected_and_highlighted')
+                        	.style("fill", "#F75082");
+                	}else{
+                        d3.select(d).attr('status','highlighted')
+                        .style("fill", "#F75082");
+                    }
                 }
             });
         }else if(option==="add"){
             d3.selectAll('.dot')[0].forEach(function(d){
                 var bitString = d.__data__.bitString;
                 if(applyPresetFilter(filterExpression,bitString)){
-                    d3.select(d).attr('class','dot_highlighted')
-                                .style("fill", "#19BAD7");
+                	if(d3.select(d).attr('status')=='selected'){
+                        d3.select(d).attr('status','selected_and_highlighted')
+                        	.style("fill", "#F75082");
+                	}else{
+                        d3.select(d).attr('status','highlighted')
+                        .style("fill", "#F75082");
+                    }
                 }
             });
         }else if(option==="within"){
-            d3.selectAll('.dot_highlighted')[0].forEach(function(d){
+            d3.selectAll('[status=highlighted]')[0].forEach(function(d){
                 var bitString = d.__data__.bitString;
                 if(!applyPresetFilter(filterExpression,bitString)){
-                    d3.select(d).attr('class','dot')
-                    .style("fill", function (d) {return "#000000";});   
+                    d3.select(d).attr('status','default')
+                    	.style("fill", function (d) {return "#000000";});   
                 }
-            });     
+            }); 
+            d3.selectAll('[status=selected_and_highlighted]')[0].forEach(function(d){
+                var bitString = d.__data__.bitString;
+                if(!applyPresetFilter(filterExpression,bitString)){
+                    d3.select(d).attr('status','selected')
+                    	.style("fill", function (d) {return "#19BAD7";});   
+                }
+            });              
         }
     }
 
@@ -970,11 +1020,7 @@ function applyFilter(option){
     	alert("Invalid input argument");
     }
     d3.select("[id=numOfSelectedArchs_inputBox]").text("" + numOfSelectedArchs());  
-    d3.select("#filter_application_save")[0][0].disabled = false;
-    d3.select('#filter_application_save')
-            .on('click',function(d){
-                save_user_defined_filter(null);
-            });
+
 }
 
 
@@ -986,23 +1032,40 @@ function applyParetoFilter(option, arg){
         d3.selectAll(".dot")[0].forEach(function (d) {
             var rank = parseInt(d3.select(d).attr("paretoRank"));
             if (rank <= +arg && rank >= 0){
-                d3.select(d).attr('class','dot_highlighted')
-                	.style("fill", "#19BAD7");
+            	if(d3.select(d).attr('status')=='selected'){
+                    d3.select(d).attr('status','selected_and_highlighted')
+                    	.style("fill", "#F75082");
+            	}else{
+                    d3.select(d).attr('status','highlighted')
+                    .style("fill", "#F75082");
+                }
             }
         });  
     }else if(option==="add"){
         d3.selectAll(".dot")[0].forEach(function (d) {
             var rank = parseInt(d3.select(d).attr("paretoRank"));
             if (rank <= +arg && rank >= 0){
-                d3.select(d).attr('class','dot_highlighted')
-                	.style("fill", "#19BAD7");
+            	if(d3.select(d).attr('status')=='selected'){
+                    d3.select(d).attr('status','selected_and_highlighted')
+                    	.style("fill", "#F75082");
+            	}else{
+                    d3.select(d).attr('status','highlighted')
+                    .style("fill", "#F75082");
+                }
             }
         });  
     }else if(option==="within"){
-        d3.selectAll(".dot_highlighted")[0].forEach(function (d) {
+        d3.selectAll("[status=highlighted]")[0].forEach(function (d) {
             var rank = parseInt(d3.select(d).attr("paretoRank"));
-            if (rank <= +arg && rank >= 0){
-                d3.select(d).attr('class','dot_highlighted')
+            if (rank > +arg || rank < 0){
+                d3.select(d).attr('status','default')
+                	.style("fill", "#000000");
+            }
+        }); 
+        d3.selectAll("[status=selected_and_highlighted]")[0].forEach(function (d) {
+            var rank = parseInt(d3.select(d).attr("paretoRank"));
+            if (rank > +arg || rank < 0){
+                d3.select(d).attr('status','selected')
                 	.style("fill", "#19BAD7");
             }
         }); 
@@ -1054,8 +1117,13 @@ function applyComplexFilter(){
 
     d3.selectAll('.dot')[0].forEach(function(d){
     	if(matchedIDs.indexOf(d.__data__.id)>-1){
-            d3.select(d).attr('class','dot_highlighted')
-        	.style("fill", "#19BAD7");
+    		if(d3.select(d).attr('status')=='default'){
+                d3.select(d).attr('status','highlighted')
+            		.style("fill", "#F75082");
+    		}else{
+                d3.select(d).attr('status','selected_and_highlighted')
+            		.style("fill", "#F75082");
+    		}
     	}
     });  
     
@@ -1083,13 +1151,19 @@ function save_user_defined_filter(expression){
     d3.select('#filter_application_save')
     		.attr('disabled',true)
     		.text('Current filter scheme saved');
+    
+    if(current_view==18){
+		if(max_view_reached < 18) max_view_reached=18;
+		activate_right_arrow();
+		alert('Success! You can move on to the next step.');
+    }
 }
 
 
 
 function update_filter_application_status(inputExpression,option){    
     
-    var application_status = d3.select('#filter_application_status');
+    var application_status = d3.select('#applied_filter_div');
     var count = application_status.selectAll('.applied_filter').size();
     
     var thisFilter = application_status.append('div')
@@ -1122,7 +1196,7 @@ function update_filter_application_status(inputExpression,option){
             .text(ppdf(inputExpression));
     
     thisFilter.append('img')
-            .attr('src','img/left_arrow.png')
+            .attr('src','images/left_arrow.png')
             .attr('id',function(){
                 var num = count+1;
                 return 'leftarrow_' + num;
@@ -1132,7 +1206,7 @@ function update_filter_application_status(inputExpression,option){
             .style('float','left')
             .style('margin-left','13px');
     thisFilter.append('img')
-            .attr('src','img/left_arrow.png')
+            .attr('src','images/left_arrow.png')
             .attr('id',function(){
                 var num = count+1;
                 return 'rightarrow_' + num;
@@ -1144,12 +1218,6 @@ function update_filter_application_status(inputExpression,option){
             .style('margin-left','4px')
             .style('margin-right','7px'); 
     
-//    thisFilter.append('button')
-//            .attr('class','filter_application_saveThis')
-//            .text('Add this filter')
-//            .on('click',function(d){
-//                save_user_defined_filter(inputExpression);
-//            });
     
     var num = count+1;
     d3.selectAll("#leftarrow_"+num).on("click",function(d){
@@ -1192,7 +1260,9 @@ function update_filter_application_status(inputExpression,option){
             applyComplexFilter();
         }
         if(d3.selectAll('.applied_filter')[0].length===0){
-            d3.select('#filter_application_save')[0][0].disabled=true;
+            d3.select('#filter_application_save').remove();
+        	d3.select('#applied_filter_title_div')
+    			.select('div').remove();
         }
     });
     
@@ -1212,10 +1282,26 @@ function update_filter_application_status(inputExpression,option){
     });
     
     
+    if(d3.select('#filter_application_save')[0][0]){
+    	// If save button exists, activate it
+        d3.select('#filter_application_save')
+	    	.text("Save currently applied filter scheme");    
+    }else{
+    	// If save button does not exist, add it
+    	d3.select('#applied_filter_title_div')
+    		.append('div')
+    		.text('Filter application status');
+        d3.select("#applied_filter_button_div")
+        	.append("button")
+		    .attr("id","filter_application_save")
+		    .attr("class","filter_options_button")
+		    .text("Save currently applied filter scheme");
+    }
+    d3.select("#filter_application_save")[0][0].disabled = false;
     d3.select('#filter_application_save')
-	    .text("Save currently applied filter scheme")
-	    .attr('disabled', false);
-
+            .on('click',function(d){
+                save_user_defined_filter(null);
+            });        
 }
 
 
@@ -1262,10 +1348,13 @@ function click_left_arrow(n){
 }
 
 
+var current_view_17_trial = 0;
+var temp_logical_connective;
+var temp_level;
 
 function parse_filter_application_status(){
 	
-    var application_status = d3.select('#filter_application_status');
+    var application_status = d3.select('#applied_filter_div');
     var count = application_status.selectAll('.applied_filter').size();
     var filter_expressions = [];
     var filter_logical_connective = [];
@@ -1292,6 +1381,43 @@ function parse_filter_application_status(){
         	}
         }
     });
+    
+    
+    if(current_view==17){
+    	var and1 = false;
+    	var and2 = false;
+    	var or = false;
+    	var later_2_filters_have_higher_level = false;
+    	
+    	if(filter_logical_connective.length==3){
+        	and1 = filter_logical_connective[0]=='&&';
+        	and2 = filter_logical_connective[1]=='&&';
+        	or = filter_logical_connective[2]=='||';
+        	later_2_filters_have_higher_level = (filter_level[1]==filter_level[2]) && filter_level[1] > filter_level[0];
+        	
+        	
+        	console.log(filter_level);
+        	console.log(filter_logical_connective);
+        	temp_logical_connective=filter_logical_connective;
+        	temp_level=filter_level;
+        	
+        	if(and1&&and2&&or&&later_2_filters_have_higher_level){
+        		if(max_view_reached < 17) max_view_reached=17;
+        		activate_right_arrow();
+        		alert('Success! You can move on to the next step.');
+        	}
+    	}
+    	
+    	if(max_view_reached < 17){
+	    	current_view_17_trial++;
+	    	if(current_view_17_trial > 10){
+	    		alert('Hint: There must be three activated filters. The logical connective for each filter should be AND, AND, and OR, respectively. The latter two filters should be indented (located right to the first filter)');
+	    	}
+    	}
+
+    }
+    
+    
     var filterExpression = "";
     var prev_level = 0;
     for(var i=0;i<filter_expressions.length;i++){

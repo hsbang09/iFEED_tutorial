@@ -19,7 +19,6 @@ function runDataMining() {
 	remove_df_application_status();
 	
 	
-	
 	if(selection_changed == false && sortedDFs != null){
 		display_drivingFeatures(sortedDFs,"lift");
 		if(testType=="3"){
@@ -28,8 +27,8 @@ function runDataMining() {
 		return;
 	}
 	
-    var selectedArchs = d3.selectAll("[class=dot_highlighted]");
-    var nonSelectedArchs = d3.selectAll("[class=dot]");
+    var selectedArchs = d3.selectAll("[status=selected]");
+    var nonSelectedArchs = d3.selectAll("[status=default]");
     var numOfSelectedArchs = selectedArchs.size();
     var numOfNonSelectedArchs = nonSelectedArchs.size();
     
@@ -241,6 +240,8 @@ function display_drivingFeatures(source,sortby) {
 
 	var application_status = infoBox.append('div')
 		.attr('id','df_application_status');
+    application_status.append('div')
+    	.attr('id','df_application_status_title');
     
 	infoBox.append('div')
 		.attr('id','df_options');
@@ -272,7 +273,10 @@ function display_drivingFeatures(source,sortby) {
 		.attr('id','df_reset')
 		.attr('class','df_options_button')
 		.text('Reset data mining')
-		.on('click',initialize_tabs_driving_features)
+		.on('click',function(d){
+			initialize_tabs_driving_features();
+		    initialize_tabs_classification_tree();
+		});
     d3.select('#df_save_feature')[0][0].disabled= true;
     d3.select('#df_cancel_selection')[0][0].disabled=true;
 	
@@ -606,30 +610,29 @@ function display_drivingFeatures(source,sortby) {
 
 
     
-    if(testType==="4"){
-    }else{
-        // draw legend
-        var legend_df = objects.selectAll(".legend")
-                        .data(color_drivingFeatures.domain())
-                        .enter().append("g")
-                        .attr("class", "legend")
-                        .attr("transform", function(d, i) { return "translate(0," + (i * 20) + ")"; });
 
-            // draw legend colored rectangles
-        legend_df.append("rect")
-                .attr("x", 655)
-                .attr("width", 18)
-                .attr("height", 18)
-                .style("fill", color_drivingFeatures);
+    // draw legend
+    var legend_df = objects.selectAll(".legend")
+                    .data(color_drivingFeatures.domain())
+                    .enter().append("g")
+                    .attr("class", "legend")
+                    .attr("transform", function(d, i) { return "translate(0," + (i * 20) + ")"; });
 
-            // draw legend text
-        legend_df.append("text")
-                .attr("x", 655)
-                .attr("y", 9)
-                .attr("dy", ".35em")
-                .style("text-anchor", "end")
-                .text(function(d) { return d;});
-    }
+        // draw legend colored rectangles
+    legend_df.append("rect")
+            .attr("x", 655)
+            .attr("width", 18)
+            .attr("height", 18)
+            .style("fill", color_drivingFeatures);
+
+        // draw legend text
+    legend_df.append("text")
+            .attr("x", 655)
+            .attr("y", 9)
+            .attr("dy", ".35em")
+            .style("text-anchor", "end")
+            .text(function(d) { return d;});
+    
     
 
     d3.select("[id=instrumentOptions]")
@@ -758,11 +761,11 @@ function highlight_dots_with_feature(expression){
 
 	// De-highlight all dots when no feature is selected
 	if(expression==null && selected_features.length==0){
-	    var highlighted = d3.selectAll("[class=dot_DFhighlighted]")
-	    		.attr("class", "dot")
+	    d3.selectAll("[status=highlighted]")
+	    		.attr("status", "default")
 	            .style("fill", "#000000");     
-	    d3.selectAll("[class=dot_selected_DFhighlighted]")
-	    		.attr("class", "dot_highlighted")
+	    d3.selectAll("[status=selected_and_highlighted]")
+	    		.attr("status", "selected")
 	            .style("fill","#19BAD7");  
 	    return;
 	}
@@ -794,22 +797,7 @@ function highlight_dots_with_feature(expression){
     	bitStrings.push(d.__data__.bitString);
         paretoRankings.push(parseInt(d3.select(d).attr("paretoRank")));
     });  
-    d3.selectAll('.dot_highlighted')[0].forEach(function(d){
-    	ids.push(d.__data__.id);
-    	bitStrings.push(d.__data__.bitString);
-        paretoRankings.push(parseInt(d3.select(d).attr("paretoRank")));
-    });  
-    d3.selectAll('.dot_DFhighlighted')[0].forEach(function(d){
-    	ids.push(d.__data__.id);
-    	bitStrings.push(d.__data__.bitString);
-        paretoRankings.push(parseInt(d3.select(d).attr("paretoRank")));
-    });  
-    d3.selectAll('.dot_selected_DFhighlighted')[0].forEach(function(d){
-    	ids.push(d.__data__.id);
-    	bitStrings.push(d.__data__.bitString);
-        paretoRankings.push(parseInt(d3.select(d).attr("paretoRank")));
-    });  
-    
+
 
     var arch_info = {bitStrings:bitStrings,paretoRankings:paretoRankings};
     var indices = [];
@@ -826,30 +814,27 @@ function highlight_dots_with_feature(expression){
 
 
     d3.selectAll("[class=dot]")[0].forEach(function (d) {
-    	if(matchedIDs.indexOf(d.__data__.id)>-1){
-    		d3.select(d).attr("class", "dot_DFhighlighted")
-			.style("fill", "#F75082");
-		}
-    });
-    d3.selectAll("[class=dot_highlighted]")[0].forEach(function (d) {
-    	if(matchedIDs.indexOf(d.__data__.id)>-1){
-			d3.select(d).attr("class", "dot_selected_DFhighlighted")
-			.style("fill", "#F75082");
-		}               	
-    });	
+    	var status = d3.select(d).attr('status');
+    	if(status=='default' || status=='highlighted'){
+        	if(matchedIDs.indexOf(d.__data__.id)>-1){
+        		d3.select(d).attr("status", "highlighted")
+    				.style("fill", "#F75082");
+    		}else{
+        		d3.select(d).attr("status", "default")
+    				.style("fill", "#000000");
+    		}
+    	}else if(status=='selected' || status=='selected_and_highlighted'){
+        	if(matchedIDs.indexOf(d.__data__.id)>-1){
+        		d3.select(d).attr("status", "selected_and_highlighted")
+    				.style("fill", "#F75082");
+    		}else{
+        		d3.select(d).attr("status", "selected")
+    				.style("fill", "#19BAD7");
+    		}
+    	}
 
-    d3.selectAll("[class=dot_DFhighlighted]")[0].forEach(function (d) {
-    	if(matchedIDs.indexOf(d.__data__.id)==-1){
-    		d3.select(d).attr("class", "dot")
-			.style("fill", "#000000");
-		}
     });
-    d3.selectAll("[class=dot_selected_DFhighlighted]")[0].forEach(function (d) {
-    	if(matchedIDs.indexOf(d.__data__.id)==-1){
-			d3.select(d).attr("class", "dot_highlighted")
-			.style("fill", "#19BAD7");
-		}       	
-    });	
+    
 }
 
 
@@ -866,12 +851,14 @@ function remove_df_application_status(expression){
 	    selected_features=[];
 	    selected_features_expressions=[];
 	    
-	    d3.selectAll("[class=dot_DFhighlighted]")
-	    		.attr("class", "dot")
+	    d3.selectAll("[status=highlighted]")
+	    		.attr("status", "default")
 	            .style("fill", "#000000");     
-	    d3.selectAll("[class=dot_selected_DFhighlighted]")
-	    		.attr("class", "dot_highlighted")
+	    d3.selectAll("[status=selected_and_highlighted]")
+	    		.attr("status", "selected")
 	            .style("fill","#19BAD7");  
+		d3.select('#df_application_status_title_div').remove();
+
 	    return;
 	}
 	
@@ -899,7 +886,10 @@ function remove_df_application_status(expression){
     if(selected_features.length!=0){
         d3.select('#df_save_feature')[0][0].disabled= false;
     	d3.select('#df_save_feature').text('Save current feature')
+	}else{
+		d3.select('#df_application_status_title_div').remove();
 	}
+    
     
     highlight_dots_with_feature();
     
@@ -941,12 +931,20 @@ function update_df_application_status(expression){
         }
     });
     
-
+    
+    if(d3.select('#df_application_status_title_div')[0][0]==null){
+    	d3.select('#df_application_status_title')
+    		.append('div')
+    		.attr('id','df_application_status_title_div')
+    		.text('Features Application Status');
+	}
+    
     d3.select('#df_save_feature')[0][0].disabled= false;
 	d3.select('#df_save_feature').text('Save current feature')
     d3.select('#df_cancel_selection')[0][0].disabled=false;
 
 }
+
 
 function save_selected_driving_features(){
     if(selected_features.length!=0){
