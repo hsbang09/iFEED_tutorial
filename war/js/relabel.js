@@ -4,6 +4,14 @@
  * and open the template in the editor.
  */
 
+var relabel = true;
+
+function toggle_relabel(){
+	return relabel==false;
+}
+
+
+
 
 var orbitList_displayName = ["1000","2000","3000","4000","5000"];
 var instrList_displayName = ["A","B","C","D","E","F","G","H","I","J","K","L"];
@@ -28,6 +36,10 @@ function Index2ActualName(index, type){
  * @param {String} type: Type of the variable. Could be either "orbit" or "instrument"
  */
 function Index2DisplayName(index, type){
+	if(relabel==false){
+		return Index2ActualName(index,type);
+	}
+	
     if(type=="orbit"){
         return orbitList_displayName[index];
     }else if(type=="instrument"){
@@ -70,11 +82,19 @@ function ActualName2Index(name, type){
 
 
 function DisplayName2Index(input, type){
+	if(relabel==false){
+		return ActualName2Index(input,type);
+	}
+	
     var input=input.trim();
 	var split = input.split(',');
 	var output='';
 	for(var i=0;i<split.length;i++){
 		var name = split[i];
+		
+		if(orbitList_displayName.indexOf(name)==-1 && instrList_displayName.indexOf(name)==-1){
+			alert('Invalid input argument');
+		}
 		if(i>0) output=output+",";
 		
 	    if(type=="orbit"){
@@ -91,6 +111,10 @@ function DisplayName2Index(input, type){
 
 
 function ActualName2DisplayName(name,type){
+	if(relabel==false){
+		return name;
+	}
+	
     var name = name.trim();
     if(type=="orbit"){
         var nth = $.inArray(name,orbitList);
@@ -111,6 +135,9 @@ function ActualName2DisplayName(name,type){
 
 
 function DisplayName2ActualName(name,type){
+	if(relabel==false){
+		return name;
+	}
     var name = name.trim();
     if(type=="orbit"){
         var nth = $.inArray(name,orbitList_displayName);
@@ -141,17 +168,34 @@ function DisplayName2ActualName(name,type){
 
 
 
-function Name2Index(name,type){
-    var name = name.trim();
-    var temp = DisplayName2Index(name,type);
-    if(name!=temp+""){
-        return temp;
-    }else{
-        return ActualName2Index(name,type);
-    }
+//function Name2Index(name,type){
+//	var name = name.trim();
+//    var temp = DisplayName2Index(name,type);
+//    if(name!=temp+""){
+//        return temp;
+//    }else{
+//        return ActualName2Index(name,type);
+//    }
+//}
+
+
+function ppdfType(expression){
+	if(expression.indexOf('[')==-1){
+		return expression;
+	}
+	var type='';
+	var erase = false;
+	for(var i=0;i<expression.length;i++){
+		if(expression[i]=='['){
+			erase=true;
+		}else if(expression[i]==']'){
+			erase=false;
+		}else if(!erase){
+			type=type+expression[i];
+		}
+	}
+	return type;
 }
-
-
 
 function ppdf(expression){
 
@@ -173,6 +217,9 @@ function ppdf(expression){
 	    
 	    if(featureName==="paretoFront"){return expression;}
 	    
+	    if(featureName[0]=='~'){
+	    	featureName = 'NOT '+ featureName.substring(1);
+	    }
 	    
 	    var featureArg = exp.split("[")[1];
 	    featureArg = featureArg.substring(0,featureArg.length-1);

@@ -315,21 +315,25 @@ function display_views(){
 						+' satisfies the measurement requirements of the climate monitoring community. The cost'
 						+' is a measure of how much is going to cost (in million dollars) to design, implement, launch'
 						+' and operate those systems. Naturally, low-cost and high-science designs are desirable.</p>'
-						+'<p>Note that, particular combinations of instruments and instrument-to-orbit assignments '
-						+'may have synergistic effects. For example, instrument X may increase the science score by 0.3 '
-						+'when it is assigned to orbit 3000, whereas the score may only increases by 0.1 when it is '
-						+'assigned to orbit 4000. '
-						+'Or, assigning instruments X and Y together in the same orbit may result in much higher score than '
-						+'having them on separate orbits.</p>');
+// 						+'<p>Note that, particular combinations of instruments and instrument-to-orbit assignments '
+// 						+'may have synergistic effects. For example, instrument X may increase the science score by 0.3 '
+// 						+'when it is assigned to orbit 3000, whereas the score may only increases by 0.1 when it is '
+// 						+'assigned to orbit 4000. '
+// 						+'Or, assigning instruments X and Y together in the same orbit may result in much higher score than '
+// 						+'having them on separate orbits.</p>'
+						+'');
 		
 		d3.select('#main_div').insert('p','#main_img2')
 			.attr('id','main_text2')
 			.style('font-size','22px')
-			.html('<p>Your specific goal in this task is to do the following:</p>'
-							+'<p> Find as many patterns (e.g. instrument-to-orbit assignments) as possible that seem to '
-							+'systematically lead to high science benefit score, while keeping the cost low. </p>'
-							+'<p>Next, we will introduce how the iFEED interface looks like and how you can use it for data analysis.'
-							+' (Loading the next page may take few seconds)</p>');
+			.html('<p>The main goal in this task is to find as many features (e.g. instrument-to-orbit assignments)'
+					+' as possible that are consistently found in the target designs more often than in the ohters. '
+					+'These features should follow two conditions:</p>'
+					+'<p>1. Most of the target designs have the feature (the feature is a necessary condition).</p>'
+					+'<p>2. Most of the designs that have the feature are within the target region (the feature is a sufficient condition).</p>'
+					+'<p>Next, we will introduce how the iFEED interface looks like and how you can use it for data analysis. '
+					+'(Loading the next page may take few seconds)</p>');					
+
 	}
 
 	
@@ -349,7 +353,12 @@ display_views();
 
 
 testType = 3;
-account_id = 0000;
+account_id = '';
+for(var i=0;i<9;i++){
+	account_id = account_id + Math.floor(Math.random()*10);
+}
+account_id = account_id + testType;
+
 activate_right_arrow();
 
 max_view=24;
@@ -357,21 +366,6 @@ d3.select('#tutorial_page_number').text("" + current_view + "/" + max_view);
 
 
 
-
-
-
-
-
-
-
-
 </script>
-
-
-
-
-
-
-
   </body>
 </html>

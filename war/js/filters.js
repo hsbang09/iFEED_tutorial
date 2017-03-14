@@ -1157,6 +1157,8 @@ function save_user_defined_filter(expression){
 		activate_right_arrow();
 		alert('Success! You can move on to the next step.');
     }
+    initialize_tabs_driving_features();
+    initialize_tabs_classification_tree();
 }
 
 

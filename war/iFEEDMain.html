@@ -16,7 +16,7 @@ and open the template in the editor.
 	   <link href="js/lib/tabcontent.css" rel="stylesheet" type="text/css"/>
    	   <link href="css/filters.css" rel="stylesheet" type="text/css"/>
    	   <link href="css/drivingFeatures.css" rel="stylesheet" type="text/css"/>
-	   
+	   <link href="css/classificationTree.css" rel="stylesheet" type="text/css"/>
 	   
        <script src="https://apis.google.com/js/platform.js" async defer></script>
        <meta name="google-signin-client_id" content="564804694787-lnsp9md3u0q8086nftbamu43drid6d4t.apps.googleusercontent.com">
@@ -280,7 +280,7 @@ and open the template in the editor.
 		               <div id="numOfArchs_inputBox" style="width:50px;text-align: center;line-height:25px;margin-left:3px;font-size:18px; height: 25px; float:left;background-color: #D5D5D5;"></div>
 		           </div>
 		           <div id="numOfSelectedArchs" style="float:left;width:270px;height:25px;font-size:18px; margin-left:20px">
-		               <div style="font-size:18px; line-height:25px;height: 25px; float:left;margin-left: 1px;">Number of selected designs:</div>
+		               <div style="font-size:18px; line-height:25px;height: 25px; float:left;margin-left: 1px;">Number of target designs:</div>
 		               <div id="numOfSelectedArchs_inputBox" style="width:50px;line-height:25px;margin-left:3px;text-align: center;font-size:18px; height: 25px;float:left;background-color: #D5D5D5;"></div> 
 		           </div>
 		           
@@ -379,6 +379,14 @@ and open the template in the editor.
 // 			    	 window.location.replace("session_end.html");
 // 				}
 
+
+ 				var cred = window.location.search;
+ 				if(cred){
+ 	 				cred = cred.substring(1);
+ 		       		testType = cred.split("-")[0];
+ 		       		account_id = cred.split("-")[1];
+ 				}
+      		
 				max_view_reached = 5;
             	current_view=5;
             	current_view_displayed=5;
@@ -487,7 +495,7 @@ and open the template in the editor.
 
 
                 function import_new_data(){
-                    var filePath = "/results/1.rs,/results/3.rs";
+                    var filePath = "/results/1.rs";
                     $.ajax(
                             {
                                 url: "IFEEDServlet",
@@ -717,7 +725,9 @@ and open the template in the editor.
                 return d3.selectAll(".dot").size();
             }
             function numOfSelectedArchs(){
-                return d3.selectAll("[status=selected]").size();
+                var l1 =d3.selectAll("[status=selected]").size();
+                var l2 = d3.selectAll('[status=selected_and_highlighted]').size();
+                return l1+l2;
             }
 
 
